@@ -1418,7 +1418,7 @@
         <div class="hero-inner">
           <div class="hero-badge">Est. 2010 · Balikpapan, Kalimantan Timur</div>
           <h1 class="hero-title">
-            Parsahutaon Dos Roha<br />Balikpapan Regency - Sepinggan Pratama & Sekitarnya
+            Parsahutaon Dos Roha<br /> Balikpapan Regency - Sepinggan Pratama & Sekitarnya
           </h1>
           <p class="hero-sub">
             Komunitas Masyarakat Batak yang bersatu dalam kasih dan persaudaraan
@@ -2545,6 +2545,65 @@
       </div>
     </div>
 
+    <!-- Edit Kegiatan -->
+    <div class="modal-overlay" id="modal-edit-kegiatan">
+      <div class="modal">
+        <div class="modal-title">
+          Edit Kegiatan
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-edit-kegiatan')"
+          >
+            ✕
+          </button>
+        </div>
+        <input type="hidden" id="f-edit-keg-id" />
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" class="form-control" id="f-edit-keg-date" />
+        </div>
+        <div class="form-group">
+          <label>Jenis Kegiatan</label>
+          <select class="form-control" id="f-edit-keg-type">
+            <option value="Kebaktian">Kebaktian</option>
+            <option value="Duka">Duka / Mangapuli</option>
+            <option value="Sakit">Menjenguk Sakit</option>
+            <option value="Pernikahan">Pernikahan / Mangamai</option>
+            <option value="Sidi">Pemberkatan Sidi</option>
+            <option value="Mamoholi">Mamoholi</option>
+            <option value="Manise">Manise</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Judul Kegiatan</label>
+          <input type="text" class="form-control" id="f-edit-keg-title" />
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label>
+          <textarea
+            class="form-control"
+            id="f-edit-keg-desc"
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tempat / Lokasi</label>
+          <input type="text" class="form-control" id="f-edit-keg-place" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-edit-kegiatan')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveEditKegiatan()">
+            💾 Simpan
+          </button>
+        </div>
+      </div>
+    </div>
     <!-- =================== ADMIN PANEL =================== -->
     <div id="admin-panel-overlay">
       <div class="admin-box">
@@ -2686,6 +2745,114 @@
       </div>
     </div>
 
+    <!-- MODAL EDIT KEGIATAN -->
+    <div class="modal-overlay" id="modal-edit-kegiatan">
+      <div class="modal">
+        <div class="modal-title">
+          Edit Kegiatan
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-edit-kegiatan')"
+          >
+            ✕
+          </button>
+        </div>
+        <input type="hidden" id="f-edit-keg-id" />
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" class="form-control" id="f-edit-keg-date" />
+        </div>
+        <div class="form-group">
+          <label>Jenis Kegiatan</label>
+          <select class="form-control" id="f-edit-keg-type">
+            <option value="Kebaktian">Kebaktian</option>
+            <option value="Duka">Duka / Mangapuli</option>
+            <option value="Sakit">Menjenguk Sakit</option>
+            <option value="Pernikahan">Pernikahan / Mangamai</option>
+            <option value="Sidi">Pemberkatan Sidi</option>
+            <option value="Mamoholi">Mamoholi</option>
+            <option value="Manise">Manise</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Judul Kegiatan</label>
+          <input type="text" class="form-control" id="f-edit-keg-title" />
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label>
+          <textarea
+            class="form-control"
+            id="f-edit-keg-desc"
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tempat / Lokasi</label>
+          <input type="text" class="form-control" id="f-edit-keg-place" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-edit-kegiatan')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveEditKegiatan()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ============================================
+      // FIX: EDIT KEGIATAN
+      // ============================================
+
+      function openEditKegiatan(id) {
+        const k = appData.kegiatan.find((x) => x.id === id);
+        if (!k) return;
+        document.getElementById("f-edit-keg-id").value = k.id;
+        document.getElementById("f-edit-keg-date").value = k.date;
+        document.getElementById("f-edit-keg-type").value = k.type;
+        document.getElementById("f-edit-keg-title").value = k.title;
+        document.getElementById("f-edit-keg-desc").value = k.desc || "";
+        document.getElementById("f-edit-keg-place").value = k.place || "";
+        openModal("modal-edit-kegiatan");
+      }
+
+      function saveEditKegiatan() {
+        const id = parseInt(document.getElementById("f-edit-keg-id").value);
+        const date = document.getElementById("f-edit-keg-date").value;
+        const type = document.getElementById("f-edit-keg-type").value;
+        const title = document.getElementById("f-edit-keg-title").value.trim();
+        const desc = document.getElementById("f-edit-keg-desc").value.trim();
+        const place = document.getElementById("f-edit-keg-place").value.trim();
+        if (!date || !title) {
+          showToast("Tanggal dan judul wajib diisi", "error");
+          return;
+        }
+        const idx = appData.kegiatan.findIndex((x) => x.id === id);
+        if (idx === -1) return;
+        appData.kegiatan[idx] = { id, date, type, title, desc, place };
+        if (attendanceData[id]) {
+          attendanceData[id].date = date;
+          attendanceData[id].title = title;
+          attendanceData[id].type = type;
+          saveAttendance();
+        }
+        saveData();
+        closeModal("modal-edit-kegiatan");
+        currentKegYear = new Date(date).getFullYear();
+        renderKegiatan();
+        showToast("✅ Kegiatan berhasil diperbarui");
+      }
+
+      const _origRenderKegiatan = renderKegiatan;
+
+      renderKegiatan();
+    </script>
     <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
@@ -4117,6 +4284,13 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
             "block";
           renderPengurusEditor();
           showToast("✅ Berhasil masuk sebagai Admin!", "success");
+          showToast("✅ Berhasil masuk sebagai Admin!", "success");
+          if (
+            document
+              .getElementById("page-kegiatan")
+              .classList.contains("active")
+          )
+            renderKegiatan();
         } else {
           showToast("❌ Password salah!", "error");
         }
@@ -4357,8 +4531,11 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
             const attBtn = isAdmin
               ? `<button class="btn btn-sm" style="background:rgba(13,148,136,0.1);color:var(--teal);border:1px solid rgba(13,148,136,0.3);margin-left:4px;white-space:nowrap" onclick="openAttendanceModal(${k.id})">✍ Isi Daftar Hadir</button>`
               : "";
+            const adminEdit = isAdmin
+              ? `<button class="edit-btn" onclick="openEditKegiatan(${k.id})" title="Edit kegiatan">✏</button>`
+              : "";
             const adminDel = isAdmin
-              ? `<button class="delete-btn" onclick="deleteKegiatan(${k.id})">🗑</button>`
+              ? `<button class="delete-btn" onclick="deleteKegiatan(${k.id})" title="Hapus kegiatan">🗑</button>`
               : "";
             return `<div class="event-card">
             <div class="event-date"><div class="day">${d.getDate()}</div><div class="month">${months[d.getMonth()]}</div></div>
@@ -4369,7 +4546,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
               ${k.place ? `<div class="event-desc">📍 ${k.place}</div>` : ""}
               <div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">${attBadge}${attBtn}</div>
             </div>
-            <div style="display:flex;gap:4px;margin-left:auto;flex-shrink:0">${adminDel}</div>
+           <div style="display:flex;gap:4px;margin-left:auto;flex-shrink:0">${adminEdit}${adminDel}</div>
           </div>`;
           })
           .join("");
@@ -5892,6 +6069,79 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
           injectUploadBukti();
         }, 300);
       }
+    </script>
+    <script>
+          // ============================================
+          // FIX: EDIT KEGIATAN
+        <script>
+      // ============================================
+      // FIX: EDIT KEGIATAN
+      // ============================================
+
+      function openEditKegiatan(id) {
+        const k = appData.kegiatan.find((x) => x.id === id);
+        if (!k) return;
+        document.getElementById("f-edit-keg-id").value = k.id;
+        document.getElementById("f-edit-keg-date").value = k.date;
+        document.getElementById("f-edit-keg-type").value = k.type;
+        document.getElementById("f-edit-keg-title").value = k.title;
+        document.getElementById("f-edit-keg-desc").value = k.desc || "";
+        document.getElementById("f-edit-keg-place").value = k.place || "";
+        openModal("modal-edit-kegiatan");
+      }
+
+      function saveEditKegiatan() {
+        const id = parseInt(document.getElementById("f-edit-keg-id").value);
+        const date = document.getElementById("f-edit-keg-date").value;
+        const type = document.getElementById("f-edit-keg-type").value;
+        const title = document.getElementById("f-edit-keg-title").value.trim();
+        const desc = document.getElementById("f-edit-keg-desc").value.trim();
+        const place = document.getElementById("f-edit-keg-place").value.trim();
+        if (!date || !title) {
+          showToast("Tanggal dan judul wajib diisi", "error");
+          return;
+        }
+        const idx = appData.kegiatan.findIndex((x) => x.id === id);
+        if (idx === -1) return;
+        appData.kegiatan[idx] = { id, date, type, title, desc, place };
+        if (attendanceData[id]) {
+          attendanceData[id].date = date;
+          attendanceData[id].title = title;
+          attendanceData[id].type = type;
+          saveAttendance();
+        }
+        saveData();
+        closeModal("modal-edit-kegiatan");
+        currentKegYear = new Date(date).getFullYear();
+        renderKegiatan();
+        showToast("✅ Kegiatan berhasil diperbarui");
+      }
+
+      const _origRenderKegiatan = renderKegiatan;
+      window.renderKegiatan = function () {
+        _origRenderKegiatan();
+        if (!isAdmin) return;
+        const list = document.getElementById("kegiatan-list");
+        if (!list) return;
+        const filtered = appData.kegiatan
+          .filter((k) => new Date(k.date).getFullYear() === currentKegYear)
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        const cards = list.querySelectorAll(".event-card");
+        cards.forEach((card, i) => {
+          if (!filtered[i]) return;
+          const kId = filtered[i].id;
+          if (card.querySelector(".edit-kegiatan-btn")) return;
+          const actionDiv = card.querySelector("div[style*='margin-left:auto']");
+          if (!actionDiv) return;
+          const editBtn = document.createElement("button");
+          editBtn.className = "edit-btn edit-kegiatan-btn";
+          editBtn.title = "Edit kegiatan";
+          editBtn.textContent = "✏";
+          editBtn.onclick = () => openEditKegiatan(kId);
+          actionDiv.insertBefore(editBtn, actionDiv.firstChild);
+        });
+      };
+      renderKegiatan();
     </script>
   </body>
 </html>
