@@ -5567,10 +5567,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
       updateTahunBerdiri();
       function updateStatKegiatan() {
         const tahunIni = new Date().getFullYear();
-        const data = JSON.parse(
-          localStorage.getItem("parsahutaon_data") || "{}",
-        );
-        const kegiatan = data.kegiatan || [];
+        const kegiatan = appData.kegiatan || [];
         const jumlahTahunIni = kegiatan.filter(
           (k) => new Date(k.date).getFullYear() === tahunIni,
         ).length;
@@ -5578,16 +5575,13 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
           (k) => new Date(k.date).getFullYear() === tahunIni - 1,
         ).length;
         const el = document.getElementById("stat-kegiatan");
-        const elLabel = document.querySelector(
-          ".hero-stat-label[for='stat-kegiatan']",
-        );
         if (el) {
-          if (jumlahTahunIni >= 3) {
+          if (jumlahTahunIni >= 1) {
             el.textContent = jumlahTahunIni;
           } else if (jumlahTahunLalu > 0) {
             el.textContent = jumlahTahunLalu + "+";
           } else {
-            el.textContent = "20+";
+            el.textContent = "-";
           }
         }
       }
