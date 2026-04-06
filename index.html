@@ -1,0 +1,5597 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parsahutaon Dos Roha Regency & Sekitarnya</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --navy: #0d1b2a;
+        --teal: #0d9488;
+        --teal-light: #14b8a6;
+        --gold: #d4a017;
+        --coral: #f97316;
+        --cream: #faf8f3;
+        --warm-white: #fffef9;
+        --text-dark: #1a1a2e;
+        --text-mid: #4a4a6a;
+        --text-light: #8888aa;
+        --border: #e8e4da;
+        --shadow: rgba(13, 27, 42, 0.08);
+        --shadow-md: rgba(13, 27, 42, 0.15);
+        --green-bg: #0d2b1f;
+        --success: #22c55e;
+        --danger: #ef4444;
+        --warn: #f59e0b;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Source Serif 4", Georgia, serif;
+        background: var(--cream);
+        color: var(--text-dark);
+        min-height: 100vh;
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      /* ===== NAV ===== */
+      nav {
+        background: var(--navy);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      }
+      .nav-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 24px;
+        height: 58px;
+        overflow-x: auto;
+      }
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Playfair Display", serif;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+        margin-right: 16px;
+        text-decoration: none;
+      }
+      .nav-logo {
+        width: 36px;
+        height: 36px;
+        background: var(--teal);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 900;
+        color: white;
+        flex-shrink: 0;
+      }
+      .nav-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.7);
+        font-family: "Source Serif 4", serif;
+        font-size: 13px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        white-space: nowrap;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      .nav-btn.active {
+        background: var(--teal);
+        color: white;
+      }
+      .nav-admin-btn {
+        margin-left: auto;
+        flex-shrink: 0;
+        background: rgba(212, 160, 23, 0.2);
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        font-size: 13px;
+        padding: 5px 14px;
+        border-radius: 20px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+        font-family: "Source Serif 4", serif;
+      }
+      .nav-admin-btn:hover {
+        background: var(--gold);
+        color: var(--navy);
+      }
+      .nav-admin-btn.active-admin {
+        background: var(--gold);
+        color: var(--navy);
+        font-weight: 600;
+      }
+
+      /* ===== PAGES ===== */
+      .page {
+        display: none;
+        min-height: calc(100vh - 58px);
+      }
+      .page.active {
+        display: block;
+      }
+
+      /* ===== HERO ===== */
+      #hero-beranda {
+        position: relative;
+        min-height: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+        background: linear-gradient(
+          135deg,
+          #0d2b1f 0%,
+          var(--navy) 50%,
+          #1a3a2a 100%
+        );
+        background-size: cover;
+        background-position: center;
+      }
+      #hero-beranda::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(13, 27, 42, 0.82) 0%,
+          rgba(13, 43, 31, 0.75) 100%
+        );
+        z-index: 1;
+      }
+      .hero-inner {
+        position: relative;
+        z-index: 2;
+        padding: 3rem 1.5rem;
+      }
+      .hero-badge {
+        display: inline-block;
+        background: rgba(212, 160, 23, 0.25);
+        border: 1px solid rgba(212, 160, 23, 0.5);
+        color: #f0d080;
+        font-size: 12px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 0.35rem 1rem;
+        border-radius: 20px;
+        margin-bottom: 1.2rem;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .hero-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.8rem, 5vw, 3.2rem);
+        font-weight: 900;
+        color: white;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+      }
+      .hero-sub {
+        color: #b8d4d0;
+        font-size: 1rem;
+        max-width: 520px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.7;
+      }
+      .hero-stats {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .hero-stat {
+        text-align: center;
+      }
+      .hero-stat-num {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        font-weight: 900;
+        color: white;
+        line-height: 1;
+      }
+      .hero-stat-label {
+        color: #8ab8b4;
+        font-size: 12px;
+        margin-top: 4px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* ===== SECTION ===== */
+      .section {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 24px;
+      }
+      .section-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+      .section-title::after {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 3px;
+        background: var(--teal);
+        margin-top: 8px;
+      }
+
+      /* ===== CARDS ===== */
+      .card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        box-shadow: 0 2px 12px var(--shadow);
+        padding: 24px;
+      }
+      .card-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--navy);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* ===== GRIDS ===== */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+
+      /* ===== BERANDA — SEJARAH ===== */
+      .sejarah-card {
+        background: var(--warm-white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 2px 12px var(--shadow);
+        margin-bottom: 2rem;
+      }
+      .sejarah-card h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.1rem;
+        color: var(--navy);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 700;
+      }
+      .sejarah-card p {
+        color: var(--text-mid);
+        line-height: 1.8;
+        margin-bottom: 0.9rem;
+      }
+      .sejarah-card p:last-child {
+        margin-bottom: 0;
+      }
+      .sejarah-card em {
+        color: var(--teal);
+      }
+
+      /* ===== BERANDA — PENGURUS PERTAMA ===== */
+      .pengurus-awal {
+        background: linear-gradient(135deg, var(--green-bg) 0%, #0d3d2f 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+      .pengurus-awal h3 {
+        font-family: "Playfair Display", serif;
+        color: #f0d080;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+      .pengurus-awal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .pengurus-item {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.2rem;
+        text-align: center;
+      }
+      .pengurus-item-icon {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+      .pengurus-item-role {
+        color: #aad4c8;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.4rem;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .pengurus-item-name {
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      /* ===== BERANDA — PENGURUS AKTIF ===== */
+      .pengurus-aktif-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2.5rem;
+      }
+      .pengurus-card-new {
+        background: var(--warm-white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px var(--shadow);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .role-badge-new {
+        display: inline-block;
+        background: rgba(13, 148, 136, 0.1);
+        color: var(--teal);
+        border: 1px solid rgba(13, 148, 136, 0.3);
+        border-radius: 20px;
+        font-size: 11px;
+        padding: 3px 10px;
+        font-family: "JetBrains Mono", monospace;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        width: fit-content;
+      }
+      .p-name-new {
+        font-weight: 600;
+        color: var(--navy);
+        font-size: 15px;
+        line-height: 1.4;
+      }
+
+      /* ===== BERANDA — KEGIATAN ===== */
+      .kegiatan-komunitas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2.5rem;
+      }
+      .kegiatan-kom-card {
+        background: var(--warm-white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.8rem;
+        box-shadow: 0 2px 12px var(--shadow);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .kegiatan-kom-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px var(--shadow-md);
+      }
+      .kegiatan-kom-card .k-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+      .kegiatan-kom-card h4 {
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 0.6rem;
+        font-size: 1.05rem;
+      }
+      .kegiatan-kom-card p {
+        color: var(--text-mid);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      /* ===== BERANDA — PEMBAYARAN ===== */
+      .payment-box {
+        background: linear-gradient(135deg, #f0fdf9 0%, #e6f4f1 100%);
+        border: 1px solid rgba(13, 148, 136, 0.25);
+        border-radius: 16px;
+        padding: 1.8rem;
+        margin-bottom: 2rem;
+      }
+      .payment-box h3 {
+        font-family: "Playfair Display", serif;
+        color: var(--teal);
+        margin-bottom: 1rem;
+        font-size: 1.05rem;
+        font-weight: 700;
+      }
+      .payment-box p {
+        color: var(--text-mid);
+        margin-bottom: 0.5rem;
+        font-size: 14px;
+      }
+      .payment-bullet {
+        display: flex;
+        gap: 0.5rem;
+        align-items: flex-start;
+        margin-bottom: 0.4rem;
+        font-size: 14px;
+        color: var(--text-mid);
+      }
+      .payment-bullet::before {
+        content: "•";
+        color: var(--teal);
+        font-weight: 900;
+        margin-top: 1px;
+      }
+
+      /* ===== STAT BOXES ===== */
+      .stat-box {
+        background: var(--navy);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        color: white;
+      }
+      .stat-box .num {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gold);
+      }
+      .stat-box .lbl {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 4px;
+      }
+
+      /* ===== TABLE ===== */
+      .tbl-wrap {
+        overflow-x: auto;
+        margin-top: 16px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      thead th {
+        background: var(--navy);
+        color: white;
+        padding: 10px 12px;
+        text-align: left;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+      }
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+      }
+      tbody tr:hover {
+        background: rgba(13, 148, 136, 0.04);
+      }
+      tbody td {
+        padding: 9px 12px;
+      }
+      .lunas-badge {
+        background: rgba(34, 197, 94, 0.1);
+        color: #16a34a;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .belum-badge {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .partial-badge {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      /* ===== FORM ===== */
+      .form-group {
+        margin-bottom: 14px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-mid);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .form-control {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-family: "Source Serif 4", serif;
+        font-size: 14px;
+        color: var(--text-dark);
+        background: white;
+        transition: border-color 0.2s;
+        outline: none;
+      }
+      .form-control:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+      }
+      select.form-control {
+        cursor: pointer;
+      }
+
+      /* ===== BUTTONS ===== */
+      .btn {
+        padding: 9px 20px;
+        border: none;
+        border-radius: 8px;
+        font-family: "Source Serif 4", serif;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: var(--teal);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: var(--teal-light);
+      }
+      .btn-secondary {
+        background: white;
+        color: var(--navy);
+        border: 1px solid var(--border);
+      }
+      .btn-secondary:hover {
+        background: var(--cream);
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      .btn-danger:hover {
+        opacity: 0.85;
+      }
+      .btn-gold {
+        background: var(--gold);
+        color: var(--navy);
+      }
+      .btn-gold:hover {
+        opacity: 0.9;
+      }
+      .btn-sm {
+        padding: 5px 12px;
+        font-size: 12px;
+      }
+      .btn-navy {
+        background: var(--navy);
+        color: white;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-mid);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover {
+        background: #f0f0f4;
+      }
+
+      /* ===== CASH FLOW ===== */
+      .cf-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .cf-box {
+        border-radius: 10px;
+        padding: 18px;
+        text-align: center;
+      }
+      .cf-box.income {
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+      }
+      .cf-box.expense {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+      .cf-box.balance {
+        background: var(--navy);
+        color: white;
+      }
+      .cf-box .cf-num {
+        font-family: "Playfair Display", serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+      .cf-box.income .cf-num {
+        color: #16a34a;
+      }
+      .cf-box.expense .cf-num {
+        color: #dc2626;
+      }
+      .cf-box.balance .cf-num {
+        color: var(--gold);
+      }
+      .cf-box .cf-lbl {
+        font-size: 11px;
+        opacity: 0.6;
+        margin-top: 4px;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ===== BAR CHART ===== */
+      .bar-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        height: 140px;
+        margin: 20px 0 8px;
+      }
+      .bar {
+        width: 100%;
+        border-radius: 4px 4px 0 0;
+        transition: opacity 0.2s;
+        cursor: pointer;
+        min-height: 4px;
+      }
+      .bar:hover {
+        opacity: 0.8;
+      }
+      .bar-in {
+        background: var(--teal);
+      }
+      .bar-out {
+        background: var(--coral);
+      }
+
+      /* ===== KEGIATAN TIMELINE ===== */
+      .event-card {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        transition: transform 0.15s;
+      }
+      .event-card:hover {
+        transform: translateX(4px);
+      }
+      .event-date {
+        flex-shrink: 0;
+        text-align: center;
+        background: var(--navy);
+        color: white;
+        border-radius: 8px;
+        padding: 8px 12px;
+        min-width: 60px;
+      }
+      .event-date .day {
+        font-family: "Playfair Display", serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+      .event-date .month {
+        font-size: 10px;
+        letter-spacing: 1px;
+        opacity: 0.7;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .event-body {
+        flex: 1;
+      }
+      .event-type {
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--teal);
+        font-family: "JetBrains Mono", monospace;
+        margin-bottom: 3px;
+      }
+      .event-title {
+        font-family: "Playfair Display", serif;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .event-desc {
+        color: var(--text-mid);
+        font-size: 13px;
+        margin-top: 4px;
+      }
+
+      /* ===== ATTENDANCE BADGE (di event card) ===== */
+      .attendance-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(13, 148, 136, 0.08);
+        border: 1px solid rgba(13, 148, 136, 0.2);
+        color: var(--teal);
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-family: "JetBrains Mono", monospace;
+        margin-top: 6px;
+        cursor: default;
+      }
+      .attendance-badge.no-data {
+        background: rgba(136, 136, 170, 0.08);
+        border-color: rgba(136, 136, 170, 0.2);
+        color: var(--text-light);
+      }
+
+      /* ===== ANGGOTA KEAKTIFAN TAB ===== */
+      .anggota-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 24px;
+        border-bottom: 2px solid var(--border);
+      }
+      .anggota-tab-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        font-family: "Source Serif 4", serif;
+        font-size: 14px;
+        color: var(--text-mid);
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.2s;
+      }
+      .anggota-tab-btn.active {
+        color: var(--teal);
+        border-bottom-color: var(--teal);
+        font-weight: 600;
+      }
+      .anggota-tab-btn:hover {
+        color: var(--navy);
+      }
+
+      /* ===== KEAKTIFAN STATS ===== */
+      .keaktifan-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .keaktifan-box {
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+      }
+      .keaktifan-box.aktif {
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+      }
+      .keaktifan-box.cukup {
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+      }
+      .keaktifan-box.perlu {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+      .keaktifan-box.total {
+        background: var(--navy);
+      }
+      .keaktifan-box .kb-num {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      .keaktifan-box.aktif .kb-num {
+        color: #16a34a;
+      }
+      .keaktifan-box.cukup .kb-num {
+        color: #d97706;
+      }
+      .keaktifan-box.perlu .kb-num {
+        color: #dc2626;
+      }
+      .keaktifan-box.total .kb-num {
+        color: var(--gold);
+      }
+      .keaktifan-box .kb-lbl {
+        font-size: 11px;
+        opacity: 0.65;
+        margin-top: 4px;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .keaktifan-box.total .kb-lbl {
+        color: white;
+      }
+
+      /* ===== STATUS BADGE KEAKTIFAN ===== */
+      .aktif-badge {
+        background: rgba(34, 197, 94, 0.1);
+        color: #16a34a;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .cukup-badge {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .perlu-badge {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .nodata-badge {
+        background: rgba(136, 136, 170, 0.1);
+        color: var(--text-light);
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      /* ===== PROGRESS BAR ===== */
+      .progress-wrap {
+        background: #eee;
+        border-radius: 999px;
+        height: 8px;
+        width: 120px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.4s;
+      }
+
+      /* ===== MEMBER CARD ATTENDANCE INFO ===== */
+      .member-attendance-info {
+        font-size: 11px;
+        margin-top: 3px;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ===== MODAL ===== */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .modal-overlay.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .modal {
+        background: white;
+        border-radius: 16px;
+        padding: 28px;
+        max-width: 560px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        transform: translateY(20px);
+        transition: transform 0.2s;
+      }
+      .modal-overlay.show .modal {
+        transform: translateY(0);
+      }
+      .modal-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--text-light);
+        line-height: 1;
+      }
+
+      /* ===== MODAL ATTENDANCE (checklist) ===== */
+      .attendance-modal {
+        max-width: 700px;
+      }
+      .attendance-member-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 8px;
+        margin: 16px 0;
+      }
+      .attendance-member-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s;
+        background: white;
+        user-select: none;
+      }
+      .attendance-member-item:hover {
+        border-color: var(--teal);
+        background: rgba(13, 148, 136, 0.04);
+      }
+      .attendance-member-item.checked {
+        background: rgba(13, 148, 136, 0.08);
+        border-color: var(--teal);
+      }
+      .attendance-member-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--teal);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .attendance-member-item label {
+        font-size: 13px;
+        cursor: pointer;
+        line-height: 1.4;
+        flex: 1;
+      }
+      .attendance-controls {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .att-count-display {
+        margin-left: auto;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        color: var(--teal);
+        font-weight: 600;
+      }
+
+      /* ===== ADMIN PANEL ===== */
+      #admin-panel-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 3000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      #admin-panel-overlay.open {
+        display: flex;
+      }
+      .admin-box {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      .admin-box h2 {
+        font-family: "Playfair Display", serif;
+        color: var(--navy);
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
+      }
+      .admin-section {
+        background: #f9f9fb;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin-bottom: 1.2rem;
+      }
+      .admin-section h3 {
+        font-size: 13px;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+        font-family: "JetBrains Mono", monospace;
+      }
+      #bg-preview-img {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        display: none;
+        margin-top: 0.5rem;
+      }
+
+      /* ===== TOAST ===== */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--navy);
+        color: white;
+        padding: 14px 20px;
+        border-radius: 10px;
+        z-index: 9999;
+        font-size: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        transform: translateY(20px);
+        opacity: 0;
+        transition: all 0.3s;
+        max-width: 320px;
+      }
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .toast.success {
+        border-left: 4px solid var(--success);
+      }
+      .toast.error {
+        border-left: 4px solid var(--danger);
+      }
+
+      /* ===== YEAR TABS ===== */
+      .year-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .year-tab {
+        padding: 6px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 13px;
+        border: 1px solid var(--border);
+        background: white;
+        transition: all 0.2s;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .year-tab.active {
+        background: var(--navy);
+        color: white;
+        border-color: var(--navy);
+      }
+
+      /* ===== ACTION ROW ===== */
+      .action-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        align-items: center;
+      }
+
+      /* ===== TYPE BADGES ===== */
+      .type-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-family: "JetBrains Mono", monospace;
+        letter-spacing: 0.5px;
+      }
+      .type-kebaktian {
+        background: rgba(13, 148, 136, 0.1);
+        color: var(--teal);
+      }
+      .type-duka {
+        background: rgba(100, 100, 100, 0.1);
+        color: #555;
+      }
+      .type-sakit {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+      }
+      .type-pernikahan {
+        background: rgba(212, 160, 23, 0.1);
+        color: #b45309;
+      }
+      .type-sidi {
+        background: rgba(139, 92, 246, 0.1);
+        color: #7c3aed;
+      }
+      .type-lainnya {
+        background: rgba(13, 27, 42, 0.1);
+        color: var(--navy);
+      }
+
+      /* ===== INFO BOX ===== */
+      .info-box {
+        background: rgba(13, 148, 136, 0.06);
+        border: 1px solid rgba(13, 148, 136, 0.2);
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 13px;
+        color: var(--teal);
+        margin-bottom: 16px;
+      }
+
+      /* ===== ANGGOTA ===== */
+      .member-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 12px;
+      }
+      .member-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .member-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--navy);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .member-name {
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .member-info {
+        font-size: 11px;
+        color: var(--text-light);
+      }
+
+      /* ===== SEARCH ===== */
+      .search-input {
+        width: 100%;
+        padding: 9px 14px 9px 36px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 14px;
+        background: white
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238888aa' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.44.819a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E")
+          no-repeat 12px center;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-input:focus {
+        border-color: var(--teal);
+      }
+
+      /* ===== ADRT ===== */
+      .adrt-article {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        padding: 32px;
+        max-width: 800px;
+      }
+      .adrt-article h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--navy);
+        margin: 28px 0 10px;
+        border-bottom: 2px solid var(--teal);
+        padding-bottom: 6px;
+      }
+      .adrt-article h2:first-of-type {
+        margin-top: 0;
+      }
+      .adrt-article h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 20px 0 8px;
+      }
+      .adrt-article p {
+        color: var(--text-mid);
+        font-size: 14px;
+        margin-bottom: 10px;
+        line-height: 1.8;
+      }
+      .adrt-article ul {
+        padding-left: 22px;
+        color: var(--text-mid);
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .adrt-article li {
+        margin-bottom: 8px;
+        line-height: 1.7;
+      }
+      .adrt-article strong {
+        color: var(--navy);
+      }
+      .adrt-article em {
+        font-style: italic;
+      }
+
+      /* ===== ACTION BUTTONS ===== */
+      .delete-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--danger);
+        font-size: 16px;
+        padding: 4px;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+      }
+      .delete-btn:hover {
+        opacity: 1;
+      }
+      .edit-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--teal);
+        font-size: 15px;
+        padding: 4px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+      }
+      .edit-btn:hover {
+        opacity: 1;
+      }
+      .rp {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 640px) {
+        .cf-summary {
+          grid-template-columns: 1fr;
+        }
+        .hero-title {
+          font-size: 2rem;
+        }
+        .keaktifan-summary {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  </head>
+  <body>
+    <!-- ===== NAV ===== -->
+    <nav>
+      <div class="nav-inner">
+        <a class="nav-brand" href="#" onclick="showPage('beranda')">
+          <div class="nav-logo">DR</div>
+        </a>
+        <button
+          class="nav-btn active"
+          onclick="showPage('beranda')"
+          id="nav-beranda"
+        >
+          🏠 Beranda
+        </button>
+        <button
+          class="nav-btn"
+          onclick="showPage('kegiatan')"
+          id="nav-kegiatan"
+        >
+          📅 Kegiatan
+        </button>
+        <button
+          class="nav-btn"
+          onclick="showPage('bonataon')"
+          id="nav-bonataon"
+        >
+          🎉 Bonataon
+        </button>
+        <button
+          class="nav-btn"
+          onclick="showPage('keuangan')"
+          id="nav-keuangan"
+        >
+          💰 Keuangan
+        </button>
+        <button class="nav-btn" onclick="showPage('anggota')" id="nav-anggota">
+          👥 Anggota
+        </button>
+        <button
+          class="nav-btn"
+          onclick="showPage('pengumuman')"
+          id="nav-pengumuman"
+        >
+          📢 Pengumuman
+        </button>
+        <button class="nav-btn" onclick="showPage('adrt')" id="nav-adrt">
+          📋 ADRT
+        </button>
+        <button
+          class="nav-admin-btn"
+          id="admin-toggle-btn"
+          onclick="openAdminPanel()"
+        >
+          ⚙ Admin
+        </button>
+      </div>
+    </nav>
+
+    <!-- =================== BERANDA =================== -->
+    <div class="page active" id="page-beranda">
+      <div id="hero-beranda">
+        <div class="hero-inner">
+          <div class="hero-badge">Est. 2010 · Balikpapan, Kalimantan Timur</div>
+          <h1 class="hero-title">
+            Parsahutaon Dos Roha<br />Regency & Sekitarnya
+          </h1>
+          <p class="hero-sub">
+            Komunitas Masyarakat Batak yang bersatu dalam kasih dan persaudaraan
+          </p>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="hero-stat-num" id="stat-anggota">44</div>
+              <div class="hero-stat-label">Keluarga Anggota</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-num" id="stat-tahun"></div>
+              <div class="hero-stat-label">Tahun Berdiri</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-num" id="stat-kegiatan">-</div>
+              <div class="hero-stat-label">Kegiatan/Tahun</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sejarah-card" style="margin-top: 2rem">
+          <h3>📖 Sejarah Singkat</h3>
+          <p>
+            Parsahutaon Dos Roha Regency dan Sekitarnya didirikan pada tahun
+            2010 sebagai wadah persatuan bagi keluarga-keluarga Batak yang
+            bermukim di kawasan Perumahan Balikpapan Regency, Sepinggan Pratama,
+            dan sekitarnya.
+          </p>
+          <p>
+            Komunitas ini lahir dari kerinduan untuk mempererat tali
+            persaudaraan (parsaripean), saling membantu dalam suka maupun duka
+            (gotong royong), dan memelihara adat budaya Batak di perantauan.
+          </p>
+          <p>
+            Dengan semangat <em>"Dos Roha"</em> — sehati sepikir — komunitas ini
+            terus berkembang menjadi keluarga besar yang saling menopang.
+          </p>
+        </div>
+        <div class="pengurus-awal">
+          <h3>🏛 Pengurus Pertama (2010)</h3>
+          <div class="pengurus-awal-grid">
+            <div class="pengurus-item">
+              <span class="pengurus-item-icon">👑</span>
+              <div class="pengurus-item-role">Ketua</div>
+              <div class="pengurus-item-name">
+                Kel. Simorangkir / br. Tampubolon
+              </div>
+            </div>
+            <div class="pengurus-item">
+              <span class="pengurus-item-icon">✍</span>
+              <div class="pengurus-item-role">Sekretaris</div>
+              <div class="pengurus-item-name">
+                Kel. R. Sihombing / br. Pangaribuan
+              </div>
+            </div>
+            <div class="pengurus-item">
+              <span class="pengurus-item-icon">💰</span>
+              <div class="pengurus-item-role">Bendahara</div>
+              <div class="pengurus-item-name">Ny. Pasaribu / br. Simamora</div>
+            </div>
+          </div>
+        </div>
+        <h2 class="section-title">Pengurus Aktif</h2>
+        <div class="pengurus-aktif-grid" id="pengurus-aktif-grid"></div>
+        <h2 class="section-title">Kegiatan Komunitas</h2>
+        <div class="kegiatan-komunitas-grid">
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">⛪</span>
+            <h4>Kebaktian Bulanan</h4>
+            <p>
+              Ibadah bulanan yang diselenggarakan secara bergilir di rumah
+              anggota atau sopo met-met.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">💝</span>
+            <h4>Kegiatan Sosial</h4>
+            <p>
+              Saling membantu dalam duka, sakit, dan bencana. Amplop pengganti
+              buah, krans bunga, dan sipaet-paet.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">🎉</span>
+            <h4>Bonataon</h4>
+            <p>
+              Pesta tahunan sebagai ajang persaudaraan dan gotong royong bersama
+              seluruh anggota.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">🤝</span>
+            <h4>Gotong Royong</h4>
+            <p>
+              Kegiatan bersama membantu acara pernikahan, mamoholi, dan kegiatan
+              sosial lainnya.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">🎊</span>
+            <h4>Pemberkatan & Sidi</h4>
+            <p>
+              Hadir dan mendukung momen sakral anggota seperti pemberkatan
+              pernikahan dan pemberkatan sidi.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">📖</span>
+            <h4>Pemahaman Adat</h4>
+            <p>
+              Melestarikan dan mengenalkan adat budaya Batak kepada generasi
+              muda di perantauan.
+            </p>
+          </div>
+        </div>
+        <div class="payment-box">
+          <h3>💳 Informasi Pembayaran</h3>
+          <p>
+            Iuran bulanan sebesar
+            <strong style="color: var(--navy)"
+              >Rp 10.000/bulan (Rp 120.000/tahun)</strong
+            >
+            dapat dibayarkan secara:
+          </p>
+          <div style="margin-top: 0.8rem">
+            <div class="payment-bullet">
+              <span
+                ><strong style="color: var(--navy)">Cash</strong> — langsung
+                kepada bendahara</span
+              >
+            </div>
+            <div class="payment-bullet">
+              <span
+                ><strong style="color: var(--navy)">Transfer Bank BNI</strong> —
+                No. Rekening <code>1135674287</code> a/n Risda H
+                Pangaribuan</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== KEGIATAN =================== -->
+    <div class="page" id="page-kegiatan">
+      <div class="section">
+        <div class="action-row">
+          <h2 class="section-title" style="margin-bottom: 0">📅 Kegiatan</h2>
+          <div
+            class="year-tabs"
+            id="kegiatan-year-tabs"
+            style="margin-bottom: 0"
+          ></div>
+          <button
+            class="btn btn-primary admin-only"
+            onclick="openModal('modal-add-kegiatan')"
+          >
+            + Tambah Kegiatan
+          </button>
+        </div>
+        <div id="kegiatan-list" style="margin-top: 16px"></div>
+      </div>
+    </div>
+
+    <!-- =================== BONATAON =================== -->
+    <div class="page" id="page-bonataon">
+      <div class="section">
+        <div class="action-row">
+          <h2 class="section-title" style="margin-bottom: 0">
+            🎉 Bonataon (Pesta Tahunan)
+          </h2>
+          <div
+            class="year-tabs"
+            id="bonataon-year-tabs"
+            style="margin-bottom: 0"
+          ></div>
+          <button
+            class="btn btn-primary admin-only"
+            onclick="openModal('modal-add-bonataon-entry')"
+          >
+            + Tambah Data Lelang
+          </button>
+        </div>
+        <div id="bonataon-content"></div>
+      </div>
+    </div>
+
+    <!-- =================== KEUANGAN =================== -->
+    <div class="page" id="page-keuangan">
+      <div class="section">
+        <div class="action-row">
+          <h2 class="section-title" style="margin-bottom: 0">
+            💰 Laporan Keuangan
+          </h2>
+          <div
+            class="year-tabs"
+            id="keuangan-year-tabs"
+            style="margin-bottom: 0"
+          ></div>
+        </div>
+        <div class="cf-summary" id="cf-summary"></div>
+        <div class="card" style="margin-bottom: 20px">
+          <div class="card-title">📊 Pemasukan vs Pengeluaran</div>
+          <div class="bar-chart" id="bar-chart"></div>
+          <div
+            style="
+              display: flex;
+              gap: 16px;
+              font-size: 12px;
+              color: var(--text-light);
+            "
+          >
+            <span style="display: flex; align-items: center; gap: 4px"
+              ><span
+                style="
+                  width: 12px;
+                  height: 12px;
+                  background: var(--teal);
+                  border-radius: 2px;
+                  display: inline-block;
+                "
+              ></span
+              >Pemasukan</span
+            >
+            <span style="display: flex; align-items: center; gap: 4px"
+              ><span
+                style="
+                  width: 12px;
+                  height: 12px;
+                  background: var(--coral);
+                  border-radius: 2px;
+                  display: inline-block;
+                "
+              ></span
+              >Pengeluaran</span
+            >
+          </div>
+        </div>
+        <div class="card" style="margin-bottom: 20px">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 16px;
+              flex-wrap: wrap;
+              gap: 10px;
+            "
+          >
+            <div class="card-title" style="margin-bottom: 0">
+              📋 Rincian Cashflow
+            </div>
+            <div style="display: flex; gap: 8px">
+              <button
+                class="btn btn-primary btn-sm"
+                onclick="openModal('modal-add-income')"
+              >
+                + Pemasukan
+              </button>
+              <button
+                class="btn btn-secondary btn-sm admin-only"
+                onclick="openModal('modal-add-expense')"
+              >
+                + Pengeluaran
+              </button>
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table id="cashflow-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Keterangan</th>
+                  <th>Masuk (Rp)</th>
+                  <th>Keluar (Rp)</th>
+                  <th>Saldo (Rp)</th>
+                  <th class="admin-only">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="cashflow-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">📁 Laporan Iuran Tahunan</div>
+          <div class="year-tabs" id="iuran-year-tabs"></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama Keluarga</th>
+                  <th>Status</th>
+                  <th>Nominal (Rp)</th>
+                </tr>
+              </thead>
+              <tbody id="iuran-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="adminDownloadSection"
+      style="
+        display: none;
+        margin: 20px 0;
+        padding: 18px;
+        background: linear-gradient(135deg, #0d1b2a, #0d2a28);
+        border-radius: 12px;
+        border-top: 3px solid #d4a017;
+        text-align: center;
+      "
+    >
+      <p
+        style="
+          color: #d4a017;
+          font-weight: bold;
+          margin: 0 0 6px;
+          font-size: 15px;
+        "
+      >
+        📊 Laporan Resmi Admin
+      </p>
+      <p
+        style="
+          color: #9ca3af;
+          font-size: 13px;
+          margin: 0 0 14px;
+          line-height: 1.6;
+        "
+      >
+        Download file Excel 3-sheet: Iuran, Cashflow, dan Master Summary.
+      </p>
+      <button
+        onclick="downloadLaporanExcel()"
+        style="
+          background: #d4a017;
+          color: #0d1b2a;
+          border: none;
+          padding: 11px 26px;
+          border-radius: 8px;
+          font-weight: bold;
+          font-size: 14px;
+          cursor: pointer;
+        "
+      >
+        📥 Download Laporan Excel
+      </button>
+      <p
+        id="downloadStatus"
+        style="color: #14b8a6; font-size: 12px; margin: 10px 0 0"
+      ></p>
+    </div>
+
+    <!-- =================== ANGGOTA =================== -->
+    <div class="page" id="page-anggota">
+      <div class="section">
+        <!-- Tab Header -->
+        <div class="anggota-tabs">
+          <button
+            class="anggota-tab-btn active"
+            id="tab-daftar-btn"
+            onclick="switchAnggotaTab('daftar')"
+          >
+            👥 Daftar Anggota
+          </button>
+          <button
+            class="anggota-tab-btn"
+            id="tab-keaktifan-btn"
+            onclick="switchAnggotaTab('keaktifan')"
+          >
+            📊 Keaktifan
+          </button>
+        </div>
+
+        <!-- TAB: DAFTAR ANGGOTA -->
+        <div id="tab-daftar">
+          <div class="action-row" style="flex-wrap: wrap">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Cari nama keluarga..."
+              id="member-search"
+              oninput="renderMembers()"
+              style="max-width: 280px"
+            />
+            <button
+              class="btn btn-primary admin-only"
+              onclick="openModal('modal-add-member')"
+            >
+              + Anggota Baru
+            </button>
+          </div>
+          <p
+            style="color: var(--text-mid); font-size: 13px; margin-bottom: 16px"
+          >
+            Total: <strong id="member-count">0</strong> keluarga terdaftar
+          </p>
+          <div class="member-grid" id="member-grid"></div>
+        </div>
+
+        <!-- TAB: KEAKTIFAN -->
+        <div id="tab-keaktifan" style="display: none">
+          <div class="action-row" style="flex-wrap: wrap; margin-bottom: 8px">
+            <div
+              class="year-tabs"
+              id="keaktifan-year-tabs"
+              style="margin-bottom: 0"
+            ></div>
+            <div
+              style="margin-left: auto; font-size: 13px; color: var(--text-mid)"
+            >
+              <span style="display: inline-flex; align-items: center; gap: 6px">
+                <span
+                  style="
+                    width: 10px;
+                    height: 10px;
+                    background: #16a34a;
+                    border-radius: 50%;
+                    display: inline-block;
+                  "
+                ></span
+                >Aktif ≥75%
+              </span>
+              &nbsp;
+              <span style="display: inline-flex; align-items: center; gap: 6px">
+                <span
+                  style="
+                    width: 10px;
+                    height: 10px;
+                    background: #d97706;
+                    border-radius: 50%;
+                    display: inline-block;
+                  "
+                ></span
+                >Cukup 50–74%
+              </span>
+              &nbsp;
+              <span style="display: inline-flex; align-items: center; gap: 6px">
+                <span
+                  style="
+                    width: 10px;
+                    height: 10px;
+                    background: #dc2626;
+                    border-radius: 50%;
+                    display: inline-block;
+                  "
+                ></span
+                >Perlu Perhatian &lt;50%
+              </span>
+            </div>
+          </div>
+          <div class="keaktifan-summary" id="keaktifan-summary"></div>
+          <div class="card" style="margin-bottom: 20px">
+            <div class="card-title">
+              📊 Grafik Kehadiran Anggota (Top Tertinggi)
+            </div>
+            <div id="keaktifan-chart" style="margin-top: 12px"></div>
+          </div>
+          <div class="card">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+              "
+            >
+              <div class="card-title" style="margin-bottom: 0">
+                🏆 Ranking Keaktifan Anggota
+              </div>
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Cari nama..."
+                id="keaktifan-search"
+                oninput="renderKeaktifanTable()"
+                style="max-width: 220px; font-size: 13px"
+              />
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nama Keluarga</th>
+                    <th>Hadir</th>
+                    <th>Total Event</th>
+                    <th>Persentase</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="keaktifan-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card" style="margin-top: 20px">
+            <div class="card-title">📋 Detail Kehadiran per Kegiatan</div>
+            <div class="info-box" style="margin-bottom: 12px">
+              Klik nama anggota di tabel ranking untuk melihat detail kehadiran
+              mereka di setiap kegiatan.
+            </div>
+            <div
+              id="keaktifan-detail"
+              style="
+                color: var(--text-light);
+                font-size: 13px;
+                text-align: center;
+                padding: 20px;
+              "
+            >
+              Pilih anggota dari tabel ranking di atas untuk melihat detail
+              kehadiran.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== PENGUMUMAN =================== -->
+    <div class="page" id="page-pengumuman">
+      <div class="section">
+        <h2 class="section-title">📢 Pengumuman & Arsip Kegiatan</h2>
+        <div class="info-box">
+          Menampilkan ringkasan semua kegiatan berdasarkan tahun. Data diambil
+          otomatis dari menu Kegiatan.
+        </div>
+        <div class="year-tabs" id="pengumuman-year-tabs"></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Jenis</th>
+                <th>Kegiatan</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody id="pengumuman-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== ADRT =================== -->
+    <div class="page" id="page-adrt">
+      <div class="section">
+        <div class="action-row">
+          <h2 class="section-title" style="margin-bottom: 0">
+            📋 Anggaran Dasar & Rumah Tangga
+          </h2>
+          <button
+            class="btn btn-secondary btn-sm admin-only"
+            onclick="openModal('modal-adrt-edit')"
+          >
+            ✏ Edit ADRT
+          </button>
+        </div>
+        <div class="adrt-article" id="adrt-content"></div>
+      </div>
+    </div>
+
+    <!-- =================== MODALS =================== -->
+
+    <!-- Add Kegiatan -->
+    <div class="modal-overlay" id="modal-add-kegiatan">
+      <div class="modal">
+        <div class="modal-title">
+          Tambah Kegiatan
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-add-kegiatan')"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label
+          ><input type="date" class="form-control" id="f-keg-date" />
+        </div>
+        <div class="form-group">
+          <label>Jenis Kegiatan</label
+          ><select class="form-control" id="f-keg-type">
+            <option value="Kebaktian">Kebaktian</option>
+            <option value="Duka">Duka / Mangapuli</option>
+            <option value="Sakit">Menjenguk Sakit</option>
+            <option value="Pernikahan">Pernikahan / Mangamai</option>
+            <option value="Sidi">Pemberkatan Sidi</option>
+            <option value="Mamoholi">Mamoholi</option>
+            <option value="Manise">Manise</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Judul Kegiatan</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-keg-title"
+            placeholder="Mis: Kebaktian Kelompok 7"
+          />
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label
+          ><textarea
+            class="form-control"
+            id="f-keg-desc"
+            rows="3"
+            placeholder="Keterangan tambahan..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tempat / Lokasi</label
+          ><input type="text" class="form-control" id="f-keg-place" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-kegiatan')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="addKegiatan()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL KEHADIRAN (ATTENDANCE) -->
+    <div class="modal-overlay" id="modal-attendance">
+      <div class="modal attendance-modal" style="max-width: 700px">
+        <div class="modal-title">
+          <span>✅ Daftar Hadir</span>
+          <button class="modal-close" onclick="closeModal('modal-attendance')">
+            ✕
+          </button>
+        </div>
+        <div
+          id="attendance-event-info"
+          style="
+            background: rgba(13, 148, 136, 0.07);
+            border: 1px solid rgba(13, 148, 136, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--navy);
+          "
+        ></div>
+        <div class="attendance-controls">
+          <button
+            class="btn btn-sm btn-secondary"
+            onclick="toggleAllAttendance(true)"
+          >
+            ✅ Pilih Semua
+          </button>
+          <button
+            class="btn btn-sm btn-ghost"
+            onclick="toggleAllAttendance(false)"
+          >
+            ☐ Hapus Semua
+          </button>
+          <span class="att-count-display" id="att-count-display"
+            >0 / 0 hadir</span
+          >
+        </div>
+        <div class="attendance-member-list" id="attendance-member-list"></div>
+        <div
+          style="
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+          "
+        >
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-attendance')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveAttendanceData()">
+            💾 Simpan Kehadiran
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Income -->
+    <div class="modal-overlay" id="modal-add-income">
+      <div class="modal">
+        <div class="modal-title">
+          Tambah Pemasukan
+          <button class="modal-close" onclick="closeModal('modal-add-income')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label
+          ><input type="date" class="form-control" id="f-inc-date" />
+        </div>
+        <div class="form-group">
+          <label>Keluarga</label
+          ><select class="form-control" id="f-inc-family">
+            <option value="">-- Pilih Keluarga --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Jenis Pembayaran</label
+          ><select class="form-control" id="f-inc-type">
+            <option value="Iuran">Iuran Anggota</option>
+            <option value="Lelang">Lelang Bonataon</option>
+            <option value="Persembahan">Persembahan Kebaktian</option>
+            <option value="Pendaftaran">Pendaftaran Anggota Baru</option>
+            <option value="Transfer Panitia">Transfer dari Panitia</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tahun</label
+          ><select class="form-control" id="f-inc-year">
+            <option>2022</option>
+            <option>2023</option>
+            <option>2024</option>
+            <option selected>2025</option>
+            <option>2026</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nominal (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-inc-amount"
+            placeholder="120000"
+          />
+        </div>
+        <div class="form-group">
+          <label>Keterangan Tambahan</label
+          ><input type="text" class="form-control" id="f-inc-note" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-income')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="addIncome()">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Expense -->
+    <div class="modal-overlay" id="modal-add-expense">
+      <div class="modal">
+        <div class="modal-title">
+          Tambah Pengeluaran
+          <button class="modal-close" onclick="closeModal('modal-add-expense')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label
+          ><input type="date" class="form-control" id="f-exp-date" />
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-exp-desc"
+            placeholder="Mis: Krans bunga..."
+          />
+        </div>
+        <div class="form-group">
+          <label>Nominal (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-exp-amount"
+            placeholder="500000"
+          />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-expense')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-danger" onclick="addExpense()">
+            Simpan Pengeluaran
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Member -->
+    <div class="modal-overlay" id="modal-add-member">
+      <div class="modal">
+        <div class="modal-title">
+          Daftarkan Anggota Baru
+          <button class="modal-close" onclick="closeModal('modal-add-member')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Nama Keluarga</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-mem-name"
+            placeholder="Mis: Pangaribuan / br.Simanjuntak"
+          />
+        </div>
+        <div class="form-group">
+          <label>Nama Panggilan / Anak</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-mem-nick"
+            placeholder="Mis: Anabel"
+          />
+        </div>
+        <div class="form-group">
+          <label>Alamat</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-mem-addr"
+            placeholder="Blok/No rumah di Regency..."
+          />
+        </div>
+        <div class="form-group admin-only">
+          <label>No. Telepon (Hanya tampil untuk Admin)</label
+          ><input type="text" class="form-control" id="f-mem-phone" />
+        </div>
+        <div class="form-group">
+          <label>Tanggal Bergabung</label
+          ><input type="date" class="form-control" id="f-mem-joined" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-member')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="addMember()">
+            Daftarkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Member -->
+    <div class="modal-overlay" id="modal-edit-member">
+      <div class="modal">
+        <div class="modal-title">
+          Edit Data Anggota
+          <button class="modal-close" onclick="closeModal('modal-edit-member')">
+            ✕
+          </button>
+        </div>
+        <input type="hidden" id="f-edit-mem-idx" />
+        <div class="form-group">
+          <label>Nama Keluarga</label
+          ><input type="text" class="form-control" id="f-edit-mem-name" />
+        </div>
+        <div class="form-group">
+          <label>Nama Panggilan / Anak</label
+          ><input type="text" class="form-control" id="f-edit-mem-nick" />
+        </div>
+        <div class="form-group">
+          <label>Alamat</label
+          ><input type="text" class="form-control" id="f-edit-mem-addr" />
+        </div>
+        <div class="form-group admin-only">
+          <label>No. Telepon</label
+          ><input type="text" class="form-control" id="f-edit-mem-phone" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-edit-member')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveEditMember()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bonataon Entry -->
+    <div class="modal-overlay" id="modal-add-bonataon-entry">
+      <div class="modal">
+        <div class="modal-title">
+          Tambah Data Lelang
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-add-bonataon-entry')"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Tahun Bonataon</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-year"
+            value="2025"
+          />
+        </div>
+        <div class="form-group">
+          <label>Nama Keluarga</label
+          ><select class="form-control" id="f-bon-family">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Gotong Royong (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-gr"
+            placeholder="100000"
+          />
+        </div>
+        <div class="form-group">
+          <label>Arsik (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-arsik"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Ayam Pinadar (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-ayam"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Buah (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-buah"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Bir (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-bir"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Minuman Ama (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-mina"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Minuman Ina (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-mini"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Sudah Dibayar (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-paid"
+            placeholder="0"
+          />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-bonataon-entry')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="addBonataonEntry()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Cashflow -->
+    <div class="modal-overlay" id="modal-edit-cf">
+      <div class="modal">
+        <div class="modal-title">
+          Edit Transaksi
+          <button class="modal-close" onclick="closeModal('modal-edit-cf')">
+            ✕
+          </button>
+        </div>
+        <input type="hidden" id="f-cf-edit-idx" />
+        <div class="form-group">
+          <label>Tanggal</label
+          ><input type="date" class="form-control" id="f-cf-edit-date" />
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label
+          ><input type="text" class="form-control" id="f-cf-edit-desc" />
+        </div>
+        <div class="form-group">
+          <label>Masuk (Rp)</label
+          ><input type="number" class="form-control" id="f-cf-edit-in" />
+        </div>
+        <div class="form-group">
+          <label>Keluar (Rp)</label
+          ><input type="number" class="form-control" id="f-cf-edit-out" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-edit-cf')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveCfEdit()">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADRT Edit -->
+    <div class="modal-overlay" id="modal-adrt-edit">
+      <div class="modal" style="max-width: 700px">
+        <div class="modal-title">
+          Edit ADRT
+          <button class="modal-close" onclick="closeModal('modal-adrt-edit')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Konten ADRT (HTML)</label
+          ><textarea
+            class="form-control"
+            id="f-adrt-content"
+            rows="14"
+            style="font-family: monospace; font-size: 12px"
+          ></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-adrt-edit')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveADRT()">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change PW -->
+    <div class="modal-overlay" id="modal-change-pw">
+      <div class="modal" style="max-width: 360px">
+        <div class="modal-title">
+          Ganti Password Admin
+          <button class="modal-close" onclick="closeModal('modal-change-pw')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Password Baru</label
+          ><input
+            type="password"
+            class="form-control"
+            id="f-new-pw1"
+            placeholder="Password baru"
+          />
+        </div>
+        <div class="form-group">
+          <label>Konfirmasi Password</label
+          ><input
+            type="password"
+            class="form-control"
+            id="f-new-pw2"
+            placeholder="Ulangi password baru"
+          />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-change-pw')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="changePassword()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== ADMIN PANEL =================== -->
+    <div id="admin-panel-overlay">
+      <div class="admin-box">
+        <h2>⚙ Panel Admin</h2>
+        <div id="admin-login-section" class="admin-section">
+          <h3>🔐 Login Admin</h3>
+          <div class="form-group">
+            <label>Password Admin</label>
+            <input
+              type="password"
+              class="form-control"
+              id="f-admin-pw"
+              placeholder="Masukkan password"
+              onkeydown="if (event.key === 'Enter') doAdminLogin();"
+            />
+          </div>
+          <div style="display: flex; gap: 8px">
+            <button
+              class="btn btn-navy"
+              style="flex: 1"
+              onclick="doAdminLogin()"
+            >
+              Masuk sebagai Admin
+            </button>
+            <button class="btn btn-ghost" onclick="closeAdminPanel()">
+              Batal
+            </button>
+          </div>
+        </div>
+        <div id="admin-logged-sections" style="display: none">
+          <div class="admin-section">
+            <h3>🖼 Ganti Background Header</h3>
+            <div class="form-group">
+              <label>URL Gambar atau Warna</label>
+              <input
+                type="text"
+                class="form-control"
+                id="f-bg-url"
+                placeholder="https://contoh.com/foto.jpg"
+                oninput="previewBgInput()"
+              />
+              <img id="bg-preview-img" alt="preview" />
+            </div>
+            <div class="form-group">
+              <label>Atau Pilih Warna Latar</label>
+              <input
+                type="color"
+                class="form-control"
+                id="f-bg-color"
+                value="#0d2b1f"
+                style="height: 42px; padding: 4px 8px; cursor: pointer"
+                oninput="previewBgColor()"
+              />
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <button class="btn btn-primary btn-sm" onclick="applyBgImage()">
+                ✅ Terapkan Gambar
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="applyBgColor()">
+                🎨 Terapkan Warna
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="removeBg()">
+                🗑 Reset Default
+              </button>
+            </div>
+            <p
+              style="
+                font-size: 12px;
+                color: var(--text-light);
+                margin-top: 0.6rem;
+              "
+            >
+              Tips: Upload foto ke Imgur / Google Drive dan ambil link langsung
+              ke file gambarnya.
+            </p>
+          </div>
+          <div class="admin-section">
+            <h3>👥 Edit Pengurus Aktif</h3>
+            <p
+              style="
+                font-size: 13px;
+                color: var(--text-mid);
+                margin-bottom: 1rem;
+              "
+            >
+              Perubahan langsung tampil di beranda. Data tersimpan otomatis.
+            </p>
+            <div id="pengurus-editor"></div>
+            <button
+              class="btn btn-gold btn-sm"
+              style="margin-top: 8px"
+              onclick="tambahPengurus()"
+            >
+              + Tambah Jabatan
+            </button>
+          </div>
+          <div class="admin-section">
+            <h3>🔑 Ganti Password Admin</h3>
+            <div class="form-group">
+              <label>Password Baru</label
+              ><input
+                type="password"
+                class="form-control"
+                id="f-new-pw-admin"
+                placeholder="Password baru..."
+              />
+            </div>
+            <div class="form-group">
+              <label>Konfirmasi</label
+              ><input
+                type="password"
+                class="form-control"
+                id="f-confirm-pw-admin"
+                placeholder="Ulangi password..."
+              />
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="gantiPassword()">
+              Simpan Password Baru
+            </button>
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              justify-content: flex-end;
+              margin-top: 1rem;
+              padding-top: 1rem;
+              border-top: 1px solid var(--border);
+            "
+          >
+            <button class="btn btn-ghost" onclick="doAdminLogout()">
+              🚪 Logout
+            </button>
+            <button class="btn btn-ghost" onclick="closeAdminPanel()">
+              Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // =========================================
+      // DATA & CONSTANTS
+      // =========================================
+      const ADMIN_PW_KEY = "parsahutaon_admin_pw";
+      const DATA_KEY = "parsahutaon_data";
+      const PENGURUS_KEY = "dr_pengurus_list";
+      const BG_KEY = "dr_bg_image";
+      const BG_COLOR_KEY = "dr_bg_color";
+      const ATTENDANCE_KEY = "parsahutaon_attendance"; // NEW
+
+      let isAdmin = false;
+
+      function getDefaultPw() {
+        return localStorage.getItem(ADMIN_PW_KEY) || "dosroha2010";
+      }
+
+      // ===== DEFAULT PENGURUS =====
+      let pengurusList = JSON.parse(
+        localStorage.getItem(PENGURUS_KEY) || "null",
+      ) || [
+        {
+          emoji: "👑",
+          role: "Ketua",
+          name: "Sintua (St) Siregar / br.Manullang",
+        },
+        { emoji: "🤝", role: "Wakil Ketua", name: "St. Sitorus / br.Saragih" },
+        { emoji: "✍", role: "Sekretaris", name: "Ny. Nababan / br.Gultom" },
+        {
+          emoji: "💰",
+          role: "Bendahara",
+          name: "Ny. Sihombing / br.Pangaribuan",
+        },
+        {
+          emoji: "✝",
+          role: "Rohaniawan",
+          name: "Pdt. J.W. Sinaga / br.Silalahi",
+        },
+      ];
+
+      // ===== MEMBERS =====
+      const defaultMembers = [
+        {
+          id: 1,
+          name: "A. Pangaribuan",
+          br: "Simanjuntak",
+          nick: "Anabel",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 2,
+          name: "Aritonang",
+          br: "Nainggolan",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 3,
+          name: "Banurea",
+          br: "Nababan",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 4,
+          name: "Batubara",
+          br: "Tobing",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 5,
+          name: "C. Nainggolan",
+          br: "Hutabarat",
+          nick: "Josua",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 6,
+          name: "D. Siregar",
+          br: "Manullang",
+          nick: "Daniel",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 7,
+          name: "Gultom",
+          br: "Sitorus",
+          nick: "Stephen",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 8,
+          name: "Harianja",
+          br: "Sianipar",
+          nick: "Feoddora",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 9,
+          name: "M. Hasugian",
+          br: "Purba",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 10,
+          name: "Malau",
+          br: "Sembiring",
+          nick: "Regina",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 11,
+          name: "Manullang",
+          br: "Pardosi",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 12,
+          name: "Manurung",
+          br: "Hutasoit",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 13,
+          name: "Nababan",
+          br: "Gultom",
+          nick: "Gerald",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 14,
+          name: "Pangaribuan",
+          br: "Siahaan",
+          nick: "Zio",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 15,
+          name: "R. Sihombing",
+          br: "Pangaribuan",
+          nick: "Audrey",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 16,
+          name: "Sianipar F",
+          br: "Sidabutar",
+          nick: "Bpk.Elvira",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 17,
+          name: "Sihombing",
+          br: "Malau",
+          nick: "Moza",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 18,
+          name: "Sihombing",
+          br: "Sihotang",
+          nick: "Phebe",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 19,
+          name: "Sihombing",
+          br: "Purba",
+          nick: "Ray",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 20,
+          name: "Simanjuntak",
+          br: "Simangungsong",
+          nick: "S.Pratama",
+          addr: "Sepinggan Pratama",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 21,
+          name: "Simanjuntak",
+          br: "Gultom",
+          nick: "Samuel",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 22,
+          name: "Simangunsong",
+          br: "Nainggolan",
+          nick: "Gideon",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 23,
+          name: "Simatupang",
+          br: "Panjaitan",
+          nick: "OP.Mira",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 24,
+          name: "Simbolon",
+          br: "Sirait",
+          nick: "mama El",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 25,
+          name: "Simorangkir",
+          br: "Tampubolon",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 26,
+          name: "Sirait",
+          br: "Sinulingga",
+          nick: "Jessica",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 27,
+          name: "Siregar",
+          br: "Sianturi",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 28,
+          name: "Sitohang",
+          br: "Situmeang",
+          nick: "op.Elora",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 29,
+          name: "Sitorus",
+          br: "Saragih",
+          nick: "B.Poin",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 30,
+          name: "Tamba",
+          br: "Nainggolan",
+          nick: "Sepinggan Pratama",
+          addr: "Sepinggan Pratama",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 31,
+          name: "Tambunan",
+          br: "Siregar",
+          nick: "Intan",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 32,
+          name: "Ny. Sinulingga",
+          br: "Simatupang",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 33,
+          name: "PDT. J.W Sinaga",
+          br: "Silalahi",
+          nick: "Tama",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 34,
+          name: "Munte",
+          br: "Parhusip",
+          nick: "Iren",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 35,
+          name: "R.Panggabean Simorangkir",
+          br: "Damanik",
+          nick: "Meidy",
+          addr: "Regency",
+          phone: "",
+          joined: "2010-01-01",
+        },
+        {
+          id: 36,
+          name: "Haloho",
+          br: "Sinaga",
+          nick: "Jayden",
+          addr: "Regency",
+          phone: "",
+          joined: "2024-03-01",
+        },
+        {
+          id: 37,
+          name: "Siagian",
+          br: "Sianturi",
+          nick: "Gilbert",
+          addr: "Regency",
+          phone: "",
+          joined: "2024-03-01",
+        },
+        {
+          id: 38,
+          name: "F. Tampubolon",
+          br: "Sidabutar",
+          nick: "Vania",
+          addr: "Regency",
+          phone: "",
+          joined: "2025-01-01",
+        },
+        {
+          id: 39,
+          name: "Turnip",
+          br: "Banjarnahor",
+          nick: "Gema",
+          addr: "Regency",
+          phone: "",
+          joined: "2025-03-23",
+        },
+        {
+          id: 40,
+          name: "Siregar",
+          br: "Manalu",
+          nick: "Arga",
+          addr: "Regency",
+          phone: "",
+          joined: "2025-03-23",
+        },
+        {
+          id: 41,
+          name: "Turnip",
+          br: "Sirait",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2025-03-01",
+        },
+        {
+          id: 42,
+          name: "Siregar",
+          br: "Tobing",
+          nick: "Ezra",
+          addr: "Regency",
+          phone: "",
+          joined: "2025-07-27",
+        },
+        {
+          id: 43,
+          name: "Pasaribu",
+          br: "Lumbantoruan",
+          nick: "",
+          addr: "Regency",
+          phone: "",
+          joined: "2025-05-18",
+        },
+        {
+          id: 44,
+          name: "Manalu",
+          br: "Silaban",
+          nick: "Oliv",
+          addr: "Regency",
+          phone: "",
+          joined: "2025-09-20",
+        },
+      ];
+
+      function memberDisplayName(m) {
+        return m.name + " / br." + m.br + (m.nick ? " (" + m.nick + ")" : "");
+      }
+
+      const defaultCashflow = [
+        {
+          id: 1,
+          date: "2025-02-05",
+          desc: "Rapat Pembubaran panitia bonataon 2025",
+          in: 0,
+          out: 440000,
+        },
+        {
+          id: 2,
+          date: "2025-02-05",
+          desc: "Terima Transfer dari Panitia Bonataon - Penerimaan I",
+          in: 10955500,
+          out: 0,
+        },
+        {
+          id: 3,
+          date: "2025-02-05",
+          desc: "Terima Transfer dari Panitia Bonataon - Penerimaan II",
+          in: 2850000,
+          out: 0,
+        },
+        {
+          id: 4,
+          date: "2025-02-05",
+          desc: "Persembahan Bonataon",
+          in: 519000,
+          out: 0,
+        },
+        {
+          id: 5,
+          date: "2025-02-01",
+          desc: "Amplop pengganti buah - Kel. Nababan/br.Gultom (sakit)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 6,
+          date: "2025-02-01",
+          desc: "Amplop pengganti buah - Kel. opung elora doli (sakit)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 7,
+          date: "2025-02-01",
+          desc: "Amplop pengganti buah - Anak kel. Gultom/br.Sitorus (sakit)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 8,
+          date: "2025-03-23",
+          desc: "Pendaftaran anggota baru - Kel. F.Tampubolon/br.Sidabutar (Vania)",
+          in: 100000,
+          out: 0,
+        },
+        {
+          id: 9,
+          date: "2025-03-23",
+          desc: "Pendaftaran anggota baru - Kel. Turnip/br.Banjarnahor (Gema)",
+          in: 100000,
+          out: 0,
+        },
+        {
+          id: 10,
+          date: "2025-03-23",
+          desc: "Pendaftaran anggota baru - Kel. Siregar/br.Manalu (Arga)",
+          in: 100000,
+          out: 0,
+        },
+        {
+          id: 11,
+          date: "2025-03-23",
+          desc: "Pembayaran lelang GR 2025 - Kel. Pangaribuan/br.Siahaan (Zio)",
+          in: 100000,
+          out: 0,
+        },
+        {
+          id: 12,
+          date: "2025-03-23",
+          desc: "Iuran 2025 - Kel. Aritonang/br.Nainggolan",
+          in: 120000,
+          out: 0,
+        },
+        {
+          id: 13,
+          date: "2025-03-23",
+          desc: "Iuran 2024+2025 - Kel. Manurung/br.Hutasoit",
+          in: 240000,
+          out: 0,
+        },
+        {
+          id: 14,
+          date: "2025-03-23",
+          desc: "Persembahan kebaktian",
+          in: 416000,
+          out: 0,
+        },
+        {
+          id: 15,
+          date: "2025-03-23",
+          desc: "Amplop kependetaan",
+          in: 0,
+          out: 150000,
+        },
+        {
+          id: 16,
+          date: "2025-03-23",
+          desc: "Iuran 2025 - Kel. Siregar/br.Manalu (Arga) + 10rb thn 2026",
+          in: 130000,
+          out: 0,
+        },
+        {
+          id: 17,
+          date: "2025-03-23",
+          desc: "Iuran 2025 + Lelang GR 2025 - Kel. Tamba/br.Nainggolan (S.P)",
+          in: 220000,
+          out: 0,
+        },
+        {
+          id: 18,
+          date: "2025-03-23",
+          desc: "Lelang 2024 arsik + Lelang 2025 - Kel. Sitorus/br.Saragih",
+          in: 200000,
+          out: 0,
+        },
+        {
+          id: 19,
+          date: "2025-03-23",
+          desc: "Lelang 2024+2025 + Iuran 2025 - Kel. Simorangkir/br.Tampubolon",
+          in: 320000,
+          out: 0,
+        },
+        {
+          id: 20,
+          date: "2025-03-23",
+          desc: "Iuran 2024+2025 - Kel. Banurea/br.Nababan",
+          in: 240000,
+          out: 0,
+        },
+        {
+          id: 21,
+          date: "2025-03-23",
+          desc: "Iuran 2025 - Kel. Malau/br.Sembiring (Regina) + 10rb thn 2026",
+          in: 130000,
+          out: 0,
+        },
+        {
+          id: 22,
+          date: "2025-03-23",
+          desc: "Iuran 2024+2025 + Lelang 2025 - Kel. Simatupang/br.Panjaitan",
+          in: 540000,
+          out: 0,
+        },
+        {
+          id: 23,
+          date: "2025-03-23",
+          desc: "Lelang 2025 + Iuran 2025 - Kel. PDT. Andreas Sinaga/br.Silalahi",
+          in: 470000,
+          out: 0,
+        },
+        {
+          id: 24,
+          date: "2025-03-23",
+          desc: "Iuran 2024 (juni-des) - Kel. Siagian/br.Sianturi (Gilbert)",
+          in: 70000,
+          out: 0,
+        },
+        {
+          id: 25,
+          date: "2025-03-23",
+          desc: "Iuran 2025 (5 bulan) - Kel. Siagian/br.Sianturi (Gilbert)",
+          in: 50000,
+          out: 0,
+        },
+        {
+          id: 26,
+          date: "2025-03-23",
+          desc: "Iuran 2024+2025 - Kel. Simanjuntak/br.Simangungsong (S.P)",
+          in: 240000,
+          out: 0,
+        },
+        {
+          id: 27,
+          date: "2025-04-12",
+          desc: "Pengganti Ulos pangoli anak - Kel. Siregar/br.Manullang",
+          in: 0,
+          out: 400000,
+        },
+        {
+          id: 28,
+          date: "2025-04-28",
+          desc: "Pengganti buah anggota sakit - Anak Stephen (Gultom/Sitorus)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 29,
+          date: "2025-04-28",
+          desc: "Pengganti buah - Ny. Gultom/Sitorus (sakit)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 30,
+          date: "2025-04-28",
+          desc: "Pengganti buah - Anak Harianja/br.Sitorus (sakit)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 31,
+          date: "2025-05-18",
+          desc: "Pendaftaran anggota baru - Kel. Pasaribu/br.Lumbantoruan",
+          in: 100000,
+          out: 0,
+        },
+        {
+          id: 32,
+          date: "2025-05-18",
+          desc: "Iuran 2025 + Lelang GR 2025 - Kel. Lumbantoruan/br.Purba",
+          in: 220000,
+          out: 0,
+        },
+        {
+          id: 33,
+          date: "2025-05-18",
+          desc: "Amplop kependetaan - Kebaktian Sopo Met-met",
+          in: 0,
+          out: 150000,
+        },
+        {
+          id: 34,
+          date: "2025-05-25",
+          desc: "Krans bunga - Manise Kel. Simorangkir/br.Manik (Meidi)",
+          in: 0,
+          out: 500000,
+        },
+        {
+          id: 35,
+          date: "2025-05-25",
+          desc: "Makanan sipaet-paet - Manise Kel. Simorangkir/br.Manik (Meidi)",
+          in: 0,
+          out: 650000,
+        },
+        {
+          id: 36,
+          date: "2025-05-01",
+          desc: "Makanan mamoholi - Kel. Tampubolon/br.Sidabutar (Vania)",
+          in: 0,
+          out: 500000,
+        },
+        {
+          id: 37,
+          date: "2025-05-01",
+          desc: "Pengganti bedak bayi - Kel. Tampubolon/br.Sidabutar (Vania)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 38,
+          date: "2025-05-01",
+          desc: "Menjenguk sakit Bpk - Kel. Harianja/br.Sitorus",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 39,
+          date: "2025-05-01",
+          desc: "Pengganti bedak bayi lahir - Kel. Sianipar/br.Sidabutar (Elvira)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 40,
+          date: "2025-06-11",
+          desc: "Makanan sipaet-paet - Manise Kel. Simatupang/br.Panjaitan (op.Mira)",
+          in: 0,
+          out: 600000,
+        },
+        {
+          id: 41,
+          date: "2025-06-11",
+          desc: "Krans bunga - Manise Kel. Simatupang/br.Panjaitan (op.Mira)",
+          in: 0,
+          out: 500000,
+        },
+        {
+          id: 42,
+          date: "2025-07-23",
+          desc: "Makanan sipaet-paet - Manise Kel. Banurea/br.Nababan",
+          in: 0,
+          out: 600000,
+        },
+        {
+          id: 43,
+          date: "2025-07-23",
+          desc: "Krans bunga - Manise Kel. Banurea/br.Nababan",
+          in: 0,
+          out: 500000,
+        },
+        {
+          id: 44,
+          date: "2025-07-23",
+          desc: "Pengganti Ulos mangamai - Kel. Amang PDT Sinaga/br.Silalahi",
+          in: 0,
+          out: 250000,
+        },
+        {
+          id: 45,
+          date: "2025-07-27",
+          desc: "Amplop kependetaan - Kebaktian Kelompok 7",
+          in: 0,
+          out: 150000,
+        },
+        {
+          id: 46,
+          date: "2025-07-27",
+          desc: "Persembahan kebaktian kelompok 7",
+          in: 545000,
+          out: 0,
+        },
+        {
+          id: 47,
+          date: "2025-07-27",
+          desc: "Iuran 2025 - Kel. op.Elora (Sitohang/br.Situmeang)",
+          in: 120000,
+          out: 0,
+        },
+        {
+          id: 48,
+          date: "2025-07-27",
+          desc: "Iuran 2024+2025 + Lelang GR 2025 - Kel. Simbolon/br.Sirait",
+          in: 340000,
+          out: 0,
+        },
+        {
+          id: 49,
+          date: "2025-07-27",
+          desc: "Iuran 2025 + Lelang GR 2024 - Kel. Lumbantoruan/br.Sihotang (Pibi)",
+          in: 220000,
+          out: 0,
+        },
+        {
+          id: 50,
+          date: "2025-07-27",
+          desc: "Iuran 2024+2025 - Kel. F.Sianipar/br.Sidabutar (Elvira)",
+          in: 240000,
+          out: 0,
+        },
+        {
+          id: 51,
+          date: "2025-07-27",
+          desc: "Pendaftaran anggota baru - Kel. Siregar/br.Tobing (Ezra)",
+          in: 100000,
+          out: 0,
+        },
+        {
+          id: 52,
+          date: "2025-07-27",
+          desc: "Iuran 2024+2025 + Lelang GR 2025 - Kel. Simanjuntak/br.Gultom (Samuel)",
+          in: 340000,
+          out: 0,
+        },
+        {
+          id: 53,
+          date: "2025-07-27",
+          desc: "Iuran 2025 + Lelang GR 2025 - Kel. Gultom/br.Sitorus (Stephen)",
+          in: 220000,
+          out: 0,
+        },
+        {
+          id: 54,
+          date: "2025-09-20",
+          desc: "Amplop kependetaan - Kebaktian Kelompok I",
+          in: 0,
+          out: 150000,
+        },
+        {
+          id: 55,
+          date: "2025-09-20",
+          desc: "Persembahan kebaktian kelompok I",
+          in: 559000,
+          out: 0,
+        },
+        {
+          id: 56,
+          date: "2025-09-20",
+          desc: "Lelang GR 2024 + Iuran 2025 - Kel. Ny.Sinulingga/br.Simatupang",
+          in: 220000,
+          out: 0,
+        },
+        {
+          id: 57,
+          date: "2025-09-20",
+          desc: "Iuran 2025 - Kel. Sirait/br.Sinulingga",
+          in: 120000,
+          out: 0,
+        },
+        {
+          id: 58,
+          date: "2025-09-20",
+          desc: "Pendaftaran + Iuran sept 2025 - Kel. Manalu/br.Nababan (Oliv)",
+          in: 140000,
+          out: 0,
+        },
+        {
+          id: 59,
+          date: "2025-10-25",
+          desc: "Pengganti Ulos pamuli boru - Kel. Siregar/br.Manullang",
+          in: 0,
+          out: 400000,
+        },
+        {
+          id: 60,
+          date: "2025-11-05",
+          desc: "Makanan sipaet-paet - Manise Kel. Pasaribu/br.Lumbantoruan",
+          in: 0,
+          out: 600000,
+        },
+        {
+          id: 61,
+          date: "2025-11-05",
+          desc: "Krans bunga - Manise Kel. Pasaribu/br.Lumbantoruan",
+          in: 0,
+          out: 500000,
+        },
+        {
+          id: 62,
+          date: "2025-11-07",
+          desc: "Iuran juni 2024-mei 2025 - Kel. Sihaloho/br.Sinaga (Jayden)",
+          in: 120000,
+          out: 0,
+        },
+        {
+          id: 63,
+          date: "2025-11-09",
+          desc: "Amplop kependetaan - Kebaktian Kelompok II",
+          in: 0,
+          out: 150000,
+        },
+        {
+          id: 64,
+          date: "2025-11-09",
+          desc: "Persembahan kebaktian kelompok II",
+          in: 437000,
+          out: 0,
+        },
+        {
+          id: 65,
+          date: "2025-11-09",
+          desc: "Operasional Ketua 3 tahun (2023-2025)",
+          in: 0,
+          out: 375000,
+        },
+        {
+          id: 66,
+          date: "2025-11-09",
+          desc: "Operasional Bendahara 3 tahun (2023-2025)",
+          in: 0,
+          out: 375000,
+        },
+        {
+          id: 67,
+          date: "2025-11-09",
+          desc: "Operasional Wakil Ketua 2 tahun (2024-2025)",
+          in: 0,
+          out: 250000,
+        },
+        {
+          id: 68,
+          date: "2025-11-09",
+          desc: "Operasional Sekretaris 2 tahun (2024-2025)",
+          in: 0,
+          out: 250000,
+        },
+        {
+          id: 69,
+          date: "2025-11-09",
+          desc: "Pengganti buah - Anak Kel. Tampubolon/br.Sidabutar (Vania)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 70,
+          date: "2025-11-09",
+          desc: "Iuran 2025 + Lelang GR 2025 - Kel. Siregar/br.Manullang",
+          in: 320000,
+          out: 0,
+        },
+        {
+          id: 71,
+          date: "2025-11-09",
+          desc: "Pembelian Dispenser Kopi dan Teh 2 buah",
+          in: 0,
+          out: 802000,
+        },
+        {
+          id: 72,
+          date: "2025-12-02",
+          desc: "Iuran 2024+2025 - Kel. Manullang/br.Pardosi",
+          in: 240000,
+          out: 0,
+        },
+        {
+          id: 73,
+          date: "2026-03-29",
+          desc: "Pengganti buah 10 anggota sakit",
+          in: 0,
+          out: 2000000,
+        },
+        {
+          id: 74,
+          date: "2026-03-29",
+          desc: "Amplop sukacita sidi - An. Audrey Sihombing (Kel. Sihombing/br.Pangaribuan)",
+          in: 0,
+          out: 200000,
+        },
+        {
+          id: 75,
+          date: "2026-03-29",
+          desc: "Persembahan - Kebaktian I 2026 (Kel. Hasugian/br.Purba)",
+          in: 273000,
+          out: 0,
+        },
+        {
+          id: 76,
+          date: "2026-03-29",
+          desc: "Amplop subsidi kependetaan dari kas parsahutaon",
+          in: 0,
+          out: 150000,
+        },
+      ];
+
+      const defaultBonataon = {
+        2025: [
+          {
+            family: "Kel. R.Nainggolan/br.Hutabarat",
+            gr: 200000,
+            arsik: 0,
+            ayam: 250000,
+            buah: 0,
+            bir: 0,
+            mina: 0,
+            mini: 50000,
+            paid: 50000,
+          },
+          {
+            family: "Kel. A Pangaribuan/br.Simanjuntak",
+            gr: 100000,
+            arsik: 0,
+            ayam: 250000,
+            buah: 0,
+            bir: 0,
+            mina: 0,
+            mini: 50000,
+            paid: 300000,
+          },
+          {
+            family: "Kel. F Tampubolon/br.Sidabutar (Vania)",
+            gr: 100000,
+            arsik: 0,
+            ayam: 0,
+            buah: 0,
+            bir: 0,
+            mina: 100000,
+            mini: 50000,
+            paid: 150000,
+          },
+        ],
+      };
+
+      const defaultKegiatan = [
+        {
+          id: 1,
+          date: "2026-03-29",
+          type: "Kebaktian",
+          title: "Kebaktian I Tahun 2026",
+          desc: "Tempat di keluarga Hasugian/br.Purba",
+          place: "Rumah Kel. Hasugian/br.Purba",
+        },
+        {
+          id: 2,
+          date: "2026-03-29",
+          type: "Sidi",
+          title: "Pemberkatan Sidi",
+          desc: "An. Audrey Sihombing dari keluarga Sihombing/br.Pangaribuan",
+          place: "",
+        },
+        {
+          id: 3,
+          date: "2025-11-09",
+          type: "Kebaktian",
+          title: "Kebaktian Kelompok II",
+          desc: "Tempat di Sopo Met-met",
+          place: "Sopo Met-met",
+        },
+        {
+          id: 4,
+          date: "2025-09-20",
+          type: "Kebaktian",
+          title: "Kebaktian Kelompok I",
+          desc: "Tempat di Café Ratu",
+          place: "Café Ratu",
+        },
+        {
+          id: 5,
+          date: "2025-07-27",
+          type: "Kebaktian",
+          title: "Kebaktian Kelompok 7",
+          desc: "Tempat di rumah Kel. Haloho/br.Sinaga",
+          place: "Rumah Kel. Haloho",
+        },
+        {
+          id: 6,
+          date: "2025-07-23",
+          type: "Duka",
+          title: "Manise Kel. Banurea/br.Nababan",
+          desc: "Ibunda eda Clea berpulang",
+          place: "",
+        },
+        {
+          id: 7,
+          date: "2025-07-23",
+          type: "Pernikahan",
+          title: "Mangamai Kel. PDT. Sinaga/br.Silalahi",
+          desc: "Penggantian Ulos acara mangamai",
+          place: "",
+        },
+        {
+          id: 8,
+          date: "2025-06-11",
+          type: "Duka",
+          title: "Manise Kel. Simatupang/br.Panjaitan",
+          desc: "Op.Mira berpulang",
+          place: "",
+        },
+        {
+          id: 9,
+          date: "2025-05-25",
+          type: "Duka",
+          title: "Manise Kel. Simorangkir/br.Manik (Meidi)",
+          desc: "Mangapuli kedukaan",
+          place: "",
+        },
+        {
+          id: 10,
+          date: "2025-05-18",
+          type: "Kebaktian",
+          title: "Kebaktian Disopo Met-met",
+          desc: "Pendaftaran anggota baru dan pembayaran iuran",
+          place: "Sopo Met-met",
+        },
+        {
+          id: 11,
+          date: "2025-05-01",
+          type: "Sakit",
+          title: "Mamoholi & Menjenguk Sakit",
+          desc: "Mamoholi kel. Tampubolon/br.Sidabutar (Vania) dan menjenguk kel. Harianja/br.Sitorus",
+          place: "",
+        },
+        {
+          id: 12,
+          date: "2025-04-28",
+          type: "Sakit",
+          title: "Menjenguk Anggota Sakit",
+          desc: "3 anggota keluarga Gultom/Sitorus dan Harianja sakit",
+          place: "",
+        },
+        {
+          id: 13,
+          date: "2025-03-23",
+          type: "Kebaktian",
+          title: "Rapat dan Pembayaran Iuran Maret 2025",
+          desc: "Pembayaran iuran, lelang, dan pendaftaran anggota baru",
+          place: "",
+        },
+      ];
+
+      const defaultADRT = `
+<div style="text-align:center;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:2px solid var(--border)">
+  <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:0.5rem">Parsahutaon</p>
+  <h1 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--navy);margin-bottom:0.3rem">Dos Roha</h1>
+  <p style="font-size:13px;color:var(--text-mid)">Kelurahan Sepinggan Baru, Balikpapan Selatan, Balikpapan</p>
+</div>
+
+<h2>PASAL I — KEANGGOTAAN</h2>
+<p>Sude keluarga ni punguan dohot naposo bulung namangharikothon punguan jala nungga terdaftar gabe anggota ni punguan parsahutaon <strong>"Dos Roha"</strong>, Kelurahan Sepinggan Baru, Balikpapan Selatan, Balikpapan.</p>
+
+<h2>PASAL II — KEWAJIBAN NI ANGGOTA</h2>
+<ul>
+  <li><strong>2.1</strong> Sude anggota ni punguan markewajiban do mangalehon <strong>iuran bulanan / toktok ripe</strong> ganup bulan godangna <strong>Rp 10.000,-</strong></li>
+  <li><strong>2.2</strong> Mandohoti sude ragam ni ulaon na masa / na pinamasa di punguan.</li>
+  <li><strong>2.3</strong> Mandohoti ulaon partangiangan sahali sabulan.</li>
+  <li><strong>2.4</strong> Paboahon manang pasahathon barita (informasi) molo adong sada-sada keluarga / anggota ni punguan, baik ulaon habot ni roha manang ulaon las ni roha.</li>
+</ul>
+
+<h2>PASAL III — KEWAJIBAN NI PUNGUAN</h2>
+<p style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:10px 14px;font-size:13px;color:#92400e">
+  ⚠️ <strong>Catatan:</strong> Kewajiban ni punguan dang mardalan molo anggota dang ro <strong>6 (enam) bulan berturut-turut</strong> tanpa konfirmasi.
+</p>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--teal);margin:1.4rem 0 0.6rem;display:flex;align-items:center;gap:0.5rem">🎉 3.1 ULAON LAS NI ROHA (Sukacita)</h3>
+
+<p><strong>3.1.1 Sorang (Lahir)</strong><br>
+Molo adong sorang dakdanak, laho do punguan tu bagas ni keluarga i laho patuduhon dohot pasahathon las ni roha ni punguan manang mamoholi. Lehonon ni punguan do songon pasi badak ni dakdanak nasorang i godangna <strong>Rp 200.000,-</strong><br>
+<em style="font-size:12px;color:var(--text-light)">Catatan: Boi marubah sesuai kesepakatan / kondisi dohot partikkian.</em></p>
+
+<p><strong>3.1.2 Tardidi (Baptis)</strong><br>
+Molo tardidi dakdanak jala dipabotohon tu punguan, laho do punguan mangadopi ulaoni jala bahenon ni punguan kado manang panggatti ni kado tu natardidi i godangna <strong>Rp 200.000,-</strong><br>
+<em style="font-size:12px;color:var(--text-light)">Catatan: Boi marubah sesuai kesepakatan / kondisi dohot partikkian.</em></p>
+
+<p><strong>3.1.3 Manghatidangkon Haposeaon (Sidi)</strong><br>
+Molo dipabotohon tu punguan, laho do punguan mangadopi ulaon i jala bahenon ni punguan do kado manang panggatti ni kado tu na manghatidangkon haporseaon i godangna <strong>Rp 200.000,-</strong><br>
+<em style="font-size:12px;color:var(--text-light)">Catatan: Boi marubah sesuai kesepakatan / kondisi dohot partikkian.</em></p>
+
+<p><strong>3.1.4 Manghatindangkon Haposeaon (Ulaon Adat)</strong><br>
+Molo dipabotohon tu punguan, laho do punguan mangadopi ulaon i jala lehonon ni punguan do pangurupion laho manghobasi ulaon i (molo di pangido hasuhuton) jala bahenon ni punguan do kado manang panggatti ni kado godangna <strong>Rp 200.000,-</strong><br>
+<em style="font-size:12px;color:var(--text-light)">Catatan: Boi marubah sesuai kesepakatan / kondisi dohot partikkian.</em></p>
+
+<p><strong>3.1.5 Pangolihon Anak / Pamuli Boru ni Anggota ni Punguan</strong></p>
+<ul>
+  <li><strong>a. Ulaon di sekitar Balikpapan:</strong> Laho do punguan mangadopi ulaon i jala lehonon ni punguan do Cendramata (kado) tu namangoli / namuli godangna <strong>Rp 400.000,-</strong></li>
+  <li><strong>b. Ulaon di luar Balikpapan:</strong> Lehonon ni punguan do Cendramata (kado) tu namangoli / namuli godangna <strong>Rp 200.000,-</strong></li>
+</ul>
+<p><em style="font-size:12px;color:var(--text-light)">Catatan: Boi marubah sesuai kesepakatan / kondisi dohot partikkian.</em></p>
+
+<p><strong>3.1.6 Pangolihon Anak / Pamuli Boru ni Anggota Naro Sianhuta Na Asing (Gabe Pangamai)</strong></p>
+<ul>
+  <li><strong>a. Pangolihon Anak:</strong> Molo ulaon di Balikpapan, adopan ni punguan do ulaon i jala bahenon ni punguan do pangurupion laho manghobasi ulaon i (molo di pangido hasuhuton jala di pasahat hasuhuton ulaon i tu punguan).</li>
+  <li><strong>b. Pamulihon Boru:</strong> Molo ulaon di Balikpapan, adopan ni punguan do ulaon i jala bahenon ni punguan do pangurupion laho manghobasi ulaon i (molo di pangido hasuhuton jala di pasahat hasuhuton ulaon i tu punguan).</li>
+</ul>
+
+<p><strong>3.1.7 Pindah (tu luat Naasing)</strong><br>
+Molo adong na pindah sian anggota ni punguan laho tu luat na asing, pamasaon ni punguan do ulaon jala lehonon do CendraMata (Kenang-kenangan) tu keluarga setara <strong>Rp 200.000,-</strong></p>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#6b4c00;margin:1.6rem 0 0.6rem;display:flex;align-items:center;gap:0.5rem">🕊️ 3.2 ULAON HABOT NI ROHA (Dukacita)</h3>
+
+<p><strong>3.2.1 Marujung Ngolu — Anggota / Ianakkon ni Punguan (Ulaon di Balikpapan)</strong></p>
+<ul>
+  <li>Sude Anggota Wajib Pasidohot manghobasi naporlu tu ulaon i mulai sian awal sahat ro di nasidung ulaon i.</li>
+  <li>Sude Anggota ni punguan dohot naung dewasa wajib dohot mandungoi molo marborngin.</li>
+  <li>Mangulahon molo adong na ringkot tu ulaon i.</li>
+</ul>
+
+<p><strong>3.2.1.1 Crans Bunga (Tanda Duka Cita)</strong><br>
+Bahenon ni punguan do sada crans bunga marasam <strong>Rp 500.000,-</strong><br>
+<em style="font-size:12px;color:var(--text-light)">Molo hurang dana (parhepengon) boido di pamasa take and list.</em></p>
+
+<p><strong>3.2.1.2 Mangapuli, Mar-indahan Sipaet-paet, Manise</strong><br>
+Borhat do punguan tu bagas ni keluarga i mandok hata panukkolion, jala mambahen permanganon do disi, manang manuhor:</p>
+<ul>
+  <li>Boras: <strong>3 kg</strong></li>
+  <li>Daging: <strong>3 kg</strong></li>
+  <li>Bumbu, sayur, d.n.a: <strong>Rp 150.000,-</strong></li>
+</ul>
+<p style="background:rgba(13,148,136,0.07);border:1px solid rgba(13,148,136,0.2);border-radius:8px;padding:10px 14px;font-size:13px">
+  💰 <strong>Total biaya sipanganon: Rp 600.000,-</strong>
+</p>
+
+<p><strong>3.2.2 Marujung Ngolu — Natoras / Ianakkon ni Anggota (Ulaon di Bona Pasogit)</strong><br>
+Bahenon ni punguan do 1 (sada) crans bunga manang pangganti crans bunga tu keluarga i marasam <strong>Rp 500.000,-</strong></p>
+
+<p><strong>3.2.2.1 Mangapuli, Mar-indahan Sipaet-paet, Manise (di Bona Pasogit)</strong><br>
+Borhat do punguan tu bagas ni keluarga i mandok hata panukkolion, jala mambahen lampet ± 50 buah <strong>(Rp 200.000,-)</strong></p>
+
+<p><strong>3.2.3 Musibah Alam / Kebakaran</strong><br>
+Wajib do punguan anghobasi naporlu tusi. Punguan angalehon pangurupion <strong>Rp 400.000,-</strong> jala boi pa asaon take and list.</p>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#dc2626;margin:1.6rem 0 0.6rem;display:flex;align-items:center;gap:0.5rem">🏥 3.3 MARSAHIT (Sakit)</h3>
+
+<p><strong>3.3.1 Opname</strong><br>
+Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho do punguan tu rumah sakit jala boanon buah tangan (manang pangganti buah tangan) godangna <strong>Rp 200.000,-</strong> — maksimal <strong>1x per anggota keluarga</strong> dalam 1 tahun.</p>
+
+<h2>PASAL IV — PARHEPENGON (Keuangan)</h2>
+<p><strong>4.1</strong> Molo adong keluarga nabaru masuk naro sian luat na asing tu punguan, wajib do keluarga i mangalehon <strong>uang modal dasar godangna Rp 100.000,-</strong></p>
+
+<h2>PASAL V — ANGKA NA ASING (Ketentuan Lain-lain)</h2>
+<ul>
+  <li><strong>5.1</strong> Molo adong Angka Na Asing naporlu alai dang tarsurat di Anggaran Dasar dohot di Anggaran Rumah Tangga on, boi do pamasaon gabe sada keputusan ni punguan.</li>
+  <li><strong>5.2</strong> Anggaran Dasar / Anggaran Rumah Tangga on porlu di padenggan (revisi) asa sesuai dohot namasa nang angka partikkian.</li>
+</ul>
+<p style="font-size:12px;color:var(--text-light);margin-top:1.5rem;text-align:center;border-top:1px solid var(--border);padding-top:1rem">
+  Andorang so binaen gabe sada Anggaran Dasar / Anggaran Rumah Tangga, boi dope paubaon asa lamtudenggan na.
+</p>
+`;
+
+      let appData = {
+        members: [...defaultMembers],
+        cashflow: [...defaultCashflow],
+        bonataon: JSON.parse(JSON.stringify(defaultBonataon)),
+        kegiatan: [...defaultKegiatan],
+        adrt: defaultADRT,
+      };
+
+      const ADRT_VERSION = "v3-2024";
+      function loadData() {
+        const saved = localStorage.getItem(DATA_KEY);
+        if (saved) {
+          try {
+            const d = JSON.parse(saved);
+            appData = { ...appData, ...d };
+          } catch (e) {}
+        }
+        const savedAdrtVer = localStorage.getItem("dr_adrt_version");
+        if (savedAdrtVer !== ADRT_VERSION) {
+          appData.adrt = defaultADRT;
+          const toSave = { ...appData, adrt: defaultADRT };
+          localStorage.setItem(DATA_KEY, JSON.stringify(toSave));
+          localStorage.setItem("dr_adrt_version", ADRT_VERSION);
+        }
+      }
+      function saveData() {
+        localStorage.setItem(DATA_KEY, JSON.stringify(appData));
+      }
+
+      // =========================================
+      // ATTENDANCE DATA
+      // =========================================
+      let attendanceData = {}; // { eventId: { eventId, date, title, type, present: [memberId,...] } }
+
+      function loadAttendance() {
+        const saved = localStorage.getItem(ATTENDANCE_KEY);
+        if (saved) {
+          try {
+            attendanceData = JSON.parse(saved);
+          } catch (e) {
+            attendanceData = {};
+          }
+        }
+      }
+      function saveAttendance() {
+        localStorage.setItem(ATTENDANCE_KEY, JSON.stringify(attendanceData));
+      }
+
+      // Get attendance for a specific event; returns array of member IDs present
+      function getEventAttendance(eventId) {
+        return attendanceData[eventId] && attendanceData[eventId].present
+          ? attendanceData[eventId].present
+          : null;
+      }
+
+      // Count how many events a member attended (filter by year if given)
+      function getMemberAttendanceStats(memberId, year) {
+        let totalEvents = 0;
+        let attended = 0;
+        Object.values(attendanceData).forEach((ev) => {
+          if (year && new Date(ev.date).getFullYear() !== year) return;
+          if (!ev.present) return;
+          totalEvents++;
+          if (ev.present.includes(memberId)) attended++;
+        });
+        return {
+          attended,
+          totalEvents,
+          pct:
+            totalEvents > 0 ? Math.round((attended / totalEvents) * 100) : null,
+        };
+      }
+
+      // =========================================
+      // UTILITIES
+      // =========================================
+      function fmtRp(n) {
+        if (!n) return "-";
+        return new Intl.NumberFormat("id-ID").format(n);
+      }
+      function fmtDate(dateStr) {
+        if (!dateStr) return "";
+        const d = new Date(dateStr);
+        const months = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "Mei",
+          "Jun",
+          "Jul",
+          "Ags",
+          "Sep",
+          "Okt",
+          "Nov",
+          "Des",
+        ];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+      }
+      function getYear(dateStr) {
+        return new Date(dateStr).getFullYear();
+      }
+      function showToast(msg, type = "success") {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.className = "toast show " + type;
+        setTimeout(() => (t.className = "toast"), 3000);
+      }
+      function openModal(id) {
+        if (id === "modal-adrt-edit")
+          document.getElementById("f-adrt-content").value = appData.adrt;
+        document.getElementById(id).classList.add("show");
+      }
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("show");
+      }
+      document.querySelectorAll(".modal-overlay").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          if (e.target === el) el.classList.remove("show");
+        });
+      });
+
+      // =========================================
+      // NAVIGATION
+      // =========================================
+      function showPage(page) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById("page-" + page).classList.add("active");
+        const nb = document.getElementById("nav-" + page);
+        if (nb) nb.classList.add("active");
+        renderPage(page);
+      }
+      function renderPage(page) {
+        if (page === "beranda") renderBeranda();
+        else if (page === "kegiatan") renderKegiatan();
+        else if (page === "bonataon") renderBonataon();
+        else if (page === "keuangan") renderKeuangan();
+        else if (page === "anggota") {
+          renderMembers();
+          if (currentAnggotaTab === "keaktifan") renderKeaktifan();
+        } else if (page === "pengumuman") renderPengumuman();
+        else if (page === "adrt") renderADRT();
+      }
+
+      // =========================================
+      // ADMIN PANEL
+      // =========================================
+      function openAdminPanel() {
+        document.getElementById("admin-panel-overlay").classList.add("open");
+        if (isAdmin) {
+          document.getElementById("admin-login-section").style.display = "none";
+          document.getElementById("admin-logged-sections").style.display =
+            "block";
+          renderPengurusEditor();
+          const savedBg = localStorage.getItem(BG_KEY) || "";
+          document.getElementById("f-bg-url").value = savedBg;
+        } else {
+          document.getElementById("admin-login-section").style.display =
+            "block";
+          document.getElementById("admin-logged-sections").style.display =
+            "none";
+        }
+      }
+      function closeAdminPanel() {
+        document.getElementById("admin-panel-overlay").classList.remove("open");
+      }
+      document
+        .getElementById("admin-panel-overlay")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closeAdminPanel();
+        });
+
+      function doAdminLogin() {
+        const pw = document.getElementById("f-admin-pw").value;
+        if (pw === getDefaultPw()) {
+          isAdmin = true;
+          updateAdminDownloadVisibility(true);
+          document.getElementById("f-admin-pw").value = "";
+          document.getElementById("admin-toggle-btn").textContent =
+            "✅ Admin (Keluar)";
+          document
+            .getElementById("admin-toggle-btn")
+            .classList.add("active-admin");
+          document
+            .querySelectorAll(".admin-only")
+            .forEach((el) => (el.style.display = ""));
+          document.getElementById("admin-login-section").style.display = "none";
+          document.getElementById("admin-logged-sections").style.display =
+            "block";
+          renderPengurusEditor();
+          showToast("✅ Berhasil masuk sebagai Admin!", "success");
+        } else {
+          showToast("❌ Password salah!", "error");
+        }
+      }
+      function doAdminLogout() {
+        isAdmin = false;
+        updateAdminDownloadVisibility(false);
+        document.getElementById("admin-toggle-btn").textContent = "⚙ Admin";
+        document
+          .getElementById("admin-toggle-btn")
+          .classList.remove("active-admin");
+        document
+          .querySelectorAll(".admin-only")
+          .forEach((el) => (el.style.display = "none"));
+        closeAdminPanel();
+        showToast("Logout berhasil", "success");
+      }
+      function updateAdminUI() {
+        document.querySelectorAll(".admin-only").forEach((el) => {
+          el.style.display = isAdmin ? "" : "none";
+        });
+      }
+      function changePassword() {
+        const p1 = document.getElementById("f-new-pw1").value;
+        const p2 = document.getElementById("f-new-pw2").value;
+        if (!p1) return showToast("Password tidak boleh kosong", "error");
+        if (p1 !== p2) return showToast("Password tidak cocok", "error");
+        localStorage.setItem(ADMIN_PW_KEY, p1);
+        closeModal("modal-change-pw");
+        showToast("✅ Password berhasil diubah!", "success");
+      }
+      function gantiPassword() {
+        const np = document.getElementById("f-new-pw-admin").value;
+        const cp = document.getElementById("f-confirm-pw-admin").value;
+        if (!np) return showToast("Password tidak boleh kosong", "error");
+        if (np !== cp)
+          return showToast("Konfirmasi password tidak cocok", "error");
+        if (np.length < 6)
+          return showToast("Password minimal 6 karakter", "error");
+        localStorage.setItem(ADMIN_PW_KEY, np);
+        document.getElementById("f-new-pw-admin").value = "";
+        document.getElementById("f-confirm-pw-admin").value = "";
+        showToast("✅ Password berhasil diubah! 🔑", "success");
+      }
+
+      // =========================================
+      // BACKGROUND HERO
+      // =========================================
+      function previewBgInput() {
+        const url = document.getElementById("f-bg-url").value.trim();
+        const preview = document.getElementById("bg-preview-img");
+        if (url && (url.startsWith("http") || url.startsWith("data:"))) {
+          preview.src = url;
+          preview.style.display = "block";
+        } else {
+          preview.style.display = "none";
+        }
+      }
+      function applyBgImage() {
+        const url = document.getElementById("f-bg-url").value.trim();
+        if (!url)
+          return showToast("Masukkan URL gambar terlebih dahulu", "error");
+        localStorage.setItem(BG_KEY, url);
+        localStorage.removeItem(BG_COLOR_KEY);
+        const hero = document.getElementById("hero-beranda");
+        hero.style.backgroundImage = `url('${url}')`;
+        hero.style.backgroundColor = "";
+        showToast("✅ Background header berhasil diubah!");
+      }
+      function previewBgColor() {
+        const color = document.getElementById("f-bg-color").value;
+        document.getElementById("hero-beranda").style.backgroundColor = color;
+      }
+      function applyBgColor() {
+        const color = document.getElementById("f-bg-color").value;
+        localStorage.setItem(BG_COLOR_KEY, color);
+        localStorage.removeItem(BG_KEY);
+        const hero = document.getElementById("hero-beranda");
+        hero.style.backgroundImage = "none";
+        hero.style.backgroundColor = color;
+        showToast("✅ Warna header berhasil diubah!");
+      }
+      function removeBg() {
+        localStorage.removeItem(BG_KEY);
+        localStorage.removeItem(BG_COLOR_KEY);
+        const hero = document.getElementById("hero-beranda");
+        hero.style.backgroundImage = "";
+        hero.style.backgroundColor = "";
+        document.getElementById("f-bg-url").value = "";
+        document.getElementById("bg-preview-img").style.display = "none";
+        showToast("Background dikembalikan ke default", "success");
+      }
+      function loadSavedBg() {
+        const hero = document.getElementById("hero-beranda");
+        const savedBg = localStorage.getItem(BG_KEY);
+        const savedColor = localStorage.getItem(BG_COLOR_KEY);
+        if (savedBg) {
+          hero.style.backgroundImage = `url('${savedBg}')`;
+        } else if (savedColor) {
+          hero.style.backgroundImage = "none";
+          hero.style.backgroundColor = savedColor;
+        }
+      }
+
+      // =========================================
+      // PENGURUS EDITOR
+      // =========================================
+      function renderPengurusEditor() {
+        const editor = document.getElementById("pengurus-editor");
+        editor.innerHTML = pengurusList
+          .map(
+            (p, i) => `
+          <div style="background:white;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;">
+            <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+              <input value="${p.emoji || ""}" style="width:46px;padding:4px;border:1px solid #ccc;border-radius:6px;text-align:center;font-size:16px;" oninput="updatePengurus(${i},'emoji',this.value)" title="Emoji">
+              <input value="${p.role || ""}" style="flex:1;padding:6px 8px;border:1px solid #ccc;border-radius:6px;font-size:13px;" oninput="updatePengurus(${i},'role',this.value)" placeholder="Jabatan">
+              <button onclick="hapusPengurus(${i})" style="background:#fee2e2;border:none;color:#dc2626;border-radius:6px;padding:4px 8px;cursor:pointer;">✕</button>
+            </div>
+            <input value="${p.name || ""}" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:6px;font-size:13px;" oninput="updatePengurus(${i},'name',this.value)" placeholder="Nama pengurus">
+          </div>`,
+          )
+          .join("");
+      }
+      function updatePengurus(i, field, val) {
+        pengurusList[i][field] = val;
+        savePengurusList();
+        renderBeranda();
+      }
+      function hapusPengurus(i) {
+        if (pengurusList.length <= 1)
+          return showToast("Minimal 1 pengurus", "error");
+        pengurusList.splice(i, 1);
+        savePengurusList();
+        renderBeranda();
+        renderPengurusEditor();
+      }
+      function tambahPengurus() {
+        pengurusList.push({
+          emoji: "🏅",
+          role: "Jabatan Baru",
+          name: "Nama Pengurus",
+        });
+        savePengurusList();
+        renderBeranda();
+        renderPengurusEditor();
+      }
+      function savePengurusList() {
+        localStorage.setItem(PENGURUS_KEY, JSON.stringify(pengurusList));
+      }
+
+      // =========================================
+      // BERANDA
+      // =========================================
+      function renderBeranda() {
+        const grid = document.getElementById("pengurus-aktif-grid");
+        if (grid) {
+          grid.innerHTML = pengurusList
+            .map(
+              (p) => `
+            <div class="pengurus-card-new">
+              <span style="font-size:1.5rem">${p.emoji || ""}</span>
+              <span class="role-badge-new">${p.role || ""}</span>
+              <div class="p-name-new">${p.name || ""}</div>
+            </div>`,
+            )
+            .join("");
+        }
+        const saldo = computeSaldo();
+        const saldoStr =
+          saldo >= 1000000 ? (saldo / 1000000).toFixed(1) + "M" : fmtRp(saldo);
+        document.getElementById("stat-anggota").textContent =
+          appData.members.length;
+        document.getElementById("stat-saldo").textContent = saldoStr;
+      }
+      function computeSaldo() {
+        let s = 10364300;
+        appData.cashflow.forEach((r) => {
+          s += r.in - r.out;
+        });
+        return s;
+      }
+
+      // =========================================
+      // KEGIATAN
+      // =========================================
+      let currentKegYear = 2026;
+      function getKegiatanYears() {
+        const years = [
+          ...new Set(appData.kegiatan.map((k) => getYear(k.date))),
+        ].sort((a, b) => b - a);
+        if (!years.includes(2026)) years.unshift(2026);
+        return years;
+      }
+      function renderKegiatan() {
+        const years = getKegiatanYears();
+        document.getElementById("kegiatan-year-tabs").innerHTML = years
+          .map(
+            (y) =>
+              `<div class="year-tab ${y === currentKegYear ? "active" : ""}" onclick="currentKegYear=${y};renderKegiatan()">${y}</div>`,
+          )
+          .join("");
+        const list = document.getElementById("kegiatan-list");
+        const filtered = appData.kegiatan
+          .filter((k) => getYear(k.date) === currentKegYear)
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (!filtered.length) {
+          list.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-light)">Belum ada kegiatan di tahun ${currentKegYear}</div>`;
+          return;
+        }
+        const months = [
+          "JAN",
+          "FEB",
+          "MAR",
+          "APR",
+          "MEI",
+          "JUN",
+          "JUL",
+          "AGS",
+          "SEP",
+          "OKT",
+          "NOV",
+          "DES",
+        ];
+        list.innerHTML = filtered
+          .map((k) => {
+            const d = new Date(k.date);
+            const tc = "type-" + k.type.toLowerCase().replace(/[^a-z]/g, "");
+            const att = getEventAttendance(k.id);
+            const totalMembers = appData.members.length;
+            // Attendance badge
+            let attBadge = "";
+            if (att !== null) {
+              attBadge = `<span class="attendance-badge">✅ ${att.length} / ${totalMembers} hadir</span>`;
+            } else {
+              attBadge = `<span class="attendance-badge no-data">— Belum ada data kehadiran</span>`;
+            }
+            // Admin attendance button
+            const attBtn = isAdmin
+              ? `<button class="btn btn-sm" style="background:rgba(13,148,136,0.1);color:var(--teal);border:1px solid rgba(13,148,136,0.3);margin-left:4px;white-space:nowrap" onclick="openAttendanceModal(${k.id})">✍ Isi Daftar Hadir</button>`
+              : "";
+            const adminDel = isAdmin
+              ? `<button class="delete-btn" onclick="deleteKegiatan(${k.id})">🗑</button>`
+              : "";
+            return `<div class="event-card">
+            <div class="event-date"><div class="day">${d.getDate()}</div><div class="month">${months[d.getMonth()]}</div></div>
+            <div class="event-body">
+              <div class="event-type"><span class="type-badge ${tc}">${k.type}</span></div>
+              <div class="event-title">${k.title}</div>
+              ${k.desc ? `<div class="event-desc">${k.desc}</div>` : ""}
+              ${k.place ? `<div class="event-desc">📍 ${k.place}</div>` : ""}
+              <div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">${attBadge}${attBtn}</div>
+            </div>
+            <div style="display:flex;gap:4px;margin-left:auto;flex-shrink:0">${adminDel}</div>
+          </div>`;
+          })
+          .join("");
+      }
+      function addKegiatan() {
+        const date = document.getElementById("f-keg-date").value;
+        const type = document.getElementById("f-keg-type").value;
+        const title = document.getElementById("f-keg-title").value.trim();
+        const desc = document.getElementById("f-keg-desc").value.trim();
+        const place = document.getElementById("f-keg-place").value.trim();
+        if (!date || !title)
+          return showToast("Tanggal dan judul wajib diisi", "error");
+        const dup = appData.kegiatan.find(
+          (k) => k.date === date && k.title === title,
+        );
+        if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
+        appData.kegiatan.push({
+          id: Date.now(),
+          date,
+          type,
+          title,
+          desc,
+          place,
+        });
+        currentKegYear = getYear(date);
+        saveData();
+        closeModal("modal-add-kegiatan");
+        renderKegiatan();
+        showToast("✅ Kegiatan berhasil ditambahkan");
+      }
+      function deleteKegiatan(id) {
+        if (!isAdmin || !confirm("Hapus kegiatan ini?")) return;
+        appData.kegiatan = appData.kegiatan.filter((k) => k.id !== id);
+        // Also delete attendance data for this event
+        delete attendanceData[id];
+        saveData();
+        saveAttendance();
+        renderKegiatan();
+        showToast("Kegiatan dihapus", "success");
+      }
+
+      // =========================================
+      // ATTENDANCE MODAL
+      // =========================================
+      let currentAttendanceEventId = null;
+
+      function openAttendanceModal(eventId) {
+        currentAttendanceEventId = eventId;
+        const event = appData.kegiatan.find((k) => k.id === eventId);
+        if (!event) return;
+
+        // Populate event info
+        document.getElementById("attendance-event-info").innerHTML =
+          `<strong>${event.title}</strong> &nbsp;·&nbsp; ${fmtDate(event.date)} &nbsp;·&nbsp; <span class="type-badge type-${event.type.toLowerCase().replace(/[^a-z]/g, "")}">${event.type}</span>${event.place ? ` &nbsp;·&nbsp; 📍 ${event.place}` : ""}`;
+
+        // Get existing attendance
+        const existing = getEventAttendance(eventId) || [];
+
+        // Render member checklist
+        const sorted = [...appData.members].sort((a, b) =>
+          memberDisplayName(a).localeCompare(memberDisplayName(b)),
+        );
+        document.getElementById("attendance-member-list").innerHTML = sorted
+          .map((m) => {
+            const checked = existing.includes(m.id);
+            return `<div class="attendance-member-item ${checked ? "checked" : ""}" onclick="toggleAttMember(this, ${m.id})">
+            <input type="checkbox" id="att-m-${m.id}" ${checked ? "checked" : ""} onchange="updateAttCount()" onclick="event.stopPropagation()"/>
+            <label for="att-m-${m.id}" onclick="event.stopPropagation()">${memberDisplayName(m)}</label>
+          </div>`;
+          })
+          .join("");
+
+        updateAttCount();
+        openModal("modal-attendance");
+      }
+
+      function toggleAttMember(el, memberId) {
+        const cb = document.getElementById("att-m-" + memberId);
+        cb.checked = !cb.checked;
+        el.classList.toggle("checked", cb.checked);
+        updateAttCount();
+      }
+
+      function updateAttCount() {
+        const total = appData.members.length;
+        const checked = document.querySelectorAll(
+          "#attendance-member-list input[type=checkbox]:checked",
+        ).length;
+        document.getElementById("att-count-display").textContent =
+          checked + " / " + total + " hadir";
+      }
+
+      function toggleAllAttendance(selectAll) {
+        document
+          .querySelectorAll("#attendance-member-list input[type=checkbox]")
+          .forEach((cb) => {
+            cb.checked = selectAll;
+            cb.closest(".attendance-member-item").classList.toggle(
+              "checked",
+              selectAll,
+            );
+          });
+        updateAttCount();
+      }
+
+      function saveAttendanceData() {
+        if (!currentAttendanceEventId) return;
+        const event = appData.kegiatan.find(
+          (k) => k.id === currentAttendanceEventId,
+        );
+        const presentIds = [];
+        document
+          .querySelectorAll(
+            "#attendance-member-list input[type=checkbox]:checked",
+          )
+          .forEach((cb) => {
+            const id = parseInt(cb.id.replace("att-m-", ""));
+            presentIds.push(id);
+          });
+        attendanceData[currentAttendanceEventId] = {
+          eventId: currentAttendanceEventId,
+          date: event.date,
+          title: event.title,
+          type: event.type,
+          present: presentIds,
+        };
+        saveAttendance();
+        closeModal("modal-attendance");
+        renderKegiatan();
+        // Refresh keaktifan if visible
+        if (currentAnggotaTab === "keaktifan") renderKeaktifan();
+        showToast(
+          `✅ Kehadiran disimpan: ${presentIds.length} dari ${appData.members.length} anggota hadir`,
+        );
+      }
+
+      // =========================================
+      // BONATAON
+      // =========================================
+      let currentBonYear = 2025;
+      function getBonYears() {
+        return [...new Set(Object.keys(appData.bonataon).map(Number))].sort(
+          (a, b) => b - a,
+        );
+      }
+      function renderBonataon() {
+        const years = getBonYears();
+        document.getElementById("bonataon-year-tabs").innerHTML = years
+          .map(
+            (y) =>
+              `<div class="year-tab ${y === currentBonYear ? "active" : ""}" onclick="currentBonYear=${y};renderBonataon()">${y}</div>`,
+          )
+          .join("");
+        const data = appData.bonataon[currentBonYear] || [];
+        const cont = document.getElementById("bonataon-content");
+        if (!data.length) {
+          cont.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-light)">Belum ada data lelang Bonataon ${currentBonYear}</div>`;
+          return;
+        }
+        let rows = data
+          .map((r, idx) => {
+            const total =
+              r.gr + r.arsik + r.ayam + r.buah + r.bir + r.mina + r.mini;
+            const sisa = total - r.paid;
+            const lunas = sisa <= 0;
+            const adminBtn = isAdmin
+              ? `<button class="delete-btn" onclick="deleteBonataon(${idx})">🗑</button>`
+              : "";
+            return `<tr><td>${idx + 1}</td><td>${r.family}</td><td class="rp">${r.gr ? fmtRp(r.gr) : "-"}</td><td class="rp">${r.arsik ? fmtRp(r.arsik) : "-"}</td><td class="rp">${r.ayam ? fmtRp(r.ayam) : "-"}</td><td class="rp">${r.buah ? fmtRp(r.buah) : "-"}</td><td class="rp">${r.bir ? fmtRp(r.bir) : "-"}</td><td class="rp">${r.mina ? fmtRp(r.mina) : "-"}</td><td class="rp">${r.mini ? fmtRp(r.mini) : "-"}</td><td class="rp"><strong>${fmtRp(total)}</strong></td><td class="rp">${fmtRp(r.paid)}</td><td class="rp">${fmtRp(sisa)}</td><td><span class="${lunas ? "lunas-badge" : "belum-badge"}">${lunas ? "LUNAS" : "BELUM"}</span></td><td>${adminBtn}</td></tr>`;
+          })
+          .join("");
+        cont.innerHTML = `<div class="card"><div class="card-title">🎉 Rekap Lelang Bonataon ${currentBonYear}</div><div class="tbl-wrap"><table><thead><tr><th>No</th><th>Nama Keluarga</th><th>GR</th><th>Arsik</th><th>Ayam</th><th>Buah</th><th>Bir</th><th>Min.Ama</th><th>Min.Ina</th><th>Total</th><th>Dibayar</th><th>Sisa</th><th>Status</th><th class="admin-only">Aksi</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+        updateAdminUI();
+      }
+      function addBonataonEntry() {
+        const year = parseInt(document.getElementById("f-bon-year").value);
+        const family = document.getElementById("f-bon-family").value;
+        if (!family) return showToast("Pilih keluarga", "error");
+        const entry = {
+          family,
+          gr: parseInt(document.getElementById("f-bon-gr").value) || 0,
+          arsik: parseInt(document.getElementById("f-bon-arsik").value) || 0,
+          ayam: parseInt(document.getElementById("f-bon-ayam").value) || 0,
+          buah: parseInt(document.getElementById("f-bon-buah").value) || 0,
+          bir: parseInt(document.getElementById("f-bon-bir").value) || 0,
+          mina: parseInt(document.getElementById("f-bon-mina").value) || 0,
+          mini: parseInt(document.getElementById("f-bon-mini").value) || 0,
+          paid: parseInt(document.getElementById("f-bon-paid").value) || 0,
+        };
+        if (!appData.bonataon[year]) appData.bonataon[year] = [];
+        if (appData.bonataon[year].find((e) => e.family === family))
+          return showToast(
+            "Data keluarga ini sudah ada untuk tahun " + year,
+            "error",
+          );
+        appData.bonataon[year].push(entry);
+        currentBonYear = year;
+        saveData();
+        closeModal("modal-add-bonataon-entry");
+        renderBonataon();
+        showToast("✅ Data lelang ditambahkan");
+      }
+      function deleteBonataon(idx) {
+        if (!isAdmin || !confirm("Hapus data ini?")) return;
+        appData.bonataon[currentBonYear].splice(idx, 1);
+        saveData();
+        renderBonataon();
+      }
+
+      // =========================================
+      // KEUANGAN
+      // =========================================
+      let currentKeuYear = 2025;
+      let currentIuranYear = 2025;
+      function getKeuYears() {
+        return [...new Set(appData.cashflow.map((r) => getYear(r.date)))].sort(
+          (a, b) => b - a,
+        );
+      }
+      function computeCashflow(year) {
+        let running = 10364300;
+        appData.cashflow
+          .filter((r) => getYear(r.date) < year)
+          .forEach((r) => {
+            running += r.in - r.out;
+          });
+        let totalIn = 0,
+          totalOut = 0;
+        const rows = [];
+        appData.cashflow
+          .filter((r) => getYear(r.date) === year)
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .forEach((r) => {
+            running += r.in - r.out;
+            totalIn += r.in;
+            totalOut += r.out;
+            rows.push({ ...r, balance: running });
+          });
+        return { rows, totalIn, totalOut, closing: running };
+      }
+      function renderKeuangan() {
+        const years = getKeuYears();
+        document.getElementById("keuangan-year-tabs").innerHTML = years
+          .map(
+            (y) =>
+              `<div class="year-tab ${y === currentKeuYear ? "active" : ""}" onclick="currentKeuYear=${y};renderKeuangan()">${y}</div>`,
+          )
+          .join("");
+        const { rows, totalIn, totalOut, closing } =
+          computeCashflow(currentKeuYear);
+        document.getElementById("cf-summary").innerHTML = `
+          <div class="cf-box income"><div class="cf-num">Rp ${fmtRp(totalIn)}</div><div class="cf-lbl">TOTAL PEMASUKAN</div></div>
+          <div class="cf-box expense"><div class="cf-num">Rp ${fmtRp(totalOut)}</div><div class="cf-lbl">TOTAL PENGELUARAN</div></div>
+          <div class="cf-box balance"><div class="cf-num">Rp ${fmtRp(closing)}</div><div class="cf-lbl">SALDO AKHIR</div></div>`;
+        renderBarChart(years);
+        document.getElementById("cashflow-tbody").innerHTML = rows
+          .map((r, i) => {
+            const adminActs = isAdmin
+              ? `<td><button class="edit-btn" onclick="openCfEdit(${i})">✏</button><button class="delete-btn" onclick="deleteCf('${r.id}')">🗑</button></td>`
+              : "<td></td>";
+            return `<tr><td>${fmtDate(r.date)}</td><td style="max-width:300px;font-size:13px">${r.desc}</td><td class="rp" style="color:var(--teal)">${r.in ? fmtRp(r.in) : ""}</td><td class="rp" style="color:var(--coral)">${r.out ? fmtRp(r.out) : ""}</td><td class="rp"><strong>${fmtRp(r.balance)}</strong></td>${adminActs}</tr>`;
+          })
+          .join("");
+        const iuranYears = [2022, 2023, 2024, 2025, 2026];
+        document.getElementById("iuran-year-tabs").innerHTML = iuranYears
+          .map(
+            (y) =>
+              `<div class="year-tab ${y === currentIuranYear ? "active" : ""}" onclick="currentIuranYear=${y};renderIuranTable()">${y}</div>`,
+          )
+          .join("");
+        renderIuranTable();
+        updateAdminUI();
+      }
+      function renderBarChart(years) {
+        const chartYears = years.slice(0, 5);
+        const maxVal = Math.max(
+          ...chartYears.map((y) => {
+            const { totalIn, totalOut } = computeCashflow(y);
+            return Math.max(totalIn, totalOut);
+          }),
+        );
+        document.getElementById("bar-chart").innerHTML = chartYears
+          .map((y) => {
+            const { totalIn, totalOut } = computeCashflow(y);
+            const inH = maxVal ? (totalIn / maxVal) * 120 : 4;
+            const outH = maxVal ? (totalOut / maxVal) * 120 : 4;
+            return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:130px">
+              <div class="bar bar-in" style="flex:1;height:${inH}px" title="Pemasukan ${fmtRp(totalIn)}"></div>
+              <div class="bar bar-out" style="flex:1;height:${outH}px" title="Pengeluaran ${fmtRp(totalOut)}"></div>
+            </div>
+            <div style="font-size:10px;color:var(--text-light);font-family:monospace">${y}</div>
+          </div>`;
+          })
+          .join("");
+      }
+
+      const iuranStatus = {
+        2022: {
+          "A. Pangaribuan / br.Simanjuntak (Anabel)": "LUNAS",
+          "Aritonang / br.Nainggolan": "LUNAS",
+          "Batubara/br.Tobing": "LUNAS",
+          "C.Nainggolan /br.Hutabarat (Josua)": "LUNAS",
+          "D. Siregar /br.Manullang (Daniel)": "LUNAS",
+          "M.Hasugian /Br.Purba": "LUNAS",
+          "Malau /Br.Sembiring (Regina)": "LUNAS",
+          "Manullang/Br Pardosi": "LUNAS",
+          "Manurung/ br.Hutasoit": "LUNAS",
+          "Pangaribuan /br.Siahaan (Zio)": "LUNAS",
+          "R.Sihombing /br.Pangaribuan (Audrey)": "LUNAS",
+          "Sihombing / br.Malau (Moza)": "LUNAS",
+          "Sihombing /br.Sihotang (Phebe)": "LUNAS",
+          "Sihombing/Purba (Ray)": "LUNAS",
+          "Simanjuntak/br.Simangungsong (S.Pratama)": "LUNAS",
+          "Simangunsong/Nainggolan (Gideon)": "LUNAS",
+          "Simatupang /br.Panjaitan (OP.Mira)": "LUNAS",
+          "Simbolon /br.Sirait (mama El)": "LUNAS",
+          "Simorangkir /br.Tampubolon": "LUNAS",
+          "Sirait/ br.Sinulingga (Jessica)": "LUNAS",
+          "Siregar /br.Sianturi": "80,000",
+          "Sitohang/br.Situmeang (op.Elora)": "LUNAS",
+          "Tamba /br.Nainggolan (Sepinggan Pratama)": "LUNAS",
+          "Tambunan/br.Siregar (Intan)": "LUNAS",
+        },
+        2023: {
+          "A. Pangaribuan / br.Simanjuntak (Anabel)": "LUNAS",
+          "Aritonang / br.Nainggolan": "LUNAS",
+          "Banurea/ br.Nababam": "LUNAS",
+          "Batubara/br.Tobing": "LUNAS",
+          "C.Nainggolan /br.Hutabarat (Josua)": "LUNAS",
+          "D. Siregar /br.Manullang (Daniel)": "LUNAS",
+          "Gultom /br.Sitorus (Stephen)": "LUNAS",
+          "M.Hasugian /Br.Purba": "LUNAS",
+          "Malau /Br.Sembiring (Regina)": "LUNAS",
+          "Manullang/Br Pardosi": "LUNAS",
+          "Manurung/ br.Hutasoit": "LUNAS",
+          "Nababan /br.Gultom (Gerald)": "LUNAS",
+          "Pangaribuan /br.Siahaan (Zio)": "LUNAS",
+          "R.Sihombing /br.Pangaribuan (Audrey)": "LUNAS",
+          "Sianipar F/br.Sidabutar (Bpk.Elvira)": "LUNAS",
+          "Sihombing / br.Malau (Moza)": "LUNAS",
+          "Sihombing /br.Sihotang (Phebe)": "LUNAS",
+          "Sihombing/Purba (Ray)": "LUNAS",
+          "Simanjuntak/br.Simangungsong (S.Pratama)": "LUNAS",
+          "Simanjuntak /br.Gultom (Samuel)": "LUNAS",
+          "Simangunsong/Nainggolan (Gideon)": "LUNAS",
+          "Simatupang /br.Panjaitan (OP.Mira)": "LUNAS",
+          "Simbolon /br.Sirait (mama El)": "LUNAS",
+          "Simorangkir /br.Tampubolon": "LUNAS",
+          "Sirait/ br.Sinulingga (Jessica)": "LUNAS",
+          "Siregar /br.Sianturi": "BELUM",
+          "Sitohang/br.Situmeang (op.Elora)": "LUNAS",
+          "Sitorus /br.Saragih (B.Poin)": "LUNAS",
+          "Tamba /br.Nainggolan (Sepinggan Pratama)": "LUNAS",
+          "Tambunan/br.Siregar (Intan)": "LUNAS",
+        },
+        2024: {
+          "A. Pangaribuan / br.Simanjuntak (Anabel)": "LUNAS",
+          "Aritonang / br.Nainggolan": "LUNAS",
+          "Banurea/ br.Nababam": "LUNAS",
+          "Batubara/br.Tobing": "LUNAS",
+          "C.Nainggolan /br.Hutabarat (Josua)": "LUNAS",
+          "D. Siregar /br.Manullang (Daniel)": "LUNAS",
+          "Gultom /br.Sitorus (Stephen)": "LUNAS",
+          "Harianja /br. Sianipar (Feoddora)": "BELUM",
+          "M.Hasugian /Br.Purba": "LUNAS",
+          "Malau /Br.Sembiring (Regina)": "LUNAS",
+          "Manullang/Br Pardosi": "LUNAS",
+          "Manurung/ br.Hutasoit": "LUNAS",
+          "Nababan /br.Gultom (Gerald)": "LUNAS",
+          "Pangaribuan /br.Siahaan (Zio)": "LUNAS",
+          "R.Sihombing /br.Pangaribuan (Audrey)": "LUNAS",
+          "Sianipar F/br.Sidabutar (Bpk.Elvira)": "LUNAS",
+          "Sihombing / br.Malau (Moza)": "LUNAS",
+          "Sihombing /br.Sihotang (Phebe)": "LUNAS",
+          "Sihombing/Purba (Ray)": "LUNAS",
+          "Simanjuntak/br.Simangungsong (S.Pratama)": "LUNAS",
+          "Simanjuntak /br.Gultom (Samuel)": "LUNAS",
+          "Simangunsong/Nainggolan (Gideon)": "LUNAS",
+          "Simatupang /br.Panjaitan (OP.Mira)": "LUNAS",
+          "Simbolon /br.Sirait (mama El)": "LUNAS",
+          "Simorangkir /br.Tampubolon": "LUNAS",
+          "Sirait/ br.Sinulingga (Jessica)": "LUNAS",
+          "Siregar /br.Sianturi": "BELUM",
+          "Sitohang/br.Situmeang (op.Elora)": "LUNAS",
+          "Sitorus /br.Saragih (B.Poin)": "LUNAS",
+          "Tamba /br.Nainggolan (Sepinggan Pratama)": "LUNAS",
+          "Tambunan/br.Siregar (Intan)": "LUNAS",
+          "Ny.Sinulingga / br.Simatupang": "LUNAS",
+          "PDT. J.W Sinaga/br.Silalahi (Tama)": "LUNAS",
+          "Munte /br.Parhusip (Iren)": "LUNAS",
+          "R.Panggabean Simorangkir/ br.Damanik (Meidy)": "LUNAS",
+          "Haloho /br. Sinaga (Jayden)": "LUNAS",
+          "Siagian /br.Sianturi (Gilbert)": "LUNAS",
+        },
+      };
+      const iuranStatus2025 = {
+        "A. Pangaribuan / br.Simanjuntak (Anabel)": "BELUM",
+        "Aritonang / br.Nainggolan": "LUNAS",
+        "Banurea/ br.Nababam": "LUNAS",
+        "Batubara/br.Tobing": "LUNAS",
+        "C.Nainggolan /br.Hutabarat (Josua)": "BELUM",
+        "D. Siregar /br.Manullang (Daniel)": "LUNAS",
+        "Gultom /br.Sitorus (Stephen)": "LUNAS",
+        "Harianja /br. Sianipar (Feoddora)": "BELUM",
+        "M.Hasugian /Br.Purba": "LUNAS",
+        "Malau /Br.Sembiring (Regina)": "LUNAS",
+        "Manullang/Br Pardosi": "LUNAS",
+        "Manurung/ br.Hutasoit": "LUNAS",
+        "Nababan /br.Gultom (Gerald)": "BELUM",
+        "Pangaribuan /br.Siahaan (Zio)": "BELUM",
+        "R.Sihombing /br.Pangaribuan (Audrey)": "LUNAS",
+        "Sianipar F/br.Sidabutar (Bpk.Elvira)": "LUNAS",
+        "Sihombing / br.Malau (Moza)": "LUNAS",
+        "Sihombing /br.Sihotang (Phebe)": "LUNAS",
+        "Sihombing/Purba (Ray)": "LUNAS",
+        "Simanjuntak/br.Simangungsong (S.Pratama)": "LUNAS",
+        "Simanjuntak /br.Gultom (Samuel)": "LUNAS",
+        "Simangunsong/Nainggolan (Gideon)": "LUNAS",
+        "Simatupang /br.Panjaitan (OP.Mira)": "LUNAS",
+        "Simbolon /br.Sirait (mama El)": "LUNAS",
+        "Simorangkir /br.Tampubolon": "LUNAS",
+        "Sirait/ br.Sinulingga (Jessica)": "LUNAS",
+        "Siregar /br.Sianturi": "BELUM",
+        "Sitohang/br.Situmeang (op.Elora)": "LUNAS",
+        "Sitorus /br.Saragih (B.Poin)": "LUNAS",
+        "Tamba /br.Nainggolan (Sepinggan Pratama)": "LUNAS",
+        "Tambunan/br.Siregar (Intan)": "LUNAS",
+        "Ny.Sinulingga / br.Simatupang": "LUNAS",
+        "PDT. J.W Sinaga/br.Silalahi (Tama)": "LUNAS",
+        "Munte /br.Parhusip (Iren)": "30,000",
+        "R.Panggabean Simorangkir/ br.Damanik (Meidy)": "LUNAS",
+        "Haloho /br. Sinaga (Jayden)": "50,000",
+        "Siagian /br.Sianturi (Gilbert)": "50,000",
+        "F.Tampubolon/ br.sidabutar (Vania)": "BELUM",
+        "Turnip /br.Banjarnahor (Gema)": "BELUM",
+        "Siregar /br.Manalu (Arga)": "LUNAS",
+        "Turnip /br.Sirait": "BELUM",
+        "Siregar/ br.Tobing (Ezra)": "BELUM",
+        "Pasaribu/br.Lumbantoruan": "LUNAS",
+        "Manalu/ br.Silaban (Oliv)": "LUNAS",
+      };
+
+      function renderIuranTable() {
+        const year = currentIuranYear;
+        let statusMap =
+          year === 2025 ? iuranStatus2025 : iuranStatus[year] || {};
+        const entries = Object.entries(statusMap);
+        document.getElementById("iuran-tbody").innerHTML = entries
+          .map(([name, status], i) => {
+            let badgeClass = "lunas-badge",
+              nominal = "120,000";
+            if (status === "BELUM") {
+              badgeClass = "belum-badge";
+              nominal = "-";
+            } else if (status !== "LUNAS") {
+              badgeClass = "partial-badge";
+              nominal = status;
+            }
+            return `<tr><td>${i + 1}</td><td>${name}</td><td><span class="${badgeClass}">${status}</span></td><td class="rp">${nominal}</td></tr>`;
+          })
+          .join("");
+      }
+      function openCfEdit(rowIdx) {
+        const { rows } = computeCashflow(currentKeuYear);
+        const r = rows[rowIdx];
+        const origIdx = appData.cashflow.findIndex((x) => x.id === r.id);
+        document.getElementById("f-cf-edit-idx").value = origIdx;
+        document.getElementById("f-cf-edit-date").value = r.date;
+        document.getElementById("f-cf-edit-desc").value = r.desc;
+        document.getElementById("f-cf-edit-in").value = r.in;
+        document.getElementById("f-cf-edit-out").value = r.out;
+        openModal("modal-edit-cf");
+      }
+      function saveCfEdit() {
+        const idx = parseInt(document.getElementById("f-cf-edit-idx").value);
+        appData.cashflow[idx].date =
+          document.getElementById("f-cf-edit-date").value;
+        appData.cashflow[idx].desc =
+          document.getElementById("f-cf-edit-desc").value;
+        appData.cashflow[idx].in =
+          parseInt(document.getElementById("f-cf-edit-in").value) || 0;
+        appData.cashflow[idx].out =
+          parseInt(document.getElementById("f-cf-edit-out").value) || 0;
+        saveData();
+        closeModal("modal-edit-cf");
+        renderKeuangan();
+        showToast("✅ Transaksi diperbarui");
+      }
+      function deleteCf(id) {
+        if (!isAdmin || !confirm("Hapus transaksi ini?")) return;
+        appData.cashflow = appData.cashflow.filter((r) => r.id != id);
+        saveData();
+        renderKeuangan();
+        showToast("Transaksi dihapus", "success");
+      }
+      function addIncome() {
+        const date = document.getElementById("f-inc-date").value;
+        const family = document.getElementById("f-inc-family").value;
+        const type = document.getElementById("f-inc-type").value;
+        const year = document.getElementById("f-inc-year").value;
+        const amount =
+          parseInt(document.getElementById("f-inc-amount").value) || 0;
+        const note = document.getElementById("f-inc-note").value;
+        if (!date || !amount)
+          return showToast("Tanggal dan nominal wajib diisi", "error");
+        const desc = `${type} ${year}${family ? " - " + family : ""}${note ? " (" + note + ")" : ""}`;
+        const dup = appData.cashflow.find(
+          (r) => r.date === date && r.desc === desc && r.in === amount,
+        );
+        if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
+        appData.cashflow.push({
+          id: Date.now(),
+          date,
+          desc,
+          in: amount,
+          out: 0,
+        });
+        currentKeuYear = getYear(date);
+        saveData();
+        closeModal("modal-add-income");
+        renderKeuangan();
+        showToast("✅ Pemasukan ditambahkan");
+      }
+      function addExpense() {
+        if (!isAdmin) return;
+        const date = document.getElementById("f-exp-date").value;
+        const desc = document.getElementById("f-exp-desc").value.trim();
+        const amount =
+          parseInt(document.getElementById("f-exp-amount").value) || 0;
+        if (!date || !desc || !amount)
+          return showToast("Semua field wajib diisi", "error");
+        const dup = appData.cashflow.find(
+          (r) => r.date === date && r.desc === desc && r.out === amount,
+        );
+        if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
+        appData.cashflow.push({
+          id: Date.now(),
+          date,
+          desc,
+          in: 0,
+          out: amount,
+        });
+        currentKeuYear = getYear(date);
+        saveData();
+        closeModal("modal-add-expense");
+        renderKeuangan();
+        showToast("✅ Pengeluaran ditambahkan");
+      }
+
+      // =========================================
+      // ANGGOTA — TAB SYSTEM
+      // =========================================
+      let currentAnggotaTab = "daftar";
+      function switchAnggotaTab(tab) {
+        currentAnggotaTab = tab;
+        document.getElementById("tab-daftar").style.display =
+          tab === "daftar" ? "" : "none";
+        document.getElementById("tab-keaktifan").style.display =
+          tab === "keaktifan" ? "" : "none";
+        document
+          .getElementById("tab-daftar-btn")
+          .classList.toggle("active", tab === "daftar");
+        document
+          .getElementById("tab-keaktifan-btn")
+          .classList.toggle("active", tab === "keaktifan");
+        if (tab === "keaktifan") renderKeaktifan();
+      }
+
+      function renderMembers() {
+        const q = (
+          document.getElementById("member-search").value || ""
+        ).toLowerCase();
+        const filtered = appData.members.filter((m) =>
+          memberDisplayName(m).toLowerCase().includes(q),
+        );
+        document.getElementById("member-count").textContent =
+          appData.members.length;
+        document.getElementById("member-grid").innerHTML = filtered
+          .map((m) => {
+            const dn = memberDisplayName(m);
+            const initials = (m.name[0] || "") + (m.br[0] || "");
+            const stats = getMemberAttendanceStats(m.id, null);
+            const attInfo =
+              stats.totalEvents > 0
+                ? `<div class="member-attendance-info" style="color:${stats.pct >= 75 ? "#16a34a" : stats.pct >= 50 ? "#d97706" : "#dc2626"}">📊 ${stats.pct}% hadir (${stats.attended}/${stats.totalEvents} kegiatan)</div>`
+                : `<div class="member-attendance-info" style="color:var(--text-light)">— Belum ada data kehadiran</div>`;
+            const adminActs = isAdmin
+              ? `<div style="margin-left:auto;display:flex;gap:4px"><button class="edit-btn" onclick="openEditMember(${appData.members.indexOf(m)})">✏</button><button class="delete-btn" onclick="deleteMember(${appData.members.indexOf(m)})">🗑</button></div>`
+              : "";
+            return `<div class="member-card">
+            <div class="member-avatar" style="background:${memberColor(m.id)}">${initials}</div>
+            <div style="flex:1;min-width:0">
+              <div class="member-name">${dn}</div>
+              <div class="member-info">${m.addr || "Balikpapan Regency"}${m.joined ? " · Bergabung " + fmtDate(m.joined) : ""}</div>
+              ${isAdmin && m.phone ? `<div class="member-info" style="color:var(--teal)">📞 ${m.phone}</div>` : ""}
+              ${attInfo}
+            </div>
+            ${adminActs}
+          </div>`;
+          })
+          .join("");
+      }
+
+      function memberColor(id) {
+        const c = [
+          "#0D9488",
+          "#0D1B2A",
+          "#D4A017",
+          "#F97316",
+          "#7c3aed",
+          "#0891b2",
+          "#059669",
+          "#dc2626",
+        ];
+        return c[id % c.length];
+      }
+
+      // =========================================
+      // KEAKTIFAN TAB
+      // =========================================
+      let currentKeaktifanYear = null; // null = semua tahun
+
+      function getAttendanceYears() {
+        const years = [
+          ...new Set(
+            Object.values(attendanceData).map((ev) => getYear(ev.date)),
+          ),
+        ].sort((a, b) => b - a);
+        return years;
+      }
+
+      function renderKeaktifan() {
+        const years = getAttendanceYears();
+        // Year tabs
+        const tabsHtml = [
+          `<div class="year-tab ${currentKeaktifanYear === null ? "active" : ""}" onclick="currentKeaktifanYear=null;renderKeaktifan()">Semua</div>`,
+          ...years.map(
+            (y) =>
+              `<div class="year-tab ${currentKeaktifanYear === y ? "active" : ""}" onclick="currentKeaktifanYear=${y};renderKeaktifan()">${y}</div>`,
+          ),
+        ].join("");
+        document.getElementById("keaktifan-year-tabs").innerHTML = tabsHtml;
+
+        // Filter attendance events by year
+        const eventsInScope = Object.values(attendanceData).filter((ev) => {
+          if (currentKeaktifanYear === null) return true;
+          return getYear(ev.date) === currentKeaktifanYear;
+        });
+        const totalEvents = eventsInScope.length;
+
+        // Calculate stats per member
+        const stats = appData.members
+          .map((m) => {
+            const attended = eventsInScope.filter(
+              (ev) => ev.present && ev.present.includes(m.id),
+            ).length;
+            const pct =
+              totalEvents > 0
+                ? Math.round((attended / totalEvents) * 100)
+                : null;
+            return { m, attended, totalEvents, pct };
+          })
+          .sort((a, b) => {
+            if (a.pct === null && b.pct === null)
+              return memberDisplayName(a.m).localeCompare(
+                memberDisplayName(b.m),
+              );
+            if (a.pct === null) return 1;
+            if (b.pct === null) return -1;
+            return b.pct - a.pct;
+          });
+
+        // Summary boxes
+        if (totalEvents === 0) {
+          document.getElementById("keaktifan-summary").innerHTML = `
+            <div class="keaktifan-box total" style="grid-column:1/-1">
+              <div class="kb-num" style="color:var(--gold)">${totalEvents}</div>
+              <div class="kb-lbl" style="color:white">Total Kegiatan Tercatat</div>
+            </div>`;
+        } else {
+          const aktifCount = stats.filter(
+            (s) => s.pct !== null && s.pct >= 75,
+          ).length;
+          const cukupCount = stats.filter(
+            (s) => s.pct !== null && s.pct >= 50 && s.pct < 75,
+          ).length;
+          const perluCount = stats.filter(
+            (s) => s.pct !== null && s.pct < 50,
+          ).length;
+          document.getElementById("keaktifan-summary").innerHTML = `
+            <div class="keaktifan-box total"><div class="kb-num" style="color:var(--gold)">${totalEvents}</div><div class="kb-lbl" style="color:white">Total Kegiatan</div></div>
+            <div class="keaktifan-box aktif"><div class="kb-num">${aktifCount}</div><div class="kb-lbl">Aktif (≥75%)</div></div>
+            <div class="keaktifan-box cukup"><div class="kb-num">${cukupCount}</div><div class="kb-lbl">Cukup (50–74%)</div></div>
+            <div class="keaktifan-box perlu"><div class="kb-num">${perluCount}</div><div class="kb-lbl">Perlu Perhatian (&lt;50%)</div></div>`;
+        }
+
+        // Bar chart (top 15 by attendance count)
+        renderKeaktifanChart(stats.slice(0, 15), totalEvents);
+
+        // Render table
+        renderKeaktifanTable(stats);
+      }
+
+      function renderKeaktifanChart(stats, totalEvents) {
+        const chartEl = document.getElementById("keaktifan-chart");
+        if (totalEvents === 0) {
+          chartEl.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-light);font-size:14px">Belum ada data kehadiran. Isi daftar hadir di menu Kegiatan.</div>`;
+          return;
+        }
+        const maxAtt = Math.max(...stats.map((s) => s.attended), 1);
+        chartEl.innerHTML =
+          `<div style="display:flex;flex-direction:column;gap:6px">` +
+          stats
+            .map((s, idx) => {
+              const pct = s.pct !== null ? s.pct : 0;
+              const barColor =
+                pct >= 75 ? "#16a34a" : pct >= 50 ? "#d97706" : "#dc2626";
+              const barW =
+                s.totalEvents > 0
+                  ? Math.round((s.attended / s.totalEvents) * 100)
+                  : 0;
+              const shortName = s.m.name + (s.m.nick ? ` (${s.m.nick})` : "");
+              return `<div style="display:flex;align-items:center;gap:10px">
+              <div style="width:22px;text-align:right;font-size:11px;color:var(--text-light);font-family:monospace;flex-shrink:0">${idx + 1}</div>
+              <div style="width:160px;font-size:12px;color:var(--text-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0" title="${memberDisplayName(s.m)}">${shortName}</div>
+              <div style="flex:1;background:#eee;border-radius:999px;height:10px;overflow:hidden">
+                <div style="height:100%;border-radius:999px;background:${barColor};width:${barW}%;transition:width 0.4s"></div>
+              </div>
+              <div style="width:50px;text-align:right;font-family:monospace;font-size:12px;font-weight:600;color:${barColor};flex-shrink:0">${s.pct !== null ? s.pct + "%" : "-"}</div>
+            </div>`;
+            })
+            .join("") +
+          `</div>`;
+      }
+
+      function renderKeaktifanTable(statsInput) {
+        const q = (
+          document.getElementById("keaktifan-search")
+            ? document.getElementById("keaktifan-search").value
+            : ""
+        ).toLowerCase();
+        const eventsInScope = Object.values(attendanceData).filter((ev) => {
+          if (currentKeaktifanYear === null) return true;
+          return getYear(ev.date) === currentKeaktifanYear;
+        });
+        const totalEvents = eventsInScope.length;
+
+        const stats =
+          statsInput ||
+          appData.members
+            .map((m) => {
+              const attended = eventsInScope.filter(
+                (ev) => ev.present && ev.present.includes(m.id),
+              ).length;
+              const pct =
+                totalEvents > 0
+                  ? Math.round((attended / totalEvents) * 100)
+                  : null;
+              return { m, attended, totalEvents, pct };
+            })
+            .sort((a, b) => {
+              if (a.pct === null && b.pct === null) return 0;
+              if (a.pct === null) return 1;
+              if (b.pct === null) return -1;
+              return b.pct - a.pct;
+            });
+
+        const filtered = q
+          ? stats.filter((s) =>
+              memberDisplayName(s.m).toLowerCase().includes(q),
+            )
+          : stats;
+
+        if (totalEvents === 0) {
+          document.getElementById("keaktifan-tbody").innerHTML =
+            `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-light)">Belum ada data kehadiran. Admin perlu mengisi daftar hadir di menu Kegiatan.</td></tr>`;
+          return;
+        }
+        document.getElementById("keaktifan-tbody").innerHTML = filtered
+          .map((s, idx) => {
+            const pct = s.pct;
+            let badge, barColor;
+            if (pct === null) {
+              badge = `<span class="nodata-badge">—</span>`;
+              barColor = "#ccc";
+            } else if (pct >= 75) {
+              badge = `<span class="aktif-badge">Aktif</span>`;
+              barColor = "#16a34a";
+            } else if (pct >= 50) {
+              badge = `<span class="cukup-badge">Cukup</span>`;
+              barColor = "#d97706";
+            } else {
+              badge = `<span class="perlu-badge">Perlu Perhatian</span>`;
+              barColor = "#dc2626";
+            }
+            const barW = pct !== null ? pct : 0;
+            return `<tr style="cursor:pointer" onclick="showMemberAttDetail(${s.m.id})" title="Klik untuk lihat detail">
+            <td style="font-weight:600;color:var(--text-light)">${idx + 1}</td>
+            <td style="font-weight:600">${memberDisplayName(s.m)}</td>
+            <td style="font-family:monospace;font-weight:700;color:${barColor}">${s.attended}</td>
+            <td style="font-family:monospace;color:var(--text-mid)">${s.totalEvents}</td>
+            <td style="font-family:monospace;font-weight:700;color:${barColor}">${pct !== null ? pct + "%" : "—"}</td>
+            <td><div class="progress-wrap"><div class="progress-bar" style="width:${barW}%;background:${barColor}"></div></div></td>
+            <td>${badge}</td>
+          </tr>`;
+          })
+          .join("");
+      }
+
+      function showMemberAttDetail(memberId) {
+        const m = appData.members.find((x) => x.id === memberId);
+        if (!m) return;
+        const eventsInScope = Object.values(attendanceData)
+          .filter(
+            (ev) =>
+              currentKeaktifanYear === null ||
+              getYear(ev.date) === currentKeaktifanYear,
+          )
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (eventsInScope.length === 0) {
+          document.getElementById("keaktifan-detail").innerHTML =
+            `<div style="color:var(--text-light);text-align:center;padding:20px">Belum ada data kehadiran.</div>`;
+          return;
+        }
+        const rows = eventsInScope
+          .map((ev) => {
+            const hadir = ev.present && ev.present.includes(memberId);
+            return `<tr>
+            <td>${fmtDate(ev.date)}</td>
+            <td>${ev.title}</td>
+            <td><span class="type-badge type-${(ev.type || "").toLowerCase().replace(/[^a-z]/g, "")}">${ev.type || ""}</span></td>
+            <td><span class="${hadir ? "lunas-badge" : "belum-badge"}">${hadir ? "✅ Hadir" : "❌ Tidak Hadir"}</span></td>
+          </tr>`;
+          })
+          .join("");
+        const attended = eventsInScope.filter(
+          (ev) => ev.present && ev.present.includes(memberId),
+        ).length;
+        document.getElementById("keaktifan-detail").innerHTML = `
+          <div style="margin-bottom:12px;padding:12px 16px;background:rgba(13,148,136,0.07);border-radius:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div class="member-avatar" style="background:${memberColor(m.id)};width:36px;height:36px;font-size:14px">${m.name[0]}${m.br[0]}</div>
+            <div>
+              <div style="font-weight:600;font-size:14px">${memberDisplayName(m)}</div>
+              <div style="font-size:12px;color:var(--teal);font-family:monospace">${attended} dari ${eventsInScope.length} kegiatan hadir</div>
+            </div>
+          </div>
+          <div class="tbl-wrap"><table><thead><tr><th>Tanggal</th><th>Kegiatan</th><th>Jenis</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      }
+
+      // =========================================
+      // MEMBER CRUD
+      // =========================================
+      function addMember() {
+        const name = document.getElementById("f-mem-name").value.trim();
+        const nick = document.getElementById("f-mem-nick").value.trim();
+        const addr = document.getElementById("f-mem-addr").value.trim();
+        const phone = document.getElementById("f-mem-phone").value.trim();
+        const joined = document.getElementById("f-mem-joined").value;
+        if (!name) return showToast("Nama keluarga wajib diisi", "error");
+        const [n, b] = name
+          .split("/")
+          .map((s) => s.trim().replace(/^br\./i, "").trim());
+        const br = b || "";
+        const dup = appData.members.find(
+          (m) =>
+            m.name.toLowerCase() === n.toLowerCase() &&
+            m.br.toLowerCase() === (br || "").toLowerCase(),
+        );
+        if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
+        const newId = Math.max(...appData.members.map((m) => m.id), 0) + 1;
+        appData.members.push({
+          id: newId,
+          name: n,
+          br,
+          nick,
+          addr,
+          phone,
+          joined,
+        });
+        saveData();
+        closeModal("modal-add-member");
+        renderMembers();
+        populateDropdowns();
+        showToast("✅ Anggota baru berhasil didaftarkan");
+      }
+      function openEditMember(idx) {
+        const m = appData.members[idx];
+        document.getElementById("f-edit-mem-idx").value = idx;
+        document.getElementById("f-edit-mem-name").value = m.name;
+        document.getElementById("f-edit-mem-nick").value = m.nick || "";
+        document.getElementById("f-edit-mem-addr").value = m.addr || "";
+        document.getElementById("f-edit-mem-phone").value = m.phone || "";
+        openModal("modal-edit-member");
+      }
+      function saveEditMember() {
+        const idx = parseInt(document.getElementById("f-edit-mem-idx").value);
+        appData.members[idx].name = document
+          .getElementById("f-edit-mem-name")
+          .value.trim();
+        appData.members[idx].nick = document
+          .getElementById("f-edit-mem-nick")
+          .value.trim();
+        appData.members[idx].addr = document
+          .getElementById("f-edit-mem-addr")
+          .value.trim();
+        appData.members[idx].phone = document
+          .getElementById("f-edit-mem-phone")
+          .value.trim();
+        saveData();
+        closeModal("modal-edit-member");
+        renderMembers();
+        showToast("✅ Data anggota diperbarui");
+      }
+      function deleteMember(idx) {
+        if (!isAdmin || !confirm("Hapus anggota ini dari daftar?")) return;
+        appData.members.splice(idx, 1);
+        saveData();
+        renderMembers();
+        showToast("Anggota dihapus", "success");
+      }
+
+      // =========================================
+      // PENGUMUMAN
+      // =========================================
+      let currentPengYear = 2026;
+      function renderPengumuman() {
+        const years = [
+          ...new Set(appData.kegiatan.map((k) => getYear(k.date))),
+        ].sort((a, b) => b - a);
+        document.getElementById("pengumuman-year-tabs").innerHTML = years
+          .map(
+            (y) =>
+              `<div class="year-tab ${y === currentPengYear ? "active" : ""}" onclick="currentPengYear=${y};renderPengumuman()">${y}</div>`,
+          )
+          .join("");
+        const filtered = appData.kegiatan
+          .filter((k) => getYear(k.date) === currentPengYear)
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        document.getElementById("pengumuman-tbody").innerHTML = filtered
+          .map((k) => {
+            const tc = "type-" + k.type.toLowerCase().replace(/[^a-z]/g, "");
+            return `<tr><td>${fmtDate(k.date)}</td><td><span class="type-badge ${tc}">${k.type}</span></td><td><strong>${k.title}</strong></td><td style="color:var(--text-mid);font-size:13px">${k.desc || ""}${k.place ? " — " + k.place : ""}</td></tr>`;
+          })
+          .join("");
+      }
+
+      // =========================================
+      // ADRT
+      // =========================================
+      function renderADRT() {
+        document.getElementById("adrt-content").innerHTML = appData.adrt;
+      }
+      function saveADRT() {
+        appData.adrt = document.getElementById("f-adrt-content").value;
+        saveData();
+        closeModal("modal-adrt-edit");
+        renderADRT();
+        showToast("✅ ADRT berhasil diperbarui");
+      }
+
+      // =========================================
+      // DROPDOWNS
+      // =========================================
+      function populateDropdowns() {
+        const families = appData.members.map((m) => memberDisplayName(m));
+        ["f-inc-family", "f-bon-family"].forEach((id) => {
+          const sel = document.getElementById(id);
+          if (!sel) return;
+          const firstOpt = sel.options[0];
+          sel.innerHTML = "";
+          sel.appendChild(firstOpt || new Option("-- Pilih --", ""));
+          families.forEach((f) => {
+            const opt = document.createElement("option");
+            opt.value = f;
+            opt.textContent = f;
+            sel.appendChild(opt);
+          });
+        });
+      }
+
+      // =========================================
+      // INIT
+      // =========================================
+      loadData();
+      loadAttendance();
+      renderBeranda();
+      populateDropdowns();
+      updateAdminUI();
+      loadSavedBg();
+
+      const today = new Date().toISOString().split("T")[0];
+      ["f-keg-date", "f-inc-date", "f-exp-date", "f-mem-joined"].forEach(
+        (id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = today;
+        },
+      );
+    </script>
+
+    <script>
+      // ============================================
+      // FUNGSI DOWNLOAD LAPORAN EXCEL ADMIN
+      // ============================================
+      function downloadLaporanExcel() {
+        var status = document.getElementById("downloadStatus");
+        status.textContent = "⏳ Sedang membuat laporan...";
+        try {
+          var wb = XLSX.utils.book_new();
+          var tahun = new Date().getFullYear();
+          var tgl = new Date().toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          });
+          var org = "Parsahutaon Dos Roha Regency & Sekitarnya";
+
+          // SHEET 1: LAPORAN IURAN
+          var s1 = [
+            [org],
+            ["LAPORAN IURAN ANGGOTA " + tahun],
+            ["Dicetak: " + tgl],
+            [],
+          ];
+          var years = [2022, 2023, 2024, 2025, 2026];
+          var h1 = ["No", "Nama Keluarga", "Nama Panggilan", "Bergabung"];
+          years.forEach(function (y) {
+            h1.push(y + " Status");
+          });
+          s1.push(h1);
+          appData.members.forEach(function (m, i) {
+            var statusMap =
+              tahun === 2025 || true
+                ? years.map(function (y) {
+                    return y === 2025 ? iuranStatus2025 : iuranStatus[y] || {};
+                  })
+                : [];
+            var row = [
+              i + 1,
+              m.name + " / br." + m.br,
+              m.nick || "-",
+              m.joined || "-",
+            ];
+            years.forEach(function (y, yi) {
+              var sm = y === 2025 ? iuranStatus2025 : iuranStatus[y] || {};
+              var dn = memberDisplayName(m);
+              row.push(sm[dn] || "-");
+            });
+            s1.push(row);
+          });
+          var ws1 = XLSX.utils.aoa_to_sheet(s1);
+          ws1["!cols"] = [
+            { wch: 5 },
+            { wch: 30 },
+            { wch: 18 },
+            { wch: 14 },
+            { wch: 12 },
+            { wch: 12 },
+            { wch: 12 },
+            { wch: 12 },
+            { wch: 12 },
+          ];
+          ws1["!merges"] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 8 } },
+            { s: { r: 1, c: 0 }, e: { r: 1, c: 8 } },
+            { s: { r: 2, c: 0 }, e: { r: 2, c: 8 } },
+          ];
+          XLSX.utils.book_append_sheet(wb, ws1, "Laporan Iuran");
+
+          // SHEET 2: CASHFLOW
+          var s2 = [
+            [org],
+            ["LAPORAN KEUANGAN & CASHFLOW"],
+            ["Dicetak: " + tgl],
+            [],
+          ];
+          var tMasuk = appData.cashflow.reduce(function (s, c) {
+            return s + (c.in || 0);
+          }, 0);
+          var tKeluar = appData.cashflow.reduce(function (s, c) {
+            return s + (c.out || 0);
+          }, 0);
+          s2.push(
+            ["=== RINGKASAN ==="],
+            ["Total Pemasukan", tMasuk],
+            ["Total Pengeluaran", tKeluar],
+            ["Saldo Kas", tMasuk - tKeluar],
+            [],
+          );
+          s2.push([
+            "Tanggal",
+            "Keterangan",
+            "Masuk (Rp)",
+            "Keluar (Rp)",
+            "Saldo (Rp)",
+          ]);
+          var saldo2 = 10364300;
+          appData.cashflow
+            .slice()
+            .sort(function (a, b) {
+              return new Date(a.date) - new Date(b.date);
+            })
+            .forEach(function (c) {
+              saldo2 += (c.in || 0) - (c.out || 0);
+              s2.push([
+                c.date || "-",
+                c.desc || "-",
+                c.in || "",
+                c.out || "",
+                saldo2,
+              ]);
+            });
+          var ws2 = XLSX.utils.aoa_to_sheet(s2);
+          ws2["!cols"] = [
+            { wch: 14 },
+            { wch: 42 },
+            { wch: 16 },
+            { wch: 16 },
+            { wch: 18 },
+          ];
+          ws2["!merges"] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },
+            { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } },
+            { s: { r: 2, c: 0 }, e: { r: 2, c: 4 } },
+          ];
+          XLSX.utils.book_append_sheet(wb, ws2, "Keuangan & Cashflow");
+
+          // SHEET 3: KEHADIRAN
+          var s3 = [
+            [org],
+            ["LAPORAN KEHADIRAN ANGGOTA"],
+            ["Dicetak: " + tgl],
+            [],
+          ];
+          var allEvents = Object.values(attendanceData).sort(function (a, b) {
+            return new Date(a.date) - new Date(b.date);
+          });
+          if (allEvents.length > 0) {
+            var hdr3 = ["No", "Nama Keluarga"];
+            allEvents.forEach(function (ev) {
+              hdr3.push(ev.date.slice(0, 10) + " - " + ev.title.slice(0, 20));
+            });
+            hdr3.push("Jumlah Hadir", "Total Event", "Persentase (%)");
+            s3.push(hdr3);
+            appData.members.forEach(function (m, i) {
+              var row = [i + 1, memberDisplayName(m)];
+              var hadir = 0;
+              allEvents.forEach(function (ev) {
+                var h = ev.present && ev.present.includes(m.id);
+                row.push(h ? "Hadir" : "Tidak Hadir");
+                if (h) hadir++;
+              });
+              row.push(
+                hadir,
+                allEvents.length,
+                allEvents.length > 0
+                  ? Math.round((hadir / allEvents.length) * 100) + "%"
+                  : "0%",
+              );
+              s3.push(row);
+            });
+          } else {
+            s3.push(["Belum ada data kehadiran yang diisi."]);
+          }
+          var ws3 = XLSX.utils.aoa_to_sheet(s3);
+          ws3["!merges"] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 5 } },
+            { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } },
+            { s: { r: 2, c: 0 }, e: { r: 2, c: 5 } },
+          ];
+          XLSX.utils.book_append_sheet(wb, ws3, "Kehadiran Anggota");
+
+          var fname =
+            "Laporan_DosRoha_" +
+            tahun +
+            "_" +
+            new Date().toISOString().slice(0, 10) +
+            ".xlsx";
+          XLSX.writeFile(wb, fname);
+          status.textContent =
+            "✅ Berhasil! File " + fname + " sudah terdownload.";
+        } catch (err) {
+          console.error(err);
+          status.textContent = "❌ Gagal. Cek konsol browser untuk detail.";
+        }
+      }
+      function updateAdminDownloadVisibility(isLoggedIn) {
+        var el = document.getElementById("adminDownloadSection");
+        if (el) el.style.display = isLoggedIn ? "block" : "none";
+      }
+      function updateTahunBerdiri() {
+        const el = document.getElementById("stat-tahun");
+        if (el) el.textContent = new Date().getFullYear() - 2010;
+      }
+      updateTahunBerdiri();
+      function updateStatKegiatan() {
+        const tahunIni = new Date().getFullYear();
+        const data = JSON.parse(
+          localStorage.getItem("parsahutaon_data") || "{}",
+        );
+        const kegiatan = data.kegiatan || [];
+        const jumlahTahunIni = kegiatan.filter(
+          (k) => new Date(k.date).getFullYear() === tahunIni,
+        ).length;
+        const jumlahTahunLalu = kegiatan.filter(
+          (k) => new Date(k.date).getFullYear() === tahunIni - 1,
+        ).length;
+        const el = document.getElementById("stat-kegiatan");
+        const elLabel = document.querySelector(
+          ".hero-stat-label[for='stat-kegiatan']",
+        );
+        if (el) {
+          if (jumlahTahunIni >= 3) {
+            el.textContent = jumlahTahunIni;
+          } else if (jumlahTahunLalu > 0) {
+            el.textContent = jumlahTahunLalu + "+";
+          } else {
+            el.textContent = "20+";
+          }
+        }
+      }
+      updateStatKegiatan();
+    </script>
+  </body>
+</html>
