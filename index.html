@@ -5587,5 +5587,311 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
       }
       updateStatKegiatan();
     </script>
+    <script>
+      // ============================================
+      // FIX: DROPDOWN KELUARGA & UPLOAD BUKTI BAYAR
+      // ============================================
+
+      // 1. Pastikan dropdown selalu terisi dari appData.members
+      function populateDropdownsFix() {
+        const families = appData.members
+          .slice()
+          .sort((a, b) =>
+            memberDisplayName(a).localeCompare(memberDisplayName(b)),
+          )
+          .map((m) => ({
+            value: memberDisplayName(m),
+            label: memberDisplayName(m),
+          }));
+
+        ["f-inc-family", "f-bon-family"].forEach((id) => {
+          const sel = document.getElementById(id);
+          if (!sel) return;
+          const currentVal = sel.value;
+          sel.innerHTML = `<option value="">-- Pilih Keluarga --</option>`;
+          families.forEach((f) => {
+            const opt = document.createElement("option");
+            opt.value = f.value;
+            opt.textContent = f.label;
+            if (f.value === currentVal) opt.selected = true;
+            sel.appendChild(opt);
+          });
+        });
+      }
+
+      // 2. Tambahkan field upload bukti ke modal Tambah Pemasukan
+      function injectUploadBukti() {
+        const modal = document.getElementById("modal-add-income");
+        if (!modal) return;
+        if (document.getElementById("f-inc-bukti-wrap")) return; // Sudah ada, skip
+
+        // Cari tombol Simpan/Batal
+        const btnRow = modal.querySelector(
+          'div[style*="justify-content: flex-end"]',
+        );
+        if (!btnRow) return;
+
+        // Buat elemen upload
+        const wrap = document.createElement("div");
+        wrap.className = "form-group";
+        wrap.id = "f-inc-bukti-wrap";
+        wrap.innerHTML = `
+      <label style="display:block;font-size:12px;font-weight:600;color:var(--text-mid);
+        margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;
+        font-family:'JetBrains Mono',monospace;">
+        Bukti Pembayaran (Opsional)
+      </label>
+      <div id="bukti-drop-area" style="
+        border: 2px dashed var(--border);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #fafafa;
+        position: relative;
+      ">
+        <input type="file" id="f-inc-bukti" accept="image/*,.pdf"
+          style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
+        <div id="bukti-placeholder">
+          <div style="font-size:1.8rem;margin-bottom:6px">📎</div>
+          <div style="font-size:13px;color:var(--text-mid)">
+            Klik atau drag foto bukti transfer di sini
+          </div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:4px">
+            JPG, PNG, atau PDF · Maks 2MB
+          </div>
+        </div>
+        <div id="bukti-preview" style="display:none"></div>
+      </div>
+      <div id="bukti-info" style="font-size:11px;color:var(--teal);
+        margin-top:6px;font-family:'JetBrains Mono',monospace;display:none">
+      </div>
+    `;
+        btnRow.parentNode.insertBefore(wrap, btnRow);
+
+        // Event: preview gambar setelah pilih file
+        const fileInput = document.getElementById("f-inc-bukti");
+        const dropArea = document.getElementById("bukti-drop-area");
+
+        fileInput.addEventListener("change", function () {
+          handleBuktiFile(this.files[0]);
+        });
+
+        // Drag & drop styling
+        dropArea.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          dropArea.style.borderColor = "var(--teal)";
+          dropArea.style.background = "rgba(13,148,136,0.05)";
+        });
+        dropArea.addEventListener("dragleave", () => {
+          dropArea.style.borderColor = "var(--border)";
+          dropArea.style.background = "#fafafa";
+        });
+        dropArea.addEventListener("drop", (e) => {
+          e.preventDefault();
+          dropArea.style.borderColor = "var(--border)";
+          dropArea.style.background = "#fafafa";
+          const file = e.dataTransfer.files[0];
+          if (file) handleBuktiFile(file);
+        });
+      }
+
+      function handleBuktiFile(file) {
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+          showToast("File terlalu besar, maksimal 2MB", "error");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const placeholder = document.getElementById("bukti-placeholder");
+          const preview = document.getElementById("bukti-preview");
+          const info = document.getElementById("bukti-info");
+
+          if (file.type.startsWith("image/")) {
+            placeholder.style.display = "none";
+            preview.style.display = "block";
+            preview.innerHTML = `
+          <img src="${e.target.result}"
+            style="max-width:100%;max-height:180px;border-radius:8px;
+              object-fit:contain;margin-bottom:6px;" />
+          <div style="font-size:12px;color:var(--teal)">${file.name}</div>
+          <button onclick="clearBukti()" style="margin-top:6px;background:none;
+            border:none;color:var(--danger);cursor:pointer;font-size:12px;">
+            ✕ Hapus foto
+          </button>`;
+          } else {
+            // PDF
+            placeholder.style.display = "none";
+            preview.style.display = "block";
+            preview.innerHTML = `
+          <div style="font-size:2.5rem">📄</div>
+          <div style="font-size:12px;color:var(--navy);margin-top:4px">${file.name}</div>
+          <button onclick="clearBukti()" style="margin-top:6px;background:none;
+            border:none;color:var(--danger);cursor:pointer;font-size:12px;">
+            ✕ Hapus file
+          </button>`;
+          }
+
+          // Simpan base64 ke dataset untuk dipakai saat save
+          const dropArea = document.getElementById("bukti-drop-area");
+          dropArea.dataset.buktiBase64 = e.target.result;
+          dropArea.dataset.buktiName = file.name;
+          dropArea.dataset.buktiType = file.type;
+
+          info.style.display = "block";
+          info.textContent = `✅ ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function clearBukti() {
+        document.getElementById("f-inc-bukti").value = "";
+        document.getElementById("bukti-placeholder").style.display = "block";
+        document.getElementById("bukti-preview").style.display = "none";
+        document.getElementById("bukti-preview").innerHTML = "";
+        document.getElementById("bukti-info").style.display = "none";
+        const dropArea = document.getElementById("bukti-drop-area");
+        delete dropArea.dataset.buktiBase64;
+        delete dropArea.dataset.buktiName;
+        delete dropArea.dataset.buktiType;
+      }
+
+      // 3. Reset form upload setiap kali modal dibuka
+      const origOpenModal = openModal;
+      window.openModal = function (id) {
+        origOpenModal(id);
+        if (id === "modal-add-income") {
+          populateDropdownsFix();
+          // Reset upload bukti
+          setTimeout(() => {
+            clearBukti();
+          }, 50);
+        }
+        if (id === "modal-add-bonataon-entry") {
+          populateDropdownsFix();
+        }
+      };
+
+      // 4. Override addIncome untuk simpan bukti ke cashflow
+      const origAddIncome = addIncome;
+      window.addIncome = function () {
+        // Ambil bukti jika ada
+        const dropArea = document.getElementById("bukti-drop-area");
+        const buktiBase64 = dropArea ? dropArea.dataset.buktiBase64 : null;
+        const buktiName = dropArea ? dropArea.dataset.buktiName : null;
+        const buktiType = dropArea ? dropArea.dataset.buktiType : null;
+
+        // Validasi manual sebelum addIncome asli
+        const date = document.getElementById("f-inc-date").value;
+        const amount =
+          parseInt(document.getElementById("f-inc-amount").value) || 0;
+        if (!date || !amount) {
+          showToast("Tanggal dan nominal wajib diisi", "error");
+          return;
+        }
+
+        // Panggil fungsi asli
+        origAddIncome();
+
+        // Setelah save, tambahkan bukti ke entry terakhir
+        if (buktiBase64 && appData.cashflow.length > 0) {
+          const last = appData.cashflow[appData.cashflow.length - 1];
+          last.bukti = buktiBase64;
+          last.buktiName = buktiName;
+          last.buktiType = buktiType;
+          saveData();
+        }
+      };
+
+      // 5. Tampilkan ikon bukti di tabel cashflow (patch renderKeuangan)
+      const origRenderKeuangan = renderKeuangan;
+      window.renderKeuangan = function () {
+        origRenderKeuangan();
+        // Tambahkan ikon bukti di kolom keterangan
+        const tbody = document.getElementById("cashflow-tbody");
+        if (!tbody) return;
+        const { rows } = computeCashflow(currentKeuYear);
+        const trs = tbody.querySelectorAll("tr");
+        rows.forEach((r, i) => {
+          if (!r.bukti) return;
+          const tr = trs[i];
+          if (!tr) return;
+          const descTd = tr.querySelectorAll("td")[1];
+          if (!descTd) return;
+          const btn = document.createElement("button");
+          btn.title = "Lihat bukti pembayaran";
+          btn.style.cssText =
+            "background:none;border:none;cursor:pointer;font-size:14px;margin-left:4px;vertical-align:middle";
+          btn.textContent = "🧾";
+          btn.onclick = () => showBuktiModal(r.bukti, r.buktiName, r.buktiType);
+          descTd.appendChild(btn);
+        });
+      };
+
+      // 6. Modal untuk lihat bukti
+      function showBuktiModal(base64, name, type) {
+        let existing = document.getElementById("modal-lihat-bukti");
+        if (existing) existing.remove();
+
+        const isImage = type && type.startsWith("image/");
+        const content = isImage
+          ? `<img src="${base64}" style="max-width:100%;border-radius:8px;" />`
+          : `<div style="text-align:center;padding:20px">
+          <div style="font-size:3rem">📄</div>
+          <p style="margin:12px 0">${name}</p>
+          <a href="${base64}" download="${name}"
+            style="background:var(--teal);color:white;padding:8px 16px;
+              border-radius:8px;text-decoration:none;font-size:13px">
+            ⬇️ Download PDF
+          </a>
+        </div>`;
+
+        const overlay = document.createElement("div");
+        overlay.id = "modal-lihat-bukti";
+        overlay.className = "modal-overlay show";
+        overlay.innerHTML = `
+      <div class="modal" style="max-width:500px">
+        <div class="modal-title">
+          🧾 Bukti Pembayaran
+          <button class="modal-close" onclick="
+            document.getElementById('modal-lihat-bukti').remove()">✕</button>
+        </div>
+        <p style="font-size:12px;color:var(--text-light);
+          margin-bottom:12px;font-family:monospace">${name || "bukti"}</p>
+        ${content}
+        ${
+          isImage
+            ? `<div style="text-align:center;margin-top:12px">
+          <a href="${base64}" download="${name}"
+            style="font-size:13px;color:var(--teal)">⬇️ Download gambar</a>
+        </div>`
+            : ""
+        }
+      </div>`;
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) overlay.remove();
+        });
+        document.body.appendChild(overlay);
+      }
+
+      // 7. Jalankan saat halaman siap
+      document.addEventListener("DOMContentLoaded", function () {
+        populateDropdownsFix();
+        injectUploadBukti();
+      });
+
+      // Fallback jika DOMContentLoaded sudah lewat
+      if (
+        document.readyState === "complete" ||
+        document.readyState === "interactive"
+      ) {
+        setTimeout(() => {
+          populateDropdownsFix();
+          injectUploadBukti();
+        }, 300);
+      }
+    </script>
   </body>
 </html>
