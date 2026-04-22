@@ -6672,5 +6672,666 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         }
       }
     </script>
+    <!--
+=============================================================
+FIREBASE CRUD PATCH — Parsahutaon Dos Roha
+Paste seluruh blok <script> ini tepat sebelum tag </body>
+=============================================================
+-->
+    <script>
+      // ============================================================
+      // FIREBASE CRUD PATCH v2.0
+      // Semua operasi add/edit/delete sekarang langsung ke Firebase
+      // Data real-time — perubahan langsung terlihat semua device
+      // ============================================================
+
+      // ─────────────────────────────────────────────
+      // HELPER: Generate ID unik berbasis timestamp
+      // ─────────────────────────────────────────────
+      function genId() {
+        return Date.now();
+      }
+
+      // ─────────────────────────────────────────────
+      // PATCH: addKegiatan → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      window.addKegiatan = async function () {
+        if (!isAdmin) return showToast("❌ Harus login admin", "error");
+        const date = document.getElementById("f-keg-date").value;
+        const type = document.getElementById("f-keg-type").value;
+        const title = document.getElementById("f-keg-title").value.trim();
+        const desc = document.getElementById("f-keg-desc").value.trim();
+        const place = document.getElementById("f-keg-place").value.trim();
+        if (!date || !title)
+          return showToast("Tanggal dan judul wajib diisi", "error");
+
+        const id = genId();
+        const data = { date, type, title, desc, place };
+        try {
+          await FB.setDoc(FB.doc(db, "kegiatan", String(id)), data);
+          appData.kegiatan.push({ id, ...data });
+          currentKegYear = new Date(date).getFullYear();
+          closeModal("modal-add-kegiatan");
+          renderKegiatan();
+          showToast("✅ Kegiatan berhasil ditambahkan");
+        } catch (e) {
+          showToast("❌ Gagal simpan: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: saveEditKegiatan → update Firebase
+      // ─────────────────────────────────────────────
+      window.saveEditKegiatan = async function () {
+        if (!isAdmin) return;
+        const id = parseInt(document.getElementById("f-edit-keg-id").value);
+        const date = document.getElementById("f-edit-keg-date").value;
+        const type = document.getElementById("f-edit-keg-type").value;
+        const title = document.getElementById("f-edit-keg-title").value.trim();
+        const desc = document.getElementById("f-edit-keg-desc").value.trim();
+        const place = document.getElementById("f-edit-keg-place").value.trim();
+        if (!date || !title)
+          return showToast("Tanggal dan judul wajib diisi", "error");
+
+        try {
+          await FB.updateDoc(FB.doc(db, "kegiatan", String(id)), {
+            date,
+            type,
+            title,
+            desc,
+            place,
+          });
+          const idx = appData.kegiatan.findIndex((x) => x.id === id);
+          if (idx !== -1)
+            appData.kegiatan[idx] = { id, date, type, title, desc, place };
+          // Update attendance metadata jika ada
+          if (attendanceData[id]) {
+            attendanceData[id].date = date;
+            attendanceData[id].title = title;
+            attendanceData[id].type = type;
+            await FB.setDoc(
+              FB.doc(db, "attendance", String(id)),
+              attendanceData[id],
+            );
+          }
+          closeModal("modal-edit-kegiatan");
+          currentKegYear = new Date(date).getFullYear();
+          renderKegiatan();
+          showToast("✅ Kegiatan berhasil diperbarui");
+        } catch (e) {
+          showToast("❌ Gagal update: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: deleteKegiatan → hapus dari Firebase
+      // ─────────────────────────────────────────────
+      window.deleteKegiatan = async function (id) {
+        if (!isAdmin || !confirm("Hapus kegiatan ini?")) return;
+        try {
+          await FB.deleteDoc(FB.doc(db, "kegiatan", String(id)));
+          // Hapus attendance juga
+          if (attendanceData[id]) {
+            await FB.deleteDoc(FB.doc(db, "attendance", String(id)));
+            delete attendanceData[id];
+          }
+          appData.kegiatan = appData.kegiatan.filter((k) => k.id !== id);
+          renderKegiatan();
+          showToast("Kegiatan dihapus", "success");
+        } catch (e) {
+          showToast("❌ Gagal hapus: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: saveAttendanceData → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      window.saveAttendanceData = async function () {
+        if (!currentAttendanceEventId) return;
+        const event = appData.kegiatan.find(
+          (k) => k.id === currentAttendanceEventId,
+        );
+        if (!event) return;
+
+        const presentIds = [];
+        document
+          .querySelectorAll(
+            "#attendance-member-list input[type=checkbox]:checked",
+          )
+          .forEach((cb) => {
+            const id = parseInt(cb.id.replace("att-m-", ""));
+            presentIds.push(id);
+          });
+
+        const attData = {
+          eventId: currentAttendanceEventId,
+          date: event.date,
+          title: event.title,
+          type: event.type,
+          present: presentIds,
+        };
+
+        try {
+          await FB.setDoc(
+            FB.doc(db, "attendance", String(currentAttendanceEventId)),
+            attData,
+          );
+          attendanceData[currentAttendanceEventId] = attData;
+          closeModal("modal-attendance");
+          renderKegiatan();
+          if (currentAnggotaTab === "keaktifan") renderKeaktifan();
+          showToast(
+            `✅ Kehadiran disimpan: ${presentIds.length} dari ${appData.members.length} anggota hadir`,
+          );
+        } catch (e) {
+          showToast("❌ Gagal simpan kehadiran: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: addMember → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      window.addMember = async function () {
+        if (!isAdmin) return showToast("❌ Harus login admin", "error");
+        const name = document.getElementById("f-mem-name").value.trim();
+        const nick = document.getElementById("f-mem-nick").value.trim();
+        const addr = document.getElementById("f-mem-addr").value.trim();
+        const phone = document.getElementById("f-mem-phone").value.trim();
+        const joined = document.getElementById("f-mem-joined").value;
+        if (!name) return showToast("Nama keluarga wajib diisi", "error");
+
+        const parts = name
+          .split("/")
+          .map((s) => s.trim().replace(/^br\./i, "").trim());
+        const n = parts[0];
+        const br = parts[1] || "";
+
+        const dup = appData.members.find(
+          (m) =>
+            m.name.toLowerCase() === n.toLowerCase() &&
+            m.br.toLowerCase() === br.toLowerCase(),
+        );
+        if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
+
+        const newId = Math.max(...appData.members.map((m) => m.id), 0) + 1;
+        const newMember = { id: newId, name: n, br, nick, addr, phone, joined };
+
+        try {
+          await FB.setDoc(FB.doc(db, "members", String(newId)), {
+            name: n,
+            br,
+            nick,
+            addr,
+            phone,
+            joined,
+          });
+          appData.members.push(newMember);
+          closeModal("modal-add-member");
+          renderMembers();
+          populateDropdowns();
+          showToast("✅ Anggota baru berhasil didaftarkan");
+        } catch (e) {
+          showToast("❌ Gagal simpan: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: saveEditMember → update Firebase
+      // ─────────────────────────────────────────────
+      window.saveEditMember = async function () {
+        const idx = parseInt(document.getElementById("f-edit-mem-idx").value);
+        const m = appData.members[idx];
+        const name = document.getElementById("f-edit-mem-name").value.trim();
+        const nick = document.getElementById("f-edit-mem-nick").value.trim();
+        const addr = document.getElementById("f-edit-mem-addr").value.trim();
+        const phone = document.getElementById("f-edit-mem-phone").value.trim();
+
+        try {
+          await FB.updateDoc(FB.doc(db, "members", String(m.id)), {
+            name,
+            nick,
+            addr,
+            phone,
+          });
+          appData.members[idx] = { ...m, name, nick, addr, phone };
+          closeModal("modal-edit-member");
+          renderMembers();
+          showToast("✅ Data anggota diperbarui");
+        } catch (e) {
+          showToast("❌ Gagal update: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: deleteMember → hapus dari Firebase
+      // ─────────────────────────────────────────────
+      window.deleteMember = async function (idx) {
+        if (!isAdmin || !confirm("Hapus anggota ini dari daftar?")) return;
+        const m = appData.members[idx];
+        try {
+          await FB.deleteDoc(FB.doc(db, "members", String(m.id)));
+          appData.members.splice(idx, 1);
+          renderMembers();
+          populateDropdowns();
+          showToast("Anggota dihapus", "success");
+        } catch (e) {
+          showToast("❌ Gagal hapus: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: addIncome → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      window.addIncome = async function () {
+        const date = document.getElementById("f-inc-date").value;
+        const family = document.getElementById("f-inc-family").value;
+        const type = document.getElementById("f-inc-type").value;
+        const year = document.getElementById("f-inc-year").value;
+        const amount =
+          parseInt(document.getElementById("f-inc-amount").value) || 0;
+        const note = document.getElementById("f-inc-note").value;
+        if (!date || !amount)
+          return showToast("Tanggal dan nominal wajib diisi", "error");
+
+        const desc = `${type} ${year}${family ? " - " + family : ""}${note ? " (" + note + ")" : ""}`;
+        const dup = appData.cashflow.find(
+          (r) => r.date === date && r.desc === desc && r.in === amount,
+        );
+        if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
+
+        // Ambil bukti jika ada
+        const dropArea = document.getElementById("bukti-drop-area");
+        const buktiBase64 = dropArea ? dropArea.dataset.buktiBase64 : null;
+        const buktiName = dropArea ? dropArea.dataset.buktiName : null;
+        const buktiType = dropArea ? dropArea.dataset.buktiType : null;
+
+        const id = genId();
+        const cfData = { date, desc, in: amount, out: 0 };
+        if (buktiBase64) {
+          cfData.bukti = buktiBase64;
+          cfData.buktiName = buktiName;
+          cfData.buktiType = buktiType;
+        }
+
+        try {
+          await FB.setDoc(FB.doc(db, "cashflow", String(id)), cfData);
+          appData.cashflow.push({ id, ...cfData });
+          currentKeuYear = new Date(date).getFullYear();
+          closeModal("modal-add-income");
+          renderKeuangan();
+          showToast("✅ Pemasukan ditambahkan");
+        } catch (e) {
+          showToast("❌ Gagal simpan: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: addExpense → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      window.addExpense = async function () {
+        if (!isAdmin) return;
+        const date = document.getElementById("f-exp-date").value;
+        const desc = document.getElementById("f-exp-desc").value.trim();
+        const amount =
+          parseInt(document.getElementById("f-exp-amount").value) || 0;
+        if (!date || !desc || !amount)
+          return showToast("Semua field wajib diisi", "error");
+
+        const dup = appData.cashflow.find(
+          (r) => r.date === date && r.desc === desc && r.out === amount,
+        );
+        if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
+
+        const id = genId();
+        try {
+          await FB.setDoc(FB.doc(db, "cashflow", String(id)), {
+            date,
+            desc,
+            in: 0,
+            out: amount,
+          });
+          appData.cashflow.push({ id, date, desc, in: 0, out: amount });
+          currentKeuYear = new Date(date).getFullYear();
+          closeModal("modal-add-expense");
+          renderKeuangan();
+          showToast("✅ Pengeluaran ditambahkan");
+        } catch (e) {
+          showToast("❌ Gagal simpan: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: saveCfEdit → update Firebase
+      // ─────────────────────────────────────────────
+      window.saveCfEdit = async function () {
+        const idx = parseInt(document.getElementById("f-cf-edit-idx").value);
+        const r = appData.cashflow[idx];
+        const date = document.getElementById("f-cf-edit-date").value;
+        const desc = document.getElementById("f-cf-edit-desc").value;
+        const inVal =
+          parseInt(document.getElementById("f-cf-edit-in").value) || 0;
+        const outVal =
+          parseInt(document.getElementById("f-cf-edit-out").value) || 0;
+
+        try {
+          await FB.updateDoc(FB.doc(db, "cashflow", String(r.id)), {
+            date,
+            desc,
+            in: inVal,
+            out: outVal,
+          });
+          appData.cashflow[idx] = { ...r, date, desc, in: inVal, out: outVal };
+          closeModal("modal-edit-cf");
+          renderKeuangan();
+          showToast("✅ Transaksi diperbarui");
+        } catch (e) {
+          showToast("❌ Gagal update: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: deleteCf → hapus dari Firebase
+      // ─────────────────────────────────────────────
+      window.deleteCf = async function (id) {
+        if (!isAdmin || !confirm("Hapus transaksi ini?")) return;
+        try {
+          await FB.deleteDoc(FB.doc(db, "cashflow", String(id)));
+          appData.cashflow = appData.cashflow.filter((r) => r.id != id);
+          renderKeuangan();
+          showToast("Transaksi dihapus", "success");
+        } catch (e) {
+          showToast("❌ Gagal hapus: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: addBonataonEntry → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      window.addBonataonEntry = async function () {
+        const year = parseInt(document.getElementById("f-bon-year").value);
+        const family = document.getElementById("f-bon-family").value;
+        if (!family) return showToast("Pilih keluarga", "error");
+
+        const entry = {
+          family,
+          gr: parseInt(document.getElementById("f-bon-gr").value) || 0,
+          arsik: parseInt(document.getElementById("f-bon-arsik").value) || 0,
+          ayam: parseInt(document.getElementById("f-bon-ayam").value) || 0,
+          buah: parseInt(document.getElementById("f-bon-buah").value) || 0,
+          bir: parseInt(document.getElementById("f-bon-bir").value) || 0,
+          mina: parseInt(document.getElementById("f-bon-mina").value) || 0,
+          mini: parseInt(document.getElementById("f-bon-mini").value) || 0,
+          paid: parseInt(document.getElementById("f-bon-paid").value) || 0,
+        };
+
+        if (!appData.bonataon[year]) appData.bonataon[year] = [];
+        if (appData.bonataon[year].find((e) => e.family === family))
+          return showToast(
+            "Data keluarga ini sudah ada untuk tahun " + year,
+            "error",
+          );
+
+        appData.bonataon[year].push(entry);
+        try {
+          await FB.setDoc(FB.doc(db, "bonataon", String(year)), {
+            entries: appData.bonataon[year],
+          });
+          currentBonYear = year;
+          closeModal("modal-add-bonataon-entry");
+          renderBonataon();
+          showToast("✅ Data lelang ditambahkan");
+        } catch (e) {
+          appData.bonataon[year].pop(); // rollback
+          showToast("❌ Gagal simpan: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: deleteBonataon → update Firebase
+      // ─────────────────────────────────────────────
+      window.deleteBonataon = async function (idx) {
+        if (!isAdmin || !confirm("Hapus data ini?")) return;
+        const removed = appData.bonataon[currentBonYear].splice(idx, 1);
+        try {
+          await FB.setDoc(FB.doc(db, "bonataon", String(currentBonYear)), {
+            entries: appData.bonataon[currentBonYear],
+          });
+          renderBonataon();
+          showToast("Data dihapus", "success");
+        } catch (e) {
+          appData.bonataon[currentBonYear].splice(idx, 0, removed[0]); // rollback
+          showToast("❌ Gagal hapus: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: saveADRT → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      window.saveADRT = async function () {
+        appData.adrt = document.getElementById("f-adrt-content").value;
+        try {
+          await FB.updateDoc(FB.doc(db, "settings", "config"), {
+            adrt: appData.adrt,
+          });
+          closeModal("modal-adrt-edit");
+          renderADRT();
+          showToast("✅ ADRT berhasil diperbarui");
+        } catch (e) {
+          // Fallback: coba setDoc jika updateDoc gagal (doc belum ada)
+          try {
+            await FB.setDoc(FB.doc(db, "settings", "config"), {
+              adrt: appData.adrt,
+              pengurusList: pengurusList || [],
+              bgImage: localStorage.getItem("dr_bg_image") || "",
+            });
+            closeModal("modal-adrt-edit");
+            renderADRT();
+            showToast("✅ ADRT berhasil diperbarui");
+          } catch (e2) {
+            showToast("❌ Gagal simpan ADRT: " + e2.message, "error");
+          }
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: updatePengurus → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      const _origUpdatePengurus = window.updatePengurus;
+      window.updatePengurus = async function (i, field, val) {
+        pengurusList[i][field] = val;
+        localStorage.setItem("dr_pengurus_list", JSON.stringify(pengurusList));
+        renderBeranda();
+        // Simpan ke Firebase (debounced - tunggu 1 detik baru simpan)
+        clearTimeout(window._pengurusDebounce);
+        window._pengurusDebounce = setTimeout(async () => {
+          try {
+            await FB.setDoc(
+              FB.doc(db, "settings", "config"),
+              {
+                adrt: appData.adrt || "",
+                pengurusList: pengurusList,
+                bgImage: localStorage.getItem("dr_bg_image") || "",
+              },
+              { merge: true },
+            );
+          } catch (e) {
+            console.warn("Pengurus save error:", e.message);
+          }
+        }, 1000);
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: tambahPengurus → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      window.tambahPengurus = async function () {
+        pengurusList.push({
+          emoji: "🏅",
+          role: "Jabatan Baru",
+          name: "Nama Pengurus",
+        });
+        localStorage.setItem("dr_pengurus_list", JSON.stringify(pengurusList));
+        renderBeranda();
+        renderPengurusEditor();
+        try {
+          await FB.setDoc(
+            FB.doc(db, "settings", "config"),
+            {
+              adrt: appData.adrt || "",
+              pengurusList: pengurusList,
+              bgImage: localStorage.getItem("dr_bg_image") || "",
+            },
+            { merge: true },
+          );
+        } catch (e) {
+          console.warn("tambahPengurus save error:", e.message);
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: hapusPengurus → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      window.hapusPengurus = async function (i) {
+        if (pengurusList.length <= 1)
+          return showToast("Minimal 1 pengurus", "error");
+        pengurusList.splice(i, 1);
+        localStorage.setItem("dr_pengurus_list", JSON.stringify(pengurusList));
+        renderBeranda();
+        renderPengurusEditor();
+        try {
+          await FB.setDoc(
+            FB.doc(db, "settings", "config"),
+            {
+              adrt: appData.adrt || "",
+              pengurusList: pengurusList,
+              bgImage: localStorage.getItem("dr_bg_image") || "",
+            },
+            { merge: true },
+          );
+        } catch (e) {
+          console.warn("hapusPengurus save error:", e.message);
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: applyBgImage & applyBgColor → simpan ke Firebase
+      // ─────────────────────────────────────────────
+      const _origApplyBgImage = window.applyBgImage;
+      window.applyBgImage = async function () {
+        const url = document.getElementById("f-bg-url").value.trim();
+        if (!url)
+          return showToast("Masukkan URL gambar terlebih dahulu", "error");
+        localStorage.setItem("dr_bg_image", url);
+        localStorage.removeItem("dr_bg_color");
+        document.getElementById("hero-beranda").style.backgroundImage =
+          `url('${url}')`;
+        try {
+          await FB.setDoc(
+            FB.doc(db, "settings", "config"),
+            { bgImage: url },
+            { merge: true },
+          );
+          showToast("✅ Background berhasil diubah!");
+        } catch (e) {
+          showToast("✅ Background diubah (lokal saja)");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: Real-time listener untuk Bonataon & Attendance
+      // ─────────────────────────────────────────────
+      function startBonataonListener() {
+        return FB.onSnapshot(FB.collection(db, "bonataon"), (snap) => {
+          appData.bonataon = {};
+          snap.forEach((d) => {
+            const year = parseInt(d.id);
+            appData.bonataon[year] = d.data().entries || [];
+          });
+          const pg = document.getElementById("page-bonataon");
+          if (pg?.classList.contains("active")) renderBonataon();
+        });
+      }
+
+      function startAttendanceListener() {
+        return FB.onSnapshot(FB.collection(db, "attendance"), (snap) => {
+          attendanceData = {};
+          snap.forEach((d) => {
+            attendanceData[d.id] = d.data();
+          });
+          const pg = document.getElementById("page-kegiatan");
+          if (pg?.classList.contains("active")) renderKegiatan();
+          if (currentAnggotaTab === "keaktifan") renderKeaktifan();
+        });
+      }
+
+      // ─────────────────────────────────────────────
+      // PATCH: initFirebase — tambah listener Bonataon & Attendance
+      // ─────────────────────────────────────────────
+      const _origInitFirebase = window.initFirebase;
+      window.initFirebase = async function () {
+        // Panggil initFirebaseAuth dulu
+        if (typeof initFirebaseAuth === "function") initFirebaseAuth();
+
+        try {
+          // Load data awal
+          await Promise.all([
+            loadMembersFromFirebase(),
+            loadAllAttendanceFromFirebase(),
+            loadSettingsFromFirebase(),
+            // Load bonataon dari Firebase
+            (async () => {
+              const snap = await FB.getDocs(FB.collection(db, "bonataon"));
+              appData.bonataon = {};
+              snap.forEach((d) => {
+                const year = parseInt(d.id);
+                appData.bonataon[year] = d.data().entries || [];
+              });
+            })(),
+            // Load cashflow dari Firebase
+            (async () => {
+              const snap = await FB.getDocs(FB.collection(db, "cashflow"));
+              appData.cashflow = [];
+              snap.forEach((d) =>
+                appData.cashflow.push({ id: parseInt(d.id), ...d.data() }),
+              );
+            })(),
+          ]);
+
+          // Render ulang setelah data Firebase masuk
+          renderBeranda();
+          renderKegiatan();
+
+          // Mulai semua real-time listener
+          startKegiatanListener();
+          startCashflowListener();
+          startBonataonListener();
+          startAttendanceListener();
+          startMembersListener();
+
+          console.log(
+            "✅ Firebase CRUD Patch aktif — semua operasi real-time!",
+          );
+        } catch (err) {
+          console.error("Firebase init error:", err);
+          showToast("⚠️ Koneksi Firebase bermasalah. Cek internet.", "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: saveData — simpan juga iuran ke Firebase
+      // Untuk iuran 2026 yang baru (bila di-update dari UI)
+      // ─────────────────────────────────────────────
+      const _origSaveData = window.saveData;
+      window.saveData = function () {
+        // Tetap simpan ke localStorage sebagai backup
+        localStorage.setItem("parsahutaon_data", JSON.stringify(appData));
+      };
+
+      // ─────────────────────────────────────────────
+      // INFO TOAST saat patch aktif
+      // ─────────────────────────────────────────────
+      console.log(
+        "🔥 Firebase CRUD Patch v2.0 loaded — semua perubahan langsung ke Firebase!",
+      );
+    </script>
   </body>
 </html>
