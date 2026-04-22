@@ -6540,5 +6540,89 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
       };
       renderKegiatan();
     </script>
+    <script>
+      // ============================================
+      // FIREBASE AUTH INTEGRATION
+      // ============================================
+
+      // Email admin yang diset di Firebase Authentication
+      // Ganti sesuai email yang kamu daftarkan di Firebase Auth
+      const ADMIN_EMAIL_FIREBASE = null; // akan diisi dari input f-admin-email
+
+      function initFirebaseAuth() {
+        FB.onAuthStateChanged(auth, (user) => {
+          if (user) {
+            console.log("✅ Firebase Auth: logged in as", user.email);
+            isAdmin = true;
+            updateAdminDownloadVisibility(true);
+            document.getElementById("admin-toggle-btn").textContent =
+              "✅ Admin (Keluar)";
+            document
+              .getElementById("admin-toggle-btn")
+              .classList.add("active-admin");
+            document
+              .querySelectorAll(".admin-only")
+              .forEach((el) => (el.style.display = ""));
+          } else {
+            console.log("ℹ️ Firebase Auth: not logged in");
+            // isAdmin tetap false, tampilan sudah dihandle
+          }
+        });
+      }
+
+      // Override doAdminLogin untuk pakai Firebase Auth
+      async function doAdminLogin() {
+        const email = document.getElementById("f-admin-email").value.trim();
+        const pw = document.getElementById("f-admin-pw").value;
+
+        if (!email || !pw) {
+          showToast("Email dan password wajib diisi", "error");
+          return;
+        }
+
+        try {
+          await FB.signInWithEmailAndPassword(auth, email, pw);
+          // onAuthStateChanged akan handle sisanya
+          document.getElementById("f-admin-pw").value = "";
+          document.getElementById("admin-login-section").style.display = "none";
+          document.getElementById("admin-logged-sections").style.display =
+            "block";
+          renderPengurusEditor();
+          showToast("✅ Berhasil masuk sebagai Admin!", "success");
+          closeAdminPanel();
+        } catch (err) {
+          console.error("Login error:", err);
+          if (
+            err.code === "auth/user-not-found" ||
+            err.code === "auth/wrong-password" ||
+            err.code === "auth/invalid-credential"
+          ) {
+            showToast("❌ Email atau password salah!", "error");
+          } else {
+            showToast("❌ Error: " + err.message, "error");
+          }
+        }
+      }
+
+      // Override doAdminLogout untuk pakai Firebase Auth
+      async function doAdminLogout() {
+        try {
+          await FB.signOut(auth);
+          isAdmin = false;
+          updateAdminDownloadVisibility(false);
+          document.getElementById("admin-toggle-btn").textContent = "⚙ Admin";
+          document
+            .getElementById("admin-toggle-btn")
+            .classList.remove("active-admin");
+          document
+            .querySelectorAll(".admin-only")
+            .forEach((el) => (el.style.display = "none"));
+          closeAdminPanel();
+          showToast("Logout berhasil", "success");
+        } catch (err) {
+          showToast("Error logout: " + err.message, "error");
+        }
+      }
+    </script>
   </body>
 </html>
