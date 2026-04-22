@@ -5982,71 +5982,119 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
 
         showToast("⏳ Memulai migrasi... jangan tutup halaman!");
         let total = 0;
+        let errors = 0;
 
         try {
-          // 1. Anggota
-          for (const m of appData.members) {
-            await FB.setDoc(FB.doc(db, "members", String(m.id)), {
-              name: m.name || "",
-              br: m.br || "",
-              nick: m.nick || "",
-              addr: m.addr || "",
-              phone: m.phone || "",
-              joined: m.joined || "",
+          // ── 1. ANGGOTA dari defaultMembers (hardcoded, pasti ada) ──
+          const membersToMigrate = defaultMembers; // pakai data hardcoded langsung
+          for (const m of membersToMigrate) {
+            try {
+              await FB.setDoc(FB.doc(db, "members", String(m.id)), {
+                name: m.name || "",
+                br: m.br || "",
+                nick: m.nick || "",
+                addr: m.addr || "",
+                phone: m.phone || "",
+                joined: m.joined || "",
+              });
+              total++;
+            } catch (e) {
+              errors++;
+              console.error("member error:", m.id, e);
+            }
+          }
+          showToast(`✅ ${membersToMigrate.length} anggota dimigrasikan`);
+
+          // ── 2. KEGIATAN dari defaultKegiatan (hardcoded) ──
+          const kegiatanToMigrate = defaultKegiatan;
+          for (const k of kegiatanToMigrate) {
+            try {
+              await FB.setDoc(FB.doc(db, "kegiatan", String(k.id)), {
+                date: k.date,
+                type: k.type,
+                title: k.title,
+                desc: k.desc || "",
+                place: k.place || "",
+              });
+              total++;
+            } catch (e) {
+              errors++;
+              console.error("kegiatan error:", k.id, e);
+            }
+          }
+          showToast(`✅ ${kegiatanToMigrate.length} kegiatan dimigrasikan`);
+
+          // ── 3. CASHFLOW dari defaultCashflow (hardcoded) ──
+          const cashflowToMigrate = defaultCashflow;
+          for (const c of cashflowToMigrate) {
+            try {
+              await FB.setDoc(FB.doc(db, "cashflow", String(c.id)), {
+                date: c.date,
+                desc: c.desc,
+                in: c.in || 0,
+                out: c.out || 0,
+              });
+              total++;
+            } catch (e) {
+              errors++;
+              console.error("cashflow error:", c.id, e);
+            }
+          }
+          showToast(`✅ ${cashflowToMigrate.length} cashflow dimigrasikan`);
+
+          // ── 4. KEHADIRAN dari attendanceData (localStorage) ──
+          const attKeys = Object.keys(attendanceData);
+          for (const id of attKeys) {
+            try {
+              await FB.setDoc(
+                FB.doc(db, "attendance", String(id)),
+                attendanceData[id],
+              );
+              total++;
+            } catch (e) {
+              errors++;
+              console.error("attendance error:", id, e);
+            }
+          }
+          showToast(`✅ ${attKeys.length} kehadiran dimigrasikan`);
+
+          // ── 5. BONATAON dari defaultBonataon (hardcoded) ──
+          for (const [yr, entries] of Object.entries(defaultBonataon)) {
+            try {
+              await FB.setDoc(FB.doc(db, "bonataon", yr), { entries });
+              total++;
+            } catch (e) {
+              errors++;
+              console.error("bonataon error:", yr, e);
+            }
+          }
+          showToast(`✅ Bonataon dimigrasikan`);
+
+          // ── 6. SETTINGS ──
+          try {
+            await FB.setDoc(FB.doc(db, "settings", "config"), {
+              adrt: defaultADRT || "",
+              pengurusList: pengurusList || [],
+              bgImage: localStorage.getItem("dr_bg_image") || "",
             });
             total++;
+          } catch (e) {
+            errors++;
+            console.error("settings error:", e);
           }
-          showToast(`✅ ${appData.members.length} anggota dimigrasikan`);
-
-          // 2. Kegiatan
-          for (const k of appData.kegiatan) {
-            await FB.setDoc(FB.doc(db, "kegiatan", String(k.id)), {
-              date: k.date,
-              type: k.type,
-              title: k.title,
-              desc: k.desc || "",
-              place: k.place || "",
-            });
-            total++;
-          }
-          showToast(`✅ ${appData.kegiatan.length} kegiatan dimigrasikan`);
-
-          // 3. Cashflow
-          for (const c of appData.cashflow) {
-            await FB.setDoc(FB.doc(db, "cashflow", String(c.id)), {
-              date: c.date,
-              desc: c.desc,
-              in: c.in || 0,
-              out: c.out || 0,
-            });
-            total++;
-          }
-          showToast(`✅ ${appData.cashflow.length} transaksi dimigrasikan`);
-
-          // 4. Kehadiran
-          for (const [id, data] of Object.entries(attendanceData)) {
-            await FB.setDoc(FB.doc(db, "attendance", String(id)), data);
-            total++;
-          }
-
-          // 5. Bonataon
-          for (const [yr, entries] of Object.entries(appData.bonataon)) {
-            await FB.setDoc(FB.doc(db, "bonataon", yr), { entries });
-            total++;
-          }
-
-          // 6. Settings
-          await FB.setDoc(FB.doc(db, "settings", "config"), {
-            adrt: appData.adrt || "",
-            pengurusList: pengurusList || [],
-            bgImage: localStorage.getItem("dr_bg_image") || "",
-          });
-          total++;
 
           localStorage.setItem("firebase_migrated", new Date().toISOString());
-          showToast(
-            `🎉 Selesai! ${total} item berhasil dipindahkan ke Firebase!`,
-          );
+
+          if (errors === 0) {
+            showToast(
+              `🎉 Selesai! ${total} item berhasil dipindahkan ke Firebase!`,
+            );
+          } else {
+            showToast(
+              `⚠️ Selesai dengan ${errors} error. ${total} item berhasil. Cek console.`,
+              "error",
+            );
+          }
         } catch (err) {
           console.error("Migrasi error:", err);
           showToast(`❌ Error: ${err.message}`, "error");
