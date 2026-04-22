@@ -1353,6 +1353,64 @@
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        setDoc,
+        getDocs,
+        addDoc,
+        deleteDoc,
+        updateDoc,
+        onSnapshot,
+        query,
+        orderBy,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+      // !! GANTI dengan config dari Firebase Console kamu !!
+      const firebaseConfig = {
+        apiKey: "AIzaSyxxxxxxxxxx",
+        authDomain: "parsahutaon-dosroha.firebaseapp.com",
+        projectId: "parsahutaon-dosroha",
+        storageBucket: "parsahutaon-dosroha.appspot.com",
+        messagingSenderId: "123456789012",
+        appId: "1:123456789012:web:abc123",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+
+      // Buat global agar bisa diakses script lain di halaman
+      window.db = db;
+      window.auth = auth;
+      window.FB = {
+        collection,
+        doc,
+        setDoc,
+        getDocs,
+        addDoc,
+        deleteDoc,
+        updateDoc,
+        onSnapshot,
+        query,
+        orderBy,
+        getDoc,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      };
+      console.log("✅ Firebase terkoneksi:", app.options.projectId);
+    </script>
   </head>
   <body>
     <!-- ===== NAV ===== -->
@@ -1418,7 +1476,8 @@
         <div class="hero-inner">
           <div class="hero-badge">Est. 2010 · Balikpapan, Kalimantan Timur</div>
           <h1 class="hero-title">
-            Parsahutaon Dos Roha<br /> Balikpapan Regency - Sepinggan Pratama & Sekitarnya
+            Parsahutaon Dos Roha<br />
+            Balikpapan Regency - Sepinggan Pratama & Sekitarnya
           </h1>
           <p class="hero-sub">
             Komunitas Masyarakat Batak yang bersatu dalam kasih dan persaudaraan
@@ -2611,6 +2670,16 @@
         <div id="admin-login-section" class="admin-section">
           <h3>🔐 Login Admin</h3>
           <div class="form-group">
+            <label>Email Admin</label>
+            <input
+              type="email"
+              class="form-control"
+              id="f-admin-email"
+              placeholder="Masukkan email admin"
+              onkeydown="if (event.key === 'Enter') doAdminLogin();"
+            />
+          </div>
+          <div class="form-group">
             <label>Password Admin</label>
             <input
               type="password"
@@ -2722,6 +2791,50 @@
             </div>
             <button class="btn btn-danger btn-sm" onclick="gantiPassword()">
               Simpan Password Baru
+            </button>
+          </div>
+          <!-- TOMBOL MIGRASI — HAPUS SETELAH MIGRASI SELESAI -->
+          <div
+            class="admin-section"
+            style="border: 2px solid #d4a017; margin-bottom: 12px"
+          >
+            <h3
+              style="
+                color: #d4a017;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 8px;
+              "
+            >
+              🔄 Migrasi Data ke Firebase
+            </h3>
+            <p
+              style="
+                font-size: 13px;
+                color: #666;
+                margin-bottom: 12px;
+                line-height: 1.6;
+              "
+            >
+              Jalankan <strong>SEKALI SAJA</strong> untuk memindahkan semua data
+              dari localStorage ke Firebase Cloud.
+            </p>
+            <button
+              onclick="migrateToFirebase()"
+              style="
+                width: 100%;
+                background: #d4a017;
+                color: #0d1b2a;
+                border: none;
+                padding: 11px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 14px;
+                cursor: pointer;
+              "
+            >
+              🔄 Migrate Semua Data ke Firebase
             </button>
           </div>
           <div
@@ -2852,6 +2965,115 @@
       const _origRenderKegiatan = renderKegiatan;
 
       renderKegiatan();
+      // ════════════════════════════════════════════
+      // FIREBASE DATA FUNCTIONS — Pengganti localStorage
+      // ════════════════════════════════════════════
+
+      // ─── ANGGOTA ────────────────────────────────
+
+      async function loadMembersFromFirebase() {
+        const snap = await FB.getDocs(FB.collection(db, "members"));
+        appData.members = [];
+        snap.forEach((d) =>
+          appData.members.push({ ...d.data(), id: parseInt(d.id) }),
+        );
+        appData.members.sort((a, b) => a.id - b.id);
+        renderMembers();
+        populateDropdowns();
+      }
+
+      async function saveMemberToFirebase(m) {
+        await FB.setDoc(FB.doc(db, "members", String(m.id)), {
+          name: m.name || "",
+          br: m.br || "",
+          nick: m.nick || "",
+          addr: m.addr || "",
+          phone: m.phone || "",
+          joined: m.joined || "",
+        });
+      }
+
+      async function updateMemberInFirebase(m) {
+        await FB.updateDoc(FB.doc(db, "members", String(m.id)), {
+          name: m.name,
+          br: m.br,
+          nick: m.nick,
+          addr: m.addr,
+          phone: m.phone,
+        });
+      }
+
+      async function deleteMemberFromFirebase(id) {
+        await FB.deleteDoc(FB.doc(db, "members", String(id)));
+      }
+
+      // ─── KEGIATAN ───────────────────────────────
+
+      async function saveKegiatanToFirebase(k) {
+        await FB.setDoc(FB.doc(db, "kegiatan", String(k.id)), {
+          date: k.date,
+          type: k.type,
+          title: k.title,
+          desc: k.desc || "",
+          place: k.place || "",
+        });
+      }
+
+      async function deleteKegiatanFromFirebase(id) {
+        await FB.deleteDoc(FB.doc(db, "kegiatan", String(id)));
+      }
+
+      // ─── CASHFLOW ───────────────────────────────
+
+      async function saveCashflowToFirebase(c) {
+        await FB.setDoc(FB.doc(db, "cashflow", String(c.id)), {
+          date: c.date,
+          desc: c.desc,
+          in: c.in || 0,
+          out: c.out || 0,
+        });
+      }
+
+      async function deleteCashflowFromFirebase(id) {
+        await FB.deleteDoc(FB.doc(db, "cashflow", String(id)));
+      }
+
+      // ─── KEHADIRAN ──────────────────────────────
+
+      async function saveAttendanceToFirebase(eventId, data) {
+        await FB.setDoc(FB.doc(db, "attendance", String(eventId)), data);
+      }
+
+      async function loadAllAttendanceFromFirebase() {
+        const snap = await FB.getDocs(FB.collection(db, "attendance"));
+        attendanceData = {};
+        snap.forEach((d) => {
+          attendanceData[d.id] = d.data();
+        });
+      }
+
+      // ─── SETTINGS (ADRT, Pengurus, BG) ──────────
+
+      async function saveSettingsToFirebase() {
+        await FB.setDoc(FB.doc(db, "settings", "config"), {
+          adrt: appData.adrt || "",
+          pengurusList: pengurusList || [],
+          bgImage: localStorage.getItem("dr_bg_image") || "",
+        });
+      }
+
+      async function loadSettingsFromFirebase() {
+        const snap = await FB.getDoc(FB.doc(db, "settings", "config"));
+        if (snap.exists()) {
+          const d = snap.data();
+          if (d.adrt) appData.adrt = d.adrt;
+          if (d.pengurusList) pengurusList = d.pengurusList;
+          if (d.bgImage) {
+            const hero = document.getElementById("hero-beranda");
+            if (hero) hero.style.backgroundImage = `url('${d.bgImage}')`;
+          }
+        }
+      }
     </script>
     <!-- TOAST -->
     <div class="toast" id="toast"></div>
@@ -5733,10 +5955,183 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
           status.textContent = "❌ Gagal. Cek konsol browser untuk detail.";
         }
       }
+
+      // ════════════════════════════════════════════
+      // MIGRASI DATA localStorage → Firebase
+      // Jalankan SEKALI SAJA dari Admin Panel!
+      // ════════════════════════════════════════════
+
+      async function migrateToFirebase() {
+        if (!isAdmin) {
+          showToast("❌ Harus login admin dulu!", "error");
+          return;
+        }
+
+        const done = localStorage.getItem("firebase_migrated");
+        if (
+          done &&
+          !confirm(
+            "Data sudah pernah dimigrasikan sebelumnya.\n" +
+              "Jalankan lagi akan MENIMPA data di Firebase.\n" +
+              "Lanjutkan?",
+          )
+        )
+          return;
+
+        showToast("⏳ Memulai migrasi... jangan tutup halaman!");
+        let total = 0;
+
+        try {
+          // 1. Anggota
+          for (const m of appData.members) {
+            await FB.setDoc(FB.doc(db, "members", String(m.id)), {
+              name: m.name || "",
+              br: m.br || "",
+              nick: m.nick || "",
+              addr: m.addr || "",
+              phone: m.phone || "",
+              joined: m.joined || "",
+            });
+            total++;
+          }
+          showToast(`✅ ${appData.members.length} anggota dimigrasikan`);
+
+          // 2. Kegiatan
+          for (const k of appData.kegiatan) {
+            await FB.setDoc(FB.doc(db, "kegiatan", String(k.id)), {
+              date: k.date,
+              type: k.type,
+              title: k.title,
+              desc: k.desc || "",
+              place: k.place || "",
+            });
+            total++;
+          }
+          showToast(`✅ ${appData.kegiatan.length} kegiatan dimigrasikan`);
+
+          // 3. Cashflow
+          for (const c of appData.cashflow) {
+            await FB.setDoc(FB.doc(db, "cashflow", String(c.id)), {
+              date: c.date,
+              desc: c.desc,
+              in: c.in || 0,
+              out: c.out || 0,
+            });
+            total++;
+          }
+          showToast(`✅ ${appData.cashflow.length} transaksi dimigrasikan`);
+
+          // 4. Kehadiran
+          for (const [id, data] of Object.entries(attendanceData)) {
+            await FB.setDoc(FB.doc(db, "attendance", String(id)), data);
+            total++;
+          }
+
+          // 5. Bonataon
+          for (const [yr, entries] of Object.entries(appData.bonataon)) {
+            await FB.setDoc(FB.doc(db, "bonataon", yr), { entries });
+            total++;
+          }
+
+          // 6. Settings
+          await FB.setDoc(FB.doc(db, "settings", "config"), {
+            adrt: appData.adrt || "",
+            pengurusList: pengurusList || [],
+            bgImage: localStorage.getItem("dr_bg_image") || "",
+          });
+          total++;
+
+          localStorage.setItem("firebase_migrated", new Date().toISOString());
+          showToast(
+            `🎉 Selesai! ${total} item berhasil dipindahkan ke Firebase!`,
+          );
+        } catch (err) {
+          console.error("Migrasi error:", err);
+          showToast(`❌ Error: ${err.message}`, "error");
+        }
+      }
       function updateAdminDownloadVisibility(isLoggedIn) {
         var el = document.getElementById("adminDownloadSection");
         if (el) el.style.display = isLoggedIn ? "block" : "none";
       }
+
+      // ════════════════════════════════════════════
+      // REAL-TIME LISTENERS
+      // Data update otomatis di semua device!
+      // ════════════════════════════════════════════
+
+      function startKegiatanListener() {
+        const q = FB.query(
+          FB.collection(db, "kegiatan"),
+          FB.orderBy("date", "desc"),
+        );
+        return FB.onSnapshot(q, (snap) => {
+          appData.kegiatan = [];
+          snap.forEach((d) =>
+            appData.kegiatan.push({ id: parseInt(d.id), ...d.data() }),
+          );
+          renderKegiatan();
+          updateStatKegiatan();
+        });
+      }
+
+      function startMembersListener() {
+        return FB.onSnapshot(FB.collection(db, "members"), (snap) => {
+          appData.members = [];
+          snap.forEach((d) =>
+            appData.members.push({ id: parseInt(d.id), ...d.data() }),
+          );
+          appData.members.sort((a, b) => a.id - b.id);
+          document.getElementById("stat-anggota").textContent =
+            appData.members.length;
+          renderMembers();
+          populateDropdowns();
+        });
+      }
+
+      function startCashflowListener() {
+        return FB.onSnapshot(FB.collection(db, "cashflow"), (snap) => {
+          appData.cashflow = [];
+          snap.forEach((d) =>
+            appData.cashflow.push({ id: parseInt(d.id), ...d.data() }),
+          );
+          const pg = document.getElementById("page-keuangan");
+          if (pg?.classList.contains("active")) renderKeuangan();
+        });
+      }
+
+      // Fungsi inisialisasi utama — panggil saat halaman dimuat
+      async function initFirebase() {
+        initFirebaseAuth(); // setup listener status login
+
+        try {
+          await Promise.all([
+            loadMembersFromFirebase(),
+            loadAllAttendanceFromFirebase(),
+            loadSettingsFromFirebase(),
+          ]);
+
+          // Mulai semua real-time listener
+          startKegiatanListener();
+          startCashflowListener();
+
+          console.log("✅ Firebase real-time aktif!");
+        } catch (err) {
+          console.error("Firebase init error:", err);
+          showToast("⚠️ Koneksi Firebase bermasalah. Cek internet.", "error");
+        }
+      }
+
+      // Panggil saat DOM siap — ganti bagian init yang lama
+      document.addEventListener("DOMContentLoaded", () => {
+        loadData(); // load localStorage sebagai fallback
+        loadAttendance(); // load attendance localStorage
+        initFirebase(); // init Firebase (akan override localStorage)
+        populateDropdowns();
+        updateAdminUI();
+        loadSavedBg();
+      });
+
       function updateTahunBerdiri() {
         const el = document.getElementById("stat-tahun");
         if (el) el.textContent = new Date().getFullYear() - 2010;
