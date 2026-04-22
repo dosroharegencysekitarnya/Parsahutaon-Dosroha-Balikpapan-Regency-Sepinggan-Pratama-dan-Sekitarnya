@@ -7340,112 +7340,134 @@ Paste seluruh blok <script> ini tepat sebelum tag </body>
 di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
 =============================================================
 -->
+    <!--
+=============================================================
+PATCH FIX: IURAN SUMMARY — Parsahutaon Dos Roha
+Paste ini MENGGANTIKAN patch iuran sebelumnya (PATCH_IURAN_EDIT.html)
+Letakkan tepat sebelum </body>
+=============================================================
+-->
     <script>
       // ============================================================
-      // PATCH IURAN v1.0
-      // Fitur edit status iuran langsung dari tabel
-      // Data disimpan ke Firebase collection "iuran"
+      // PATCH IURAN v2.0 — Fix summary duplikat + label tahun jelas
       // ============================================================
 
-      // ─────────────────────────────────────────────
-      // STATE: iuranFirebase menyimpan override dari Firebase
-      // Format: { "2025": { "Nama Keluarga": "LUNAS" }, ... }
-      // ─────────────────────────────────────────────
       let iuranFirebase = {};
 
-      // ─────────────────────────────────────────────
-      // LOAD: Ambil data iuran dari Firebase saat init
-      // ─────────────────────────────────────────────
       async function loadIuranFromFirebase() {
         try {
           const snap = await FB.getDocs(FB.collection(db, "iuran"));
           iuranFirebase = {};
           snap.forEach((d) => {
-            iuranFirebase[d.id] = d.data(); // d.id = tahun (string)
+            iuranFirebase[d.id] = d.data();
           });
-          console.log("✅ Data iuran dari Firebase:", iuranFirebase);
         } catch (e) {
           console.warn("loadIuranFromFirebase error:", e.message);
         }
       }
 
-      // ─────────────────────────────────────────────
-      // HELPER: Gabungkan iuranStatus hardcoded + Firebase override
-      // Firebase override menang (lebih baru)
-      // ─────────────────────────────────────────────
       function getMergedIuranStatus(year) {
-        // Base: hardcoded
         let base = {};
-        if (year === 2025) {
-          base = { ...iuranStatus2025 };
-        } else if (iuranStatus[year]) {
-          base = { ...iuranStatus[year] };
-        }
-        // Override dengan data Firebase
-        if (iuranFirebase[String(year)]) {
+        if (year === 2025) base = { ...iuranStatus2025 };
+        else if (iuranStatus[year]) base = { ...iuranStatus[year] };
+        if (iuranFirebase[String(year)])
           base = { ...base, ...iuranFirebase[String(year)] };
-        }
         return base;
       }
 
       // ─────────────────────────────────────────────
-      // PATCH: renderIuranTable — tambah tombol edit & info
+      // PATCH: renderIuranTable — 1 summary bar, jelas & bersih
       // ─────────────────────────────────────────────
       window.renderIuranTable = function () {
         const year = currentIuranYear;
         const statusMap = getMergedIuranStatus(year);
         const entries = Object.entries(statusMap);
 
-        // Hitung ringkasan
         const lunas = entries.filter(([, s]) => s === "LUNAS").length;
         const belum = entries.filter(([, s]) => s === "BELUM").length;
         const partial = entries.filter(
           ([, s]) => s !== "LUNAS" && s !== "BELUM",
         ).length;
+        const total = entries.length;
+        const pct = total > 0 ? Math.round((lunas / total) * 100) : 0;
 
-        // Render ringkasan di atas tabel
-        const summaryId = "iuran-summary-" + year;
-        let summaryEl = document.getElementById(summaryId);
-        if (!summaryEl) {
-          summaryEl = document.createElement("div");
-          summaryEl.id = summaryId;
-          const iuranTbody = document.getElementById("iuran-tbody");
-          iuranTbody.closest("table").before(summaryEl);
-        }
+        // ── Bersihkan summary lama (hapus semua elemen summary) ──
+        document
+          .querySelectorAll(".iuran-summary-block")
+          .forEach((el) => el.remove());
+
+        // ── Buat 1 summary block baru ──
+        const summaryEl = document.createElement("div");
+        summaryEl.className = "iuran-summary-block";
+        summaryEl.style.cssText = "margin-bottom:20px";
         summaryEl.innerHTML = `
-    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
-      <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:12px 20px;text-align:center;min-width:100px">
-        <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#16a34a">${lunas}</div>
-        <div style="font-size:11px;color:#16a34a;font-family:'JetBrains Mono',monospace">LUNAS</div>
-      </div>
-      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:12px 20px;text-align:center;min-width:100px">
-        <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#dc2626">${belum}</div>
-        <div style="font-size:11px;color:#dc2626;font-family:'JetBrains Mono',monospace">BELUM BAYAR</div>
-      </div>
-      ${
-        partial > 0
-          ? `<div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:12px 20px;text-align:center;min-width:100px">
-        <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#d97706">${partial}</div>
-        <div style="font-size:11px;color:#d97706;font-family:'JetBrains Mono',monospace">SEBAGIAN</div>
-      </div>`
-          : ""
-      }
-      <div style="background:var(--navy);border-radius:10px;padding:12px 20px;text-align:center;min-width:100px">
-        <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gold)">${entries.length}</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.5);font-family:'JetBrains Mono',monospace">TOTAL ANGGOTA</div>
+    <!-- Header tahun -->
+    <div style="display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="background:var(--navy);color:var(--gold);font-family:'Playfair Display',serif;
+          font-size:1.1rem;font-weight:700;padding:6px 16px;border-radius:20px">
+          Tahun ${year}
+        </div>
+        <div style="font-size:13px;color:var(--text-mid)">
+          ${lunas} dari ${total} anggota sudah lunas
+        </div>
       </div>
       ${
         isAdmin
-          ? `<div style="margin-left:auto;display:flex;align-items:center">
-        <div style="background:rgba(13,148,136,0.08);border:1px solid rgba(13,148,136,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--teal);font-family:'JetBrains Mono',monospace">
-          ✏ Klik status untuk edit
-        </div>
+          ? `<div style="background:rgba(13,148,136,0.08);border:1px solid rgba(13,148,136,0.2);
+        border-radius:8px;padding:6px 12px;font-size:11px;color:var(--teal);
+        font-family:'JetBrains Mono',monospace">
+        ✏ Klik badge status untuk edit
       </div>`
           : ""
       }
+    </div>
+
+    <!-- Progress bar -->
+    <div style="background:#eee;border-radius:999px;height:10px;margin-bottom:14px;overflow:hidden">
+      <div style="height:100%;border-radius:999px;background:var(--teal);
+        width:${pct}%;transition:width 0.6s ease"></div>
+    </div>
+
+    <!-- 3 stat boxes horizontal -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);
+        border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px">
+        <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;
+          color:#16a34a;line-height:1">${lunas}</div>
+        <div>
+          <div style="font-weight:600;font-size:13px;color:#16a34a">LUNAS</div>
+          <div style="font-size:11px;color:var(--text-light)">Rp ${(lunas * 120000).toLocaleString("id-ID")}</div>
+        </div>
+      </div>
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);
+        border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px">
+        <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;
+          color:#dc2626;line-height:1">${belum}</div>
+        <div>
+          <div style="font-weight:600;font-size:13px;color:#dc2626">BELUM BAYAR</div>
+          <div style="font-size:11px;color:var(--text-light)">Sisa tagihan</div>
+        </div>
+      </div>
+      <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);
+        border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px">
+        <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;
+          color:#d97706;line-height:1">${partial}</div>
+        <div>
+          <div style="font-weight:600;font-size:13px;color:#d97706">SEBAGIAN</div>
+          <div style="font-size:11px;color:var(--text-light)">Belum penuh</div>
+        </div>
+      </div>
     </div>`;
 
-        // Render tabel dengan tombol edit
+        // ── Sisipkan sebelum tabel ──
+        const iuranTable = document
+          .getElementById("iuran-tbody")
+          ?.closest("table");
+        if (iuranTable) iuranTable.before(summaryEl);
+
+        // ── Render baris tabel ──
         document.getElementById("iuran-tbody").innerHTML = entries
           .map(([name, status], i) => {
             let badgeClass = "lunas-badge",
@@ -7458,29 +7480,24 @@ di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
               nominal = status;
             }
 
-            // Tombol edit hanya untuk admin
             const editBtn = isAdmin
               ? `
-        <button onclick="openEditIuran('${year}','${name.replace(/'/g, "\\'")}','${status}')"
-          style="background:none;border:none;cursor:pointer;color:var(--teal);
-            font-size:13px;padding:2px 6px;opacity:0.7;transition:opacity 0.2s;margin-left:4px"
-          title="Edit status iuran" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">
-          ✏
-        </button>`
+        <span onclick="openEditIuran('${year}','${name.replace(/'/g, "\\'")}','${status}')"
+          style="cursor:pointer;color:var(--teal);font-size:12px;margin-left:6px;
+            opacity:0.6;transition:opacity 0.2s;user-select:none"
+          onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6"
+          title="Edit status iuran">✏</span>`
+              : "";
+
+            const fbTag = iuranFirebase[String(year)]?.[name]
+              ? `<span style="font-size:9px;color:var(--teal);margin-left:4px;
+            font-family:'JetBrains Mono',monospace;opacity:0.7">✓</span>`
               : "";
 
             return `<tr>
         <td>${i + 1}</td>
         <td>${name}</td>
-        <td>
-          <span class="${badgeClass}">${status}</span>
-          ${editBtn}
-          ${
-            iuranFirebase[String(year)] && iuranFirebase[String(year)][name]
-              ? `<span style="font-size:10px;color:var(--teal);margin-left:4px;font-family:'JetBrains Mono',monospace">✓Firebase</span>`
-              : ""
-          }
-        </td>
+        <td><span class="${badgeClass}">${status}</span>${fbTag}${editBtn}</td>
         <td class="rp">${nominal}</td>
       </tr>`;
           })
@@ -7488,10 +7505,9 @@ di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
       };
 
       // ─────────────────────────────────────────────
-      // MODAL: Edit status iuran satu anggota
+      // MODAL EDIT IURAN
       // ─────────────────────────────────────────────
       function openEditIuran(year, name, currentStatus) {
-        // Buat modal dinamis jika belum ada
         let overlay = document.getElementById("modal-edit-iuran");
         if (!overlay) {
           overlay = document.createElement("div");
@@ -7501,21 +7517,24 @@ di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
       <div class="modal" style="max-width:420px">
         <div class="modal-title">
           ✏ Edit Status Iuran
-          <button class="modal-close" onclick="document.getElementById('modal-edit-iuran').classList.remove('show')">✕</button>
+          <button class="modal-close"
+            onclick="document.getElementById('modal-edit-iuran').classList.remove('show')">✕</button>
         </div>
-        <div style="background:rgba(13,148,136,0.07);border:1px solid rgba(13,148,136,0.2);border-radius:8px;padding:12px 16px;margin-bottom:16px">
-          <div style="font-size:12px;color:var(--text-light);font-family:'JetBrains Mono',monospace;margin-bottom:4px">ANGGOTA</div>
+        <div style="background:rgba(13,148,136,0.07);border:1px solid rgba(13,148,136,0.2);
+          border-radius:8px;padding:12px 16px;margin-bottom:16px">
+          <div style="font-size:11px;color:var(--text-light);font-family:'JetBrains Mono',monospace;margin-bottom:4px">ANGGOTA · TAHUN IURAN</div>
           <div id="iuran-edit-name" style="font-weight:600;color:var(--navy);font-size:15px"></div>
-          <div id="iuran-edit-year-display" style="font-size:12px;color:var(--teal);font-family:'JetBrains Mono',monospace;margin-top:2px"></div>
+          <div id="iuran-edit-year-display"
+            style="font-size:12px;color:var(--teal);font-family:'JetBrains Mono',monospace;margin-top:2px"></div>
         </div>
         <input type="hidden" id="iuran-edit-year"/>
         <input type="hidden" id="iuran-edit-key"/>
         <div class="form-group">
           <label>Status Pembayaran</label>
           <select class="form-control" id="iuran-edit-status" onchange="toggleNominalField()">
-            <option value="LUNAS">LUNAS (Rp 120.000)</option>
-            <option value="BELUM">BELUM BAYAR</option>
-            <option value="custom">Sebagian (isi nominal)</option>
+            <option value="LUNAS">✅ LUNAS (Rp 120.000)</option>
+            <option value="BELUM">❌ BELUM BAYAR</option>
+            <option value="custom">🔶 Sebagian (isi nominal)</option>
           </select>
         </div>
         <div class="form-group" id="iuran-nominal-group" style="display:none">
@@ -7543,10 +7562,9 @@ di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
           document.body.appendChild(overlay);
         }
 
-        // Isi data ke modal
         document.getElementById("iuran-edit-name").textContent = name;
         document.getElementById("iuran-edit-year-display").textContent =
-          `Tahun Iuran: ${year}`;
+          `Tahun ${year}`;
         document.getElementById("iuran-edit-year").value = year;
         document.getElementById("iuran-edit-key").value = name;
 
@@ -7560,7 +7578,6 @@ di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
             "block";
           document.getElementById("iuran-edit-nominal").value = currentStatus;
         }
-
         overlay.classList.add("show");
       }
 
@@ -7570,9 +7587,6 @@ di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
           sel.value === "custom" ? "block" : "none";
       }
 
-      // ─────────────────────────────────────────────
-      // SAVE: Simpan perubahan iuran ke Firebase
-      // ─────────────────────────────────────────────
       async function saveIuranEdit() {
         const year = document.getElementById("iuran-edit-year").value;
         const name = document.getElementById("iuran-edit-key").value;
@@ -7589,30 +7603,24 @@ di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
             return showToast("Masukkan nominal yang sudah dibayar", "error");
         }
 
-        // Simpan ke Firebase
         try {
-          // Ambil data tahun ini dulu, lalu update 1 field
           if (!iuranFirebase[year]) iuranFirebase[year] = {};
           iuranFirebase[year][name] = newStatus;
-
           await FB.setDoc(
             FB.doc(db, "iuran", String(year)),
             iuranFirebase[year],
-            { merge: true }, // merge agar tidak hapus data anggota lain
+            { merge: true },
           );
-
           document.getElementById("modal-edit-iuran").classList.remove("show");
           renderIuranTable();
-          showToast(
-            `✅ Status iuran ${name} berhasil diperbarui → ${newStatus}`,
-          );
+          showToast(`✅ Status iuran diperbarui → ${newStatus}`);
         } catch (e) {
           showToast("❌ Gagal simpan: " + e.message, "error");
         }
       }
 
       // ─────────────────────────────────────────────
-      // REAL-TIME: Listener untuk iuran
+      // REAL-TIME listener iuran
       // ─────────────────────────────────────────────
       function startIuranListener() {
         return FB.onSnapshot(FB.collection(db, "iuran"), (snap) => {
@@ -7620,38 +7628,25 @@ di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
           snap.forEach((d) => {
             iuranFirebase[d.id] = d.data();
           });
-          // Refresh tabel jika halaman keuangan aktif
           const pg = document.getElementById("page-keuangan");
           if (pg?.classList.contains("active")) renderIuranTable();
         });
       }
 
       // ─────────────────────────────────────────────
-      // INIT: Load iuran saat Firebase init
-      // Tambahkan ke initFirebase yang sudah ada
+      // INIT — tambahkan loadIuran ke initFirebase
       // ─────────────────────────────────────────────
-      const _prevInitFirebase = window.initFirebase;
+      const _prevInitFirebaseIuran = window.initFirebase;
       window.initFirebase = async function () {
-        await _prevInitFirebase();
-        // Load iuran tambahan
+        await _prevInitFirebaseIuran();
         await loadIuranFromFirebase();
         startIuranListener();
-        console.log("✅ Iuran patch aktif — edit status iuran via Firebase!");
+        console.log("✅ Iuran patch v2.0 aktif!");
       };
 
-      // ─────────────────────────────────────────────
-      // PATCH: updateAdminUI — refresh tabel iuran saat login
-      // ─────────────────────────────────────────────
-      const _prevUpdateAdminUI = window.updateAdminUI || function () {};
-      window.updateAdminUI = function () {
-        _prevUpdateAdminUI();
-        // Refresh iuran table agar tombol edit muncul setelah login
-        const pg = document.getElementById("page-keuangan");
-        if (pg?.classList.contains("active")) renderIuranTable();
-      };
-
-      console.log("📋 Iuran Edit Patch loaded!");
+      console.log("📋 Iuran Edit Patch v2.0 loaded — summary fix done!");
     </script>
+
     <script>
       // PATCH: Pengumuman ikut update saat kegiatan berubah di Firebase
       const _prevStartKegiatanListener = startKegiatanListener;
