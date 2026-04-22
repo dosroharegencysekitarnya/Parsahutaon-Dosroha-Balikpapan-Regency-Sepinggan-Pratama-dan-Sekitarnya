@@ -7626,5 +7626,301 @@ Letakkan tepat sebelum </body>
         });
       };
     </script>
+  <!--
+=============================================================
+PATCH: IURAN TAHUN BARU — Parsahutaon Dos Roha
+Fitur: Tambah data iuran untuk tahun apapun langsung dari UI
+Paste tepat sebelum </body>, setelah semua patch sebelumnya
+=============================================================
+-->
+<script>
+// ============================================================
+// PATCH IURAN TAHUN BARU v1.0
+// Admin bisa tambah/inisialisasi data iuran untuk tahun baru
+// tanpa perlu edit kode HTML
+// ============================================================
+
+// ─────────────────────────────────────────────
+// PATCH: renderIuranTable — tambah tombol "Inisialisasi Tahun Baru"
+// jika tahun yang dipilih belum ada datanya
+// ─────────────────────────────────────────────
+const _prevRenderIuranTable = window.renderIuranTable;
+window.renderIuranTable = function() {
+  const year     = currentIuranYear;
+  const statusMap = getMergedIuranStatus ? getMergedIuranStatus(year) : {};
+  const entries   = Object.entries(statusMap);
+
+  // Panggil fungsi asli dulu
+  _prevRenderIuranTable();
+
+  // Jika tidak ada data DAN admin login → tampilkan tombol inisialisasi
+  if (entries.length === 0 && isAdmin) {
+    // Hapus summary block yang mungkin kosong
+    document.querySelectorAll(".iuran-summary-block").forEach(el => el.remove());
+
+    const iuranTable = document.getElementById("iuran-tbody")?.closest("table");
+    if (!iuranTable) return;
+
+    // Buat panel inisialisasi
+    const initPanel = document.createElement("div");
+    initPanel.className = "iuran-summary-block";
+    initPanel.innerHTML = `
+      <div style="background:rgba(13,148,136,0.05);border:2px dashed rgba(13,148,136,0.3);
+        border-radius:12px;padding:32px;text-align:center;margin-bottom:16px">
+        <div style="font-size:2.5rem;margin-bottom:12px">📋</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;
+          color:var(--navy);margin-bottom:8px">
+          Belum ada data iuran untuk Tahun ${year}
+        </div>
+        <div style="font-size:13px;color:var(--text-mid);margin-bottom:20px;max-width:400px;margin-left:auto;margin-right:auto">
+          Klik tombol di bawah untuk membuat daftar iuran ${year} 
+          dari seluruh anggota yang terdaftar saat ini (${appData.members.length} keluarga).
+          Status awal semua anggota akan di-set <strong>BELUM BAYAR</strong>.
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button onclick="inisialisasiIuranTahunBaru(${year})"
+            style="background:var(--teal);color:white;border:none;padding:10px 24px;
+              border-radius:8px;font-family:'Source Serif 4',serif;font-size:14px;
+              font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+            🚀 Inisialisasi Iuran ${year} untuk Semua Anggota
+          </button>
+          <button onclick="openTambahSatuIuran(${year})"
+            style="background:white;color:var(--navy);border:1px solid var(--border);
+              padding:10px 24px;border-radius:8px;font-family:'Source Serif 4',serif;
+              font-size:14px;font-weight:600;cursor:pointer">
+            + Tambah 1 Anggota Saja
+          </button>
+        </div>
+      </div>`;
+    iuranTable.before(initPanel);
+  } else if (entries.length > 0 && isAdmin) {
+    // Ada data → tampilkan tombol tambah 1 anggota di bawah tabel
+    const iuranTable = document.getElementById("iuran-tbody")?.closest("table");
+    if (!iuranTable) return;
+
+    // Hapus tombol lama jika ada
+    const oldBtn = document.getElementById("btn-tambah-iuran-wrap");
+    if (oldBtn) oldBtn.remove();
+
+    const btnWrap = document.createElement("div");
+    btnWrap.id = "btn-tambah-iuran-wrap";
+    btnWrap.style.cssText = "margin-top:12px;display:flex;gap:8px;flex-wrap:wrap";
+    btnWrap.innerHTML = `
+      <button onclick="openTambahSatuIuran(${year})"
+        style="background:rgba(13,148,136,0.08);color:var(--teal);
+          border:1px solid rgba(13,148,136,0.3);padding:7px 16px;border-radius:8px;
+          font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;cursor:pointer">
+        + Tambah Anggota ke Iuran ${year}
+      </button>
+      <button onclick="inisialisasiIuranTahunBaru(${year}, true)"
+        style="background:rgba(13,27,42,0.06);color:var(--navy);
+          border:1px solid var(--border);padding:7px 16px;border-radius:8px;
+          font-family:'Source Serif 4',serif;font-size:13px;cursor:pointer">
+        🔄 Tambah Anggota Baru ke Daftar ${year}
+      </button>`;
+    iuranTable.after(btnWrap);
+  }
+};
+
+// ─────────────────────────────────────────────
+// FUNGSI: Inisialisasi semua anggota ke tahun baru
+// onlyMissing=true → hanya tambah yg belum ada
+// ─────────────────────────────────────────────
+async function inisialisasiIuranTahunBaru(year, onlyMissing = false) {
+  if (!isAdmin) return showToast("❌ Harus login admin", "error");
+
+  const existing  = iuranFirebase[String(year)] || {};
+  const members   = appData.members;
+
+  if (members.length === 0) return showToast("Belum ada anggota terdaftar", "error");
+
+  const toAdd = onlyMissing
+    ? members.filter(m => !existing[memberDisplayName(m)])
+    : members;
+
+  if (toAdd.length === 0) {
+    showToast("Semua anggota sudah ada di daftar iuran " + year, "success");
+    return;
+  }
+
+  const msg = onlyMissing
+    ? `Tambahkan ${toAdd.length} anggota baru ke daftar iuran ${year}?\nStatus awal: BELUM BAYAR`
+    : `Buat daftar iuran ${year} untuk SEMUA ${toAdd.length} anggota?\nStatus awal semua: BELUM BAYAR`;
+
+  if (!confirm(msg)) return;
+
+  showToast(`⏳ Membuat daftar iuran ${year}...`);
+
+  // Buat data baru
+  const newData = { ...existing };
+  toAdd.forEach(m => {
+    newData[memberDisplayName(m)] = "BELUM";
+  });
+
+  try {
+    await FB.setDoc(FB.doc(db, "iuran", String(year)), newData, { merge: true });
+    iuranFirebase[String(year)] = newData;
+    renderIuranTable();
+    showToast(`✅ Daftar iuran ${year} berhasil dibuat untuk ${toAdd.length} anggota!`);
+  } catch(e) {
+    showToast("❌ Gagal: " + e.message, "error");
+  }
+}
+
+// ─────────────────────────────────────────────
+// MODAL: Tambah 1 anggota ke iuran tahun tertentu
+// ─────────────────────────────────────────────
+function openTambahSatuIuran(year) {
+  let overlay = document.getElementById("modal-tambah-iuran");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id        = "modal-tambah-iuran";
+    overlay.className = "modal-overlay";
+    overlay.innerHTML = `
+      <div class="modal" style="max-width:440px">
+        <div class="modal-title">
+          + Tambah Data Iuran
+          <button class="modal-close"
+            onclick="document.getElementById('modal-tambah-iuran').classList.remove('show')">✕</button>
+        </div>
+        <div class="form-group">
+          <label>Tahun Iuran</label>
+          <input type="number" class="form-control" id="f-iuran-baru-year" value="2026"/>
+        </div>
+        <div class="form-group">
+          <label>Nama Keluarga</label>
+          <select class="form-control" id="f-iuran-baru-family">
+            <option value="">-- Pilih Keluarga --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status Iuran</label>
+          <select class="form-control" id="f-iuran-baru-status" onchange="toggleIuranBaruNominal()">
+            <option value="BELUM">❌ BELUM BAYAR</option>
+            <option value="LUNAS">✅ LUNAS (Rp 120.000)</option>
+            <option value="custom">🔶 Sebagian (isi nominal)</option>
+          </select>
+        </div>
+        <div class="form-group" id="iuran-baru-nominal-group" style="display:none">
+          <label>Nominal yang Sudah Dibayar</label>
+          <input type="text" class="form-control" id="f-iuran-baru-nominal"
+            placeholder="Contoh: 60,000"/>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+          <button class="btn btn-secondary"
+            onclick="document.getElementById('modal-tambah-iuran').classList.remove('show')">
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveTambahSatuIuran()">
+            💾 Simpan
+          </button>
+        </div>
+      </div>`;
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay) overlay.classList.remove("show");
+    });
+    document.body.appendChild(overlay);
+  }
+
+  // Set tahun
+  document.getElementById("f-iuran-baru-year").value = year;
+
+  // Isi dropdown anggota
+  const sel = document.getElementById("f-iuran-baru-family");
+  sel.innerHTML = `<option value="">-- Pilih Keluarga --</option>`;
+  const existing = iuranFirebase[String(year)] || {};
+  appData.members
+    .slice()
+    .sort((a, b) => memberDisplayName(a).localeCompare(memberDisplayName(b)))
+    .forEach(m => {
+      const dn  = memberDisplayName(m);
+      const ada = existing[dn];
+      const opt = document.createElement("option");
+      opt.value       = dn;
+      opt.textContent = dn + (ada ? ` (${ada})` : " — belum ada");
+      sel.appendChild(opt);
+    });
+
+  overlay.classList.add("show");
+}
+
+function toggleIuranBaruNominal() {
+  const sel = document.getElementById("f-iuran-baru-status");
+  document.getElementById("iuran-baru-nominal-group").style.display =
+    sel.value === "custom" ? "block" : "none";
+}
+
+async function saveTambahSatuIuran() {
+  const year   = document.getElementById("f-iuran-baru-year").value;
+  const family = document.getElementById("f-iuran-baru-family").value;
+  const selVal = document.getElementById("f-iuran-baru-status").value;
+
+  if (!family) return showToast("Pilih keluarga terlebih dahulu", "error");
+
+  let status;
+  if (selVal === "LUNAS" || selVal === "BELUM") {
+    status = selVal;
+  } else {
+    status = document.getElementById("f-iuran-baru-nominal").value.trim();
+    if (!status) return showToast("Masukkan nominal", "error");
+  }
+
+  try {
+    if (!iuranFirebase[year]) iuranFirebase[year] = {};
+    iuranFirebase[year][family] = status;
+
+    await FB.setDoc(
+      FB.doc(db, "iuran", String(year)),
+      iuranFirebase[year],
+      { merge: true }
+    );
+
+    // Update currentIuranYear ke tahun yang baru diinput
+    currentIuranYear = parseInt(year);
+
+    // Update tab iuran agar tahun yang dipilih aktif
+    const iuranYears = [2022, 2023, 2024, 2025, 2026, 2027];
+    document.getElementById("iuran-year-tabs").innerHTML = iuranYears
+      .map(y => `<div class="year-tab ${y === currentIuranYear ? "active" : ""}"
+        onclick="currentIuranYear=${y};renderIuranTable()">${y}</div>`)
+      .join("");
+
+    document.getElementById("modal-tambah-iuran").classList.remove("show");
+    renderIuranTable();
+    showToast(`✅ Data iuran ${family} tahun ${year} → ${status}`);
+  } catch(e) {
+    showToast("❌ Gagal simpan: " + e.message, "error");
+  }
+}
+
+// ─────────────────────────────────────────────
+// PATCH: Tambah tab tahun 2026, 2027 dst ke iuran-year-tabs
+// ─────────────────────────────────────────────
+const _prevRenderKeuangan = window.renderKeuangan;
+window.renderKeuangan = function() {
+  _prevRenderKeuangan();
+
+  // Override iuran year tabs agar include 2026+
+  const allIuranYears = new Set([2022, 2023, 2024, 2025, 2026]);
+
+  // Tambahkan tahun dari Firebase jika ada
+  Object.keys(iuranFirebase || {}).forEach(y => allIuranYears.add(parseInt(y)));
+
+  // Tambahkan tahun ini dan tahun depan
+  const thisYear = new Date().getFullYear();
+  allIuranYears.add(thisYear);
+  allIuranYears.add(thisYear + 1);
+
+  const sortedYears = [...allIuranYears].sort((a, b) => a - b);
+
+  document.getElementById("iuran-year-tabs").innerHTML = sortedYears
+    .map(y => `<div class="year-tab ${y === currentIuranYear ? "active" : ""}"
+      onclick="currentIuranYear=${y};renderIuranTable()">${y}</div>`)
+    .join("");
+};
+
+console.log("📋 Iuran Tahun Baru Patch loaded!");
+</script>
+
   </body>
 </html>
