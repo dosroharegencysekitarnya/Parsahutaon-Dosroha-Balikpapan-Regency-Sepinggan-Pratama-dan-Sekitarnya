@@ -7652,5 +7652,26 @@ di file dosroha.html (setelah patch Firebase CRUD jika sudah ada)
 
       console.log("📋 Iuran Edit Patch loaded!");
     </script>
+    <script>
+      // PATCH: Pengumuman ikut update saat kegiatan berubah di Firebase
+      const _prevStartKegiatanListener = startKegiatanListener;
+      window.startKegiatanListener = function () {
+        const q = FB.query(
+          FB.collection(db, "kegiatan"),
+          FB.orderBy("date", "desc"),
+        );
+        return FB.onSnapshot(q, (snap) => {
+          appData.kegiatan = [];
+          snap.forEach((d) =>
+            appData.kegiatan.push({ id: parseInt(d.id), ...d.data() }),
+          );
+          renderKegiatan();
+          updateStatKegiatan();
+          // Tambahan: update Pengumuman jika halaman aktif
+          const pg = document.getElementById("page-pengumuman");
+          if (pg?.classList.contains("active")) renderPengumuman();
+        });
+      };
+    </script>
   </body>
 </html>
