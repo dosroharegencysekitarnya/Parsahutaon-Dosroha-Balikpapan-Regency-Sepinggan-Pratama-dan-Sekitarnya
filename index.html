@@ -1497,6 +1497,10 @@
               <div class="hero-stat-num" id="stat-kegiatan">-</div>
               <div class="hero-stat-label">Kegiatan/Tahun</div>
             </div>
+            <div class="hero-stat">
+              <div class="hero-stat-num" id="stat-saldo">-</div>
+              <div class="hero-stat-label">Saldo Kas</div>
+            </div>
           </div>
         </div>
       </div>
@@ -6134,7 +6138,6 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
       document.addEventListener("DOMContentLoaded", () => {
         loadData(); // load localStorage sebagai fallback
         loadAttendance(); // load attendance localStorage
-        initFirebase(); // init Firebase (akan override localStorage)
         populateDropdowns();
         updateAdminUI();
         loadSavedBg();
@@ -6474,7 +6477,6 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
       }
     </script>
     <script>
-
       // ============================================
       // FIX: EDIT KEGIATAN
       // ============================================
@@ -6532,7 +6534,9 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
           if (!filtered[i]) return;
           const kId = filtered[i].id;
           if (card.querySelector(".edit-kegiatan-btn")) return;
-          const actionDiv = card.querySelector("div[style*='margin-left:auto']");
+          const actionDiv = card.querySelector(
+            "div[style*='margin-left:auto']",
+          );
           if (!actionDiv) return;
           const editBtn = document.createElement("button");
           editBtn.className = "edit-btn edit-kegiatan-btn";
@@ -8043,6 +8047,218 @@ Paste tepat sebelum </body>, setelah semua patch sebelumnya
       }
 
       console.log("🗑 Hapus Iuran Patch loaded!");
+    </script>
+    <!--
+=============================================================
+PATCH: FIREBASE FIX — Promise.allSettled + waitForFB
+Parsahutaon Dos Roha
+
+CARA PAKAI:
+Paste seluruh blok <script> ini tepat sebelum tag </body>
+di dosroha.html — SETELAH semua patch sebelumnya
+=============================================================
+-->
+    <script>
+      // ============================================================
+      // FIREBASE FIX PATCH v1.0
+      // Fix: Promise.all → Promise.allSettled (1 gagal tidak crash semua)
+      // Fix: waitForFB — tunggu window.FB siap sebelum initFirebase()
+      // Fix: fallback ke defaultMembers kalau Firebase gagal load members
+      // ============================================================
+
+      // ─────────────────────────────────────────────
+      // PATCH: initFirebase — pakai Promise.allSettled
+      // ─────────────────────────────────────────────
+      window.initFirebase = async function () {
+        // Setup auth listener dulu
+        if (typeof initFirebaseAuth === "function") initFirebaseAuth();
+
+        try {
+          // ✅ Promise.allSettled: kalau 1 koleksi gagal, yang lain tetap jalan
+          const results = await Promise.allSettled([
+            loadMembersFromFirebase(),
+            loadAllAttendanceFromFirebase(),
+            loadSettingsFromFirebase(),
+
+            // Load bonataon dari Firebase
+            (async () => {
+              const snap = await FB.getDocs(FB.collection(db, "bonataon"));
+              appData.bonataon = {};
+              snap.forEach((d) => {
+                const year = parseInt(d.id);
+                appData.bonataon[year] = d.data().entries || [];
+              });
+            })(),
+
+            // Load cashflow dari Firebase
+            (async () => {
+              const snap = await FB.getDocs(FB.collection(db, "cashflow"));
+              if (snap.size > 0) {
+                appData.cashflow = [];
+                snap.forEach((d) =>
+                  appData.cashflow.push({ id: parseInt(d.id), ...d.data() }),
+                );
+              }
+              // kalau kosong, tetap pakai defaultCashflow dari localStorage
+            })(),
+
+            // Load iuran dari Firebase
+            loadIuranFromFirebase().catch(() => {}),
+          ]);
+
+          // Log hasil per koleksi untuk debugging
+          const labels = [
+            "members",
+            "attendance",
+            "settings",
+            "bonataon",
+            "cashflow",
+            "iuran",
+          ];
+          results.forEach((r, i) => {
+            if (r.status === "rejected") {
+              console.warn(
+                `⚠️ Firebase [${labels[i]}] gagal:`,
+                r.reason?.message || r.reason,
+              );
+            } else {
+              console.log(`✅ Firebase [${labels[i]}] OK`);
+            }
+          });
+
+          // Fallback: kalau members kosong dari Firebase, pakai default
+          if (!appData.members || appData.members.length === 0) {
+            console.warn(
+              "⚠️ Members kosong dari Firebase, pakai defaultMembers",
+            );
+            appData.members = [...defaultMembers];
+          }
+
+          // Render ulang setelah data masuk
+          renderBeranda();
+          renderKegiatan();
+          updateStatKegiatan();
+
+          // Mulai semua real-time listener
+          startKegiatanListener();
+          startCashflowListener();
+          if (typeof startBonataonListener === "function")
+            startBonataonListener();
+          if (typeof startAttendanceListener === "function")
+            startAttendanceListener();
+          if (typeof startMembersListener === "function")
+            startMembersListener();
+          if (typeof startIuranListener === "function") startIuranListener();
+
+          console.log(
+            "🔥 Firebase Fix Patch aktif — Promise.allSettled, semua listener real-time!",
+          );
+        } catch (err) {
+          // Error di luar Promise.allSettled (sangat jarang)
+          console.error("Firebase init error:", err);
+          // Jangan tampilkan toast error ke user — fallback ke data lokal
+          console.warn("⚠️ Menggunakan data lokal sebagai fallback");
+
+          // Pastikan data default tetap tampil
+          if (!appData.members || appData.members.length === 0) {
+            appData.members = [...defaultMembers];
+          }
+          renderBeranda();
+          updateStatKegiatan();
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // PATCH: DOMContentLoaded — tunggu window.FB siap
+      // Ganti listener DOMContentLoaded yang lama
+      // ─────────────────────────────────────────────
+
+      // Hapus listener lama dengan cara override langsung
+      // (listener lama tetap jalan tapi initFirebase() sudah di-override di atas)
+
+      // Tambah safety: kalau FB belum siap, retry setiap 100ms (max 5 detik)
+      function waitAndInitFirebase() {
+        let attempts = 0;
+        const maxAttempts = 50; // 50 × 100ms = 5 detik timeout
+
+        const interval = setInterval(() => {
+          attempts++;
+
+          if (window.FB && window.db) {
+            clearInterval(interval);
+            console.log(
+              `✅ window.FB siap setelah ${attempts * 100}ms, init Firebase...`,
+            );
+            initFirebase();
+            return;
+          }
+
+          if (attempts >= maxAttempts) {
+            clearInterval(interval);
+            console.error("❌ Firebase module tidak load dalam 5 detik");
+            // Fallback: tampilkan data default tanpa Firebase
+            if (!appData.members || appData.members.length === 0) {
+              appData.members = [...defaultMembers];
+            }
+            renderBeranda();
+            updateStatKegiatan();
+            // TIDAK tampilkan toast error — biarkan UI tetap berfungsi dengan data lokal
+          }
+        }, 100);
+      }
+
+      // Override DOMContentLoaded agar pakai waitAndInitFirebase
+      // (tambahkan listener baru — override listener lama tidak bisa,
+      //  tapi initFirebase yang di-override sudah cukup untuk fix utama)
+      document.addEventListener("DOMContentLoaded", () => {
+        // Jalankan cek delay untuk FB
+        setTimeout(() => {
+          if (!window._firebaseInitDone) {
+            window._firebaseInitDone = true;
+            waitAndInitFirebase();
+          }
+        }, 200); // beri 200ms buffer untuk module ES import selesai
+      });
+
+      // Fallback kalau DOMContentLoaded sudah lewat
+      if (
+        document.readyState === "complete" ||
+        document.readyState === "interactive"
+      ) {
+        setTimeout(() => {
+          if (!window._firebaseInitDone) {
+            window._firebaseInitDone = true;
+            waitAndInitFirebase();
+          }
+        }, 300);
+      }
+
+      // ─────────────────────────────────────────────
+      // PATCH: Sembunyikan toast "Firebase bermasalah" ke console saja
+      // Ganti pesan error jadi tidak menakutkan untuk user awam
+      // ─────────────────────────────────────────────
+      const _origShowToast = window.showToast;
+      window.showToast = function (msg, type) {
+        // Filter pesan teknikal Firebase — tampilkan di console saja
+        const techMessages = [
+          "Firebase bermasalah",
+          "Koneksi Firebase",
+          "Error:",
+          "error:",
+        ];
+        const isTechError =
+          techMessages.some((t) => msg.includes(t)) && type === "error";
+
+        if (isTechError) {
+          console.warn("🔕 Toast disembunyikan (teknikal):", msg);
+          return; // jangan tampilkan ke user
+        }
+        _origShowToast(msg, type);
+      };
+
+      console.log(
+        "🛡️ Firebase Fix Patch loaded — Promise.allSettled + waitForFB + toast filter!",
+      );
     </script>
   </body>
 </html>
