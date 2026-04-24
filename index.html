@@ -4628,7 +4628,6 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
           saldo >= 1000000 ? (saldo / 1000000).toFixed(1) + "M" : fmtRp(saldo);
         document.getElementById("stat-anggota").textContent =
           appData.members.length;
-        document.getElementById("stat-saldo").textContent = saldoStr;
       }
       function computeSaldo() {
         let s = 10364300;
@@ -7078,6 +7077,7 @@ window.saveCfEdit = async function() {
   try {
     await FB.updateDoc(FB.doc(db, "cashflow", String(r.id)), { date, desc, in: inVal, out: outVal });
     closeModal("modal-edit-cf");
+    renderKeuangan();
     showToast("✅ Transaksi diperbarui");
   } catch(e) { showToast("❌ Gagal: " + e.message, "error"); }
 };
@@ -7085,7 +7085,9 @@ window.saveCfEdit = async function() {
 window.deleteCf = async function(id) {
   if (!isAdmin || !confirm("Hapus transaksi ini?")) return;
   try {
-    await FB.deleteDoc(FB.doc(db, "cashflow", String(id)));
+   await FB.deleteDoc(FB.doc(db, "cashflow", String(id)));
+    appData.cashflow = appData.cashflow.filter(r => r.id != id);
+    renderKeuangan();
     showToast("Transaksi dihapus", "success");
   } catch(e) { showToast("❌ Gagal: " + e.message, "error"); }
 };
