@@ -7121,7 +7121,7 @@ window.getMergedIuranStatus = function(year) {
   if (year === 2025 || year === "2025") base = { ...iuranStatus2025 };
   else if (iuranStatus?.[String(year)]) base = { ...iuranStatus[String(year)] };
   if (iuranFirebase[String(year)] && Object.keys(iuranFirebase[String(year)]).length > 0)
-    return { ...iuranFirebase[String(year)] };
+     return { ...base, ...iuranFirebase[String(year)] };
   return base;
 };
 
