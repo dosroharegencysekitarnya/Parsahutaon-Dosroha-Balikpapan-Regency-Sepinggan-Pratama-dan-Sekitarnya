@@ -8843,5 +8843,126 @@ di dosroha.html — SETELAH semua patch sebelumnya
         "🔒 Privacy Patch loaded — addr & phone tersembunyi dari publik!",
       );
     </script>
+    <!--
+=============================================================
+PATCH FIX: HAPUS IURAN 2025 — Parsahutaon Dos Roha
+
+MASALAH:
+Tombol hapus tidak berfungsi untuk tahun 2025 karena data
+iuranStatus2025 tersimpan di hardcode (bukan Firebase).
+hapusBarisIuran() mencari di iuranFirebase["2025"] yang kosong.
+
+SOLUSI:
+Override hapusBarisIuran() agar:
+1. Cek iuranFirebase dulu (data Firebase)
+2. Kalau tidak ada → ambil dari hardcode iuranStatus2025
+3. Gabungkan, hapus nama yang diminta, simpan ke Firebase
+
+CARA PAKAI:
+Paste seluruh blok ini tepat sebelum </body>
+SETELAH semua patch yang sudah ada
+=============================================================
+-->
+    <script>
+      // ============================================================
+      // PATCH FIX: HAPUS IURAN 2025 v1.1
+      // Mendukung hapus dari data hardcode iuranStatus2025
+      // ============================================================
+
+      window.hapusBarisIuran = async function (year, name) {
+        if (!isAdmin) return;
+
+        if (
+          !confirm(
+            `Hapus "${name}" dari daftar iuran tahun ${year}?\n\nData iuran anggota ini akan dihapus dari laporan tahun ${year}.`,
+          )
+        )
+          return;
+
+        try {
+          // ── Ambil data yang sudah ada di Firebase untuk tahun ini ──
+          const existingFirebase = iuranFirebase[String(year)]
+            ? { ...iuranFirebase[String(year)] }
+            : {};
+
+          // ── Kalau Firebase masih kosong untuk tahun ini,
+          //    gabungkan dulu dengan data hardcode ──
+          let mergedData = { ...existingFirebase };
+
+          if (Object.keys(mergedData).length === 0) {
+            // Belum ada di Firebase → ambil dari hardcode
+            if (year == 2025) {
+              mergedData = { ...iuranStatus2025 };
+            } else if (iuranStatus && iuranStatus[String(year)]) {
+              mergedData = { ...iuranStatus[String(year)] };
+            }
+          } else {
+            // Sudah ada di Firebase tapi mungkin tidak lengkap
+            // → gabungkan dengan hardcode sebagai base
+            let hardcodeBase = {};
+            if (year == 2025) hardcodeBase = { ...iuranStatus2025 };
+            else if (iuranStatus && iuranStatus[String(year)]) {
+              hardcodeBase = { ...iuranStatus[String(year)] };
+            }
+            mergedData = { ...hardcodeBase, ...existingFirebase };
+          }
+
+          // ── Cek apakah nama ada di data ──
+          if (!(name in mergedData)) {
+            showToast(
+              `⚠️ "${name}" tidak ditemukan di data iuran ${year}`,
+              "error",
+            );
+            return;
+          }
+
+          // ── Hapus nama dari data ──
+          delete mergedData[name];
+
+          // ── Simpan data yang sudah dihapus ke Firebase ──
+          await FB.setDoc(FB.doc(db, "iuran", String(year)), mergedData);
+
+          // ── Update cache lokal ──
+          iuranFirebase[String(year)] = mergedData;
+
+          renderIuranTable();
+          showToast(`✅ "${name}" berhasil dihapus dari iuran ${year}`);
+        } catch (e) {
+          console.error("hapusBarisIuran error:", e);
+          showToast("❌ Gagal hapus: " + e.message, "error");
+        }
+      };
+
+      // ─────────────────────────────────────────────
+      // BONUS FIX: getMergedIuranStatus juga diperbaiki
+      // Memastikan data hardcode + Firebase selalu tergabung
+      // ─────────────────────────────────────────────
+      window.getMergedIuranStatus = function (year) {
+        // Ambil base dari hardcode
+        let base = {};
+        if (year === 2025 || year === "2025") {
+          base = { ...iuranStatus2025 };
+        } else if (iuranStatus && iuranStatus[String(year)]) {
+          base = { ...iuranStatus[String(year)] };
+        }
+
+        // Kalau sudah ada di Firebase, data Firebase menimpa hardcode
+        // (Firebase = data yang sudah diupdate/dihapus admin)
+        if (
+          iuranFirebase[String(year)] &&
+          Object.keys(iuranFirebase[String(year)]).length > 0
+        ) {
+          // Gunakan HANYA data Firebase (sudah mencakup semua update termasuk hapus)
+          return { ...iuranFirebase[String(year)] };
+        }
+
+        // Kalau belum ada di Firebase, pakai hardcode
+        return base;
+      };
+
+      console.log(
+        "✅ Fix Hapus Iuran 2025 loaded — hapus dari hardcode + Firebase didukung!",
+      );
+    </script>
   </body>
 </html>
