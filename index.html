@@ -6743,6 +6743,8 @@ function initFirebaseAuth() {
       }
 
       // Inject tombol migrasi di admin panel
+      renderKegiatan();
+      renderMembers();
       setTimeout(() => injectMigrasiButtons(), 500);
 
     } else {
