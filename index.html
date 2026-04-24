@@ -6617,11 +6617,9 @@ Paste seluruh blok <script> ini tepat sebelum tag </body>
         const id = genId();
         const data = { date, type, title, desc, place };
         try {
-          await FB.setDoc(FB.doc(db, "kegiatan", String(id)), data);
-          appData.kegiatan.push({ id, ...data });
+          await FB.setDoc(FB.doc(db, "kegiatan", String(id)), data);          
           currentKegYear = new Date(date).getFullYear();
           closeModal("modal-add-kegiatan");
-          renderKegiatan();
           showToast("✅ Kegiatan berhasil ditambahkan");
         } catch (e) {
           showToast("❌ Gagal simpan: " + e.message, "error");
