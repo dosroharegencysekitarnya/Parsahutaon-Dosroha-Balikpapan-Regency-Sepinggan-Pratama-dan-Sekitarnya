@@ -6085,8 +6085,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
           snap.forEach((d) =>
             appData.cashflow.push({ id: parseInt(d.id), ...d.data() }),
           );
-          const pg = document.getElementById("page-keuangan");
-          if (pg?.classList.contains("active")) renderKeuangan();
+          renderKeuangan();
         });
       }
 
