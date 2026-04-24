@@ -4974,7 +4974,10 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
             return `<tr><td>${fmtDate(r.date)}</td><td style="max-width:300px;font-size:13px">${r.desc}</td><td class="rp" style="color:var(--teal)">${r.in ? fmtRp(r.in) : ""}</td><td class="rp" style="color:var(--coral)">${r.out ? fmtRp(r.out) : ""}</td><td class="rp"><strong>${fmtRp(r.balance)}</strong></td>${adminActs}</tr>`;
           })
           .join("");
-        const iuranYears = [2022, 2023, 2024, 2025, 2026];
+        const thisYear = new Date().getFullYear();
+        const iuranYears = [2022, 2023, 2024, 2025];
+        if (!iuranYears.includes(thisYear)) iuranYears.push(thisYear);
+        if (!iuranYears.includes(thisYear + 1)) iuranYears.push(thisYear + 1);
         document.getElementById("iuran-year-tabs").innerHTML = iuranYears
           .map(
             (y) =>
@@ -5154,7 +5157,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         "Manalu/ br.Silaban (Oliv)": "LUNAS",
       };
 
-      function renderIuranTable() {
+      function renderIuranTable_OLD() {
         const year = currentIuranYear;
         let statusMap =
           year === 2025 ? iuranStatus2025 : iuranStatus[year] || {};
@@ -7217,6 +7220,7 @@ window.renderIuranTable = function() {
   // Hapus summary lama
   document.querySelectorAll(".iuran-summary-block").forEach(el => el.remove());
   document.getElementById("btn-tambah-iuran-wrap")?.remove();
+  document.getElementById("iuran-tbody").innerHTML = "";
 
   const iuranTable = document.getElementById("iuran-tbody")?.closest("table");
   if (!iuranTable) return;
