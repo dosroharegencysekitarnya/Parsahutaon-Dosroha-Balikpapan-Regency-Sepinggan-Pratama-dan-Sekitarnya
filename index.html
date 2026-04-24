@@ -203,6 +203,7 @@
         max-width: 520px;
         margin: 0 auto 2.5rem;
         line-height: 1.7;
+        white-space: nowrap;
       }
       .hero-stats {
         display: flex;
@@ -7703,43 +7704,116 @@ console.log("🔥 PATCH MASTER v1.0 loaded — Firebase clean, no duplicates, re
 </script>
 <script>
 // ============================================================
-// PATCH: FIX TAB IURAN AKTIF — switchIuranYear()
-// Tambahkan tepat sebelum </body>
+// PATCH FINAL: FIX TAB IURAN — versi bersih, tidak konflik
+// Paste ini PALING BAWAH, setelah semua script sebelumnya
 // ============================================================
 
-window.switchIuranYear = function(y) {
-  currentIuranYear = y;
+// Tunggu DOM siap
+(function waitReady() {
+  if (document.readyState !== "complete") {
+    window.addEventListener("load", applyIuranTabFix);
+  } else {
+    setTimeout(applyIuranTabFix, 800); // beri waktu semua script load dulu
+  }
+})();
 
-  // Re-render tab buttons dengan class active yang benar
-  const allYears = [2022, 2023, 2024, 2025, 2026, 2027];
-  const tabsEl = document.getElementById("iuran-year-tabs");
-  if (tabsEl) {
+function applyIuranTabFix() {
+
+  // ─── FUNGSI UTAMA: switchIuranYear ───────────────────────
+  // Satu fungsi ini menangani SEMUA — update variable,
+  // re-render tab dengan active yang benar, render tabel
+  window.switchIuranYear = function(y) {
+    y = parseInt(y);
+    window.currentIuranYear = y;
+
+    // Re-render tab buttons dengan active state yang benar
+    _renderIuranYearTabs(y);
+
+    // Render tabel iuran
+    if (typeof renderIuranTable === "function") renderIuranTable();
+  };
+
+  // ─── HELPER: render tab buttons iuran ────────────────────
+  function _renderIuranYearTabs(activeYear) {
+    const tabsEl = document.getElementById("iuran-year-tabs");
+    if (!tabsEl) return;
+
+    // Ambil semua tahun yang tersedia (dari hardcode + Firebase + saat ini)
+    const hardcodeYears = [2022, 2023, 2024, 2025];
+    const firebaseYears = typeof iuranFirebase !== "undefined"
+      ? Object.keys(iuranFirebase).map(Number)
+      : [];
+    const thisYear = new Date().getFullYear();
+
+    // Gabung semua, deduplicate, sort
+    const allYears = [...new Set([
+      ...hardcodeYears,
+      ...firebaseYears,
+      thisYear,
+      thisYear + 1
+    ])].sort((a, b) => a - b);
+
     tabsEl.innerHTML = allYears.map(yr =>
-      `<div class="year-tab ${yr === y ? 'active' : ''}"
+      `<div class="year-tab ${yr === activeYear ? "active" : ""}"
+        style="cursor:pointer"
         onclick="switchIuranYear(${yr})">${yr}</div>`
     ).join("");
   }
 
-  // Render tabel iuran sesuai tahun
-  renderIuranTable();
-};
+  // ─── OVERRIDE renderKeuangan: HAPUS semua chain override ─
+  // Simpan referensi ke versi yang sudah di-override berkali-kali
+  const _chainedRenderKeuangan = window.renderKeuangan;
 
-// Override renderKeuangan untuk pakai switchIuranYear di tab iuran
-const _origRenderKeuangan = window.renderKeuangan;
-window.renderKeuangan = function() {
-  _origRenderKeuangan();
+  window.renderKeuangan = function() {
+    // Panggil versi yang sudah ada (apapun chain-nya)
+    if (typeof _chainedRenderKeuangan === "function") {
+      _chainedRenderKeuangan();
+    }
 
-  // Ganti onclick di semua tab iuran yang sudah dirender
-  const tabsEl = document.getElementById("iuran-year-tabs");
-  if (!tabsEl) return;
+    // Setelah render selesai, PAKSA fix tab iuran
+    // Ini override apapun yang dirender oleh fungsi lama
+    setTimeout(function() {
+      _renderIuranYearTabs(window.currentIuranYear);
+    }, 0);
+  };
 
-  // Re-render tab dengan fungsi yang benar
-  const allYears = [2022, 2023, 2024, 2025, 2026, 2027];
-  tabsEl.innerHTML = allYears.map(yr =>
-    `<div class="year-tab ${yr === currentIuranYear ? 'active' : ''}"
-      onclick="switchIuranYear(${yr})">${yr}</div>`
-  ).join("");
-};
-</script>  
+  // ─── FIX: Sinkronisasi summary box "Tahun XXXX" ──────────
+  // Override renderIuranTable untuk pastikan summary box
+  // selalu menampilkan tahun yang SAMA dengan tab aktif
+  const _origRenderIuranTable = window.renderIuranTable;
+  if (typeof _origRenderIuranTable === "function") {
+    window.renderIuranTable = function() {
+      // Pastikan currentIuranYear sudah ter-set dengan benar
+      // sebelum render tabel
+      if (typeof window.currentIuranYear === "undefined") {
+        window.currentIuranYear = new Date().getFullYear();
+      }
+      _origRenderIuranTable();
+    };
+  }
+
+  // ─── INIT: Fix tab segera jika halaman keuangan aktif ────
+  const pgKeuangan = document.getElementById("page-keuangan");
+  if (pgKeuangan && pgKeuangan.classList.contains("active")) {
+    _renderIuranYearTabs(window.currentIuranYear);
+  }
+
+  // ─── INTERCEPT: Fix tab setiap kali showPage('keuangan') ─
+  const _origShowPage = window.showPage;
+  if (typeof _origShowPage === "function") {
+    window.showPage = function(page) {
+      _origShowPage(page);
+      if (page === "keuangan") {
+        // Setelah render, fix tab aktif
+        setTimeout(function() {
+          _renderIuranYearTabs(window.currentIuranYear);
+        }, 50);
+      }
+    };
+  }
+
+  console.log("✅ Iuran Tab Fix FINAL aktif — currentIuranYear:", window.currentIuranYear);
+}
+</script>
 </body>
 </html>
