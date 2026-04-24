@@ -5157,7 +5157,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         "Manalu/ br.Silaban (Oliv)": "LUNAS",
       };
 
-      function renderIuranTable_OLD() {
+      function renderIuranTable() {
         const year = currentIuranYear;
         let statusMap =
           year === 2025 ? iuranStatus2025 : iuranStatus[year] || {};
@@ -7221,7 +7221,6 @@ window.renderIuranTable = function() {
   document.querySelectorAll(".iuran-summary-block").forEach(el => el.remove());
   document.getElementById("btn-tambah-iuran-wrap")?.remove();
   document.getElementById("iuran-tbody").innerHTML = "";
-
   const iuranTable = document.getElementById("iuran-tbody")?.closest("table");
   if (!iuranTable) return;
 
