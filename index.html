@@ -2909,8 +2909,6 @@
         showToast("✅ Kegiatan berhasil diperbarui");
       }
 
-      const _origRenderKegiatan = renderKegiatan;
-
       renderKegiatan();
       // ════════════════════════════════════════════
       // FIREBASE DATA FUNCTIONS — Pengganti localStorage
@@ -4627,12 +4625,8 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
             )
             .join("");
         }
-        const saldo = computeSaldo();
-        const saldoStr =
-          saldo >= 1000000 ? (saldo / 1000000).toFixed(1) + "M" : fmtRp(saldo);
         document.getElementById("stat-anggota").textContent =
           appData.members.length;
-        document.getElementById("stat-saldo").textContent = saldoStr;
       }
       function computeSaldo() {
         let s = 10364300;
@@ -6502,34 +6496,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         renderKegiatan();
         showToast("✅ Kegiatan berhasil diperbarui");
       }
-
-      const _origRenderKegiatan = renderKegiatan;
-      window.renderKegiatan = function () {
-        _origRenderKegiatan();
-        if (!isAdmin) return;
-        const list = document.getElementById("kegiatan-list");
-        if (!list) return;
-        const filtered = appData.kegiatan
-          .filter((k) => new Date(k.date).getFullYear() === currentKegYear)
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
-        const cards = list.querySelectorAll(".event-card");
-        cards.forEach((card, i) => {
-          if (!filtered[i]) return;
-          const kId = filtered[i].id;
-          if (card.querySelector(".edit-kegiatan-btn")) return;
-          const actionDiv = card.querySelector(
-            "div[style*='margin-left:auto']",
-          );
-          if (!actionDiv) return;
-          const editBtn = document.createElement("button");
-          editBtn.className = "edit-btn edit-kegiatan-btn";
-          editBtn.title = "Edit kegiatan";
-          editBtn.textContent = "✏";
-          editBtn.onclick = () => openEditKegiatan(kId);
-          actionDiv.insertBefore(editBtn, actionDiv.firstChild);
-        });
-      };
-      renderKegiatan();
+      
     </script>
     <script>
       // ============================================
