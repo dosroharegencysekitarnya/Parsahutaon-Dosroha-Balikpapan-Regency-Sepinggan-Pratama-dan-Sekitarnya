@@ -4924,8 +4924,8 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
       // =========================================
       // KEUANGAN
       // =========================================
-      let currentKeuYear = 2025;
-      let currentIuranYear = 2025;
+      let currentKeuYear = new Date().getFullYear();
+      let currentIuranYear = new Date().getFullYear();
       function getKeuYears() {
         return [...new Set(appData.cashflow.map((r) => getYear(r.date)))].sort(
           (a, b) => b - a,
