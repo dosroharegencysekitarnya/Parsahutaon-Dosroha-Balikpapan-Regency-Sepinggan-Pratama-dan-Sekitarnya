@@ -203,6 +203,7 @@
         max-width: 520px;
         margin: 0 auto 2.5rem;
         line-height: 1.7;
+        white-space: nowrap;
       }
       .hero-stats {
         display: flex;
@@ -1496,10 +1497,6 @@
             <div class="hero-stat">
               <div class="hero-stat-num" id="stat-kegiatan">-</div>
               <div class="hero-stat-label">Kegiatan/Tahun</div>
-            </div>
-            <div class="hero-stat">
-              <div class="hero-stat-num" id="stat-saldo">-</div>
-              <div class="hero-stat-label">Saldo Kas</div>
             </div>
           </div>
         </div>
@@ -8950,5 +8947,46 @@ SETELAH semua patch yang sudah ada
         "✅ Fix Hapus Iuran 2025 loaded — hapus dari hardcode + Firebase didukung!",
       );
     </script>
-  </body>
+</script>
+<script>
+// ============================================================
+// PATCH: FIX TAB IURAN AKTIF — switchIuranYear()
+// Tambahkan tepat sebelum </body>
+// ============================================================
+
+window.switchIuranYear = function(y) {
+  currentIuranYear = y;
+
+  // Re-render tab buttons dengan class active yang benar
+  const allYears = [2022, 2023, 2024, 2025, 2026, 2027];
+  const tabsEl = document.getElementById("iuran-year-tabs");
+  if (tabsEl) {
+    tabsEl.innerHTML = allYears.map(yr =>
+      `<div class="year-tab ${yr === y ? 'active' : ''}"
+        onclick="switchIuranYear(${yr})">${yr}</div>`
+    ).join("");
+  }
+
+  // Render tabel iuran sesuai tahun
+  renderIuranTable();
+};
+
+// Override renderKeuangan untuk pakai switchIuranYear di tab iuran
+const _origRenderKeuangan = window.renderKeuangan;
+window.renderKeuangan = function() {
+  _origRenderKeuangan();
+
+  // Ganti onclick di semua tab iuran yang sudah dirender
+  const tabsEl = document.getElementById("iuran-year-tabs");
+  if (!tabsEl) return;
+
+  // Re-render tab dengan fungsi yang benar
+  const allYears = [2022, 2023, 2024, 2025, 2026, 2027];
+  tabsEl.innerHTML = allYears.map(yr =>
+    `<div class="year-tab ${yr === currentIuranYear ? 'active' : ''}"
+      onclick="switchIuranYear(${yr})">${yr}</div>`
+  ).join("");
+};
+</script>
+</body>
 </html>
