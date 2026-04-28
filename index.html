@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="id">
   <head>
+    <!-- Preconnect untuk Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Preconnect untuk Firebase -->
+<link rel="preconnect" href="https://parsahutaon-dosroha-brsps.firebaseapp.com">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://apis.google.com">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Parsahutaon Dos Roha Regency & Sekitarnya</title>
@@ -1353,7 +1361,7 @@
         }
       }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import {
@@ -5708,14 +5716,26 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         },
       );
     </script>
-
     <script>
+      // Lazy loader untuk library eksternal
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}  
       // ============================================
       // FUNGSI DOWNLOAD LAPORAN EXCEL ADMIN
       // ============================================
-      function downloadLaporanExcel() {
+      async function downloadLaporanExcel() {
         var status = document.getElementById("downloadStatus");
         status.textContent = "⏳ Sedang membuat laporan...";
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
         try {
           var wb = XLSX.utils.book_new();
           var tahun = new Date().getFullYear();
