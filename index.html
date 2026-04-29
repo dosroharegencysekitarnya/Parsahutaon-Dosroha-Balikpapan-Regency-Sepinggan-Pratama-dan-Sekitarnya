@@ -5706,10 +5706,7 @@ Paste seluruh blok <script> ini tepat sebelum tag </body>
             phone,
             joined,
           });
-          appData.members.push(newMember);
-          closeModal("modal-add-member");
-          renderMembers();
-          populateDropdowns();
+          closeModal("modal-add-member");       
           showToast("✅ Anggota baru berhasil didaftarkan");
         } catch (e) {
           showToast("❌ Gagal simpan: " + e.message, "error");
@@ -7488,6 +7485,7 @@ di dosroha.html — SETELAH semua patch yang sudah ada
       console.log(
         "💡 Jalankan dari console browser atau klik tombol di Admin Panel → Migrasi Data",
       );
+
     </script>
     <!--
 =============================================================
@@ -7662,11 +7660,6 @@ di dosroha.html — SETELAH semua patch sebelumnya
       // PATCH: addMember — pastikan addr & phone tersimpan di Firebase
       // (fungsi ini sudah ada di CRUD patch, ini hanya safety check)
       // ─────────────────────────────────────────────
-      const _prevAddMemberPrivacy = window.addMember;
-      window.addMember = async function () {
-        if (!isAdmin) return showToast("❌ Harus login admin", "error");
-        await _prevAddMemberPrivacy();
-      };
 
       // ─────────────────────────────────────────────
       // PATCH: Firestore Security Rules reminder
