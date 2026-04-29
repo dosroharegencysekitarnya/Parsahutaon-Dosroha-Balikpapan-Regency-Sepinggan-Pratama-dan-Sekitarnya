@@ -7395,6 +7395,7 @@ di dosroha.html — SETELAH semua patch yang sudah ada
         migrasiSection.id = "admin-migrasi-section";
         migrasiSection.className = "admin-section";
         migrasiSection.innerHTML = `
+
     <h3>🔄 Migrasi Data ke Firebase</h3>
     <p style="font-size:13px;color:var(--text-mid);margin-bottom:1rem;line-height:1.7">
       Gunakan tombol di bawah untuk memindahkan data ke Firebase.
@@ -7459,7 +7460,7 @@ di dosroha.html — SETELAH semua patch yang sudah ada
         }
 
         // Update status migrasi
-
+      }
       // Inject tombol saat admin panel dibuka
       const _origOpenAdminPanel = window.openAdminPanel;
       window.openAdminPanel = function () {
