@@ -3070,7 +3070,7 @@
         await FB.setDoc(FB.doc(db, "settings", "config"), {
           adrt: appData.adrt || "",
           pengurusList: pengurusList || [],
-          bgImage: localStorage.getItem("dr_bg_image") || "",
+          bgImage: "",
         });
       }
 
@@ -3094,31 +3094,18 @@
       // =========================================
       // DATA & CONSTANTS
       // =========================================
-      const ADMIN_PW_KEY = "parsahutaon_admin_pw";
-      const DATA_KEY = "parsahutaon_data";
-      const PENGURUS_KEY = "dr_pengurus_list";
-      const BG_KEY = "dr_bg_image";
-      const BG_COLOR_KEY = "dr_bg_color";
-      const ATTENDANCE_KEY = "parsahutaon_attendance"; // NEW
+      // Konstanta KEY dihapus — semua data sekarang dari Firebase
 
       let isAdmin = false;
 
-      function getDefaultPw() {
-        return localStorage.getItem(ADMIN_PW_KEY) || "dosroha2010";
-      }
-
       // ===== DEFAULT PENGURUS =====
-      let pengurusList = JSON.parse(
-        localStorage.getItem(PENGURUS_KEY) || "null",
-      ) || [
+       let pengurusList = [
         {
           emoji: "👑",
           role: "Ketua",
           name: "Sintua (St) Siregar / br.Manullang",
         },
-        { emoji: "🤝", role: "Wakil Ketua", name: "St. Sitorus / br.Saragih" },
-        { emoji: "✍", role: "Sekretaris", name: "Ny. Nababan / br.Gultom" },
-        {
+         {      
           emoji: "💰",
           role: "Bendahara",
           name: "Ny. Sihombing / br.Pangaribuan",
@@ -4330,45 +4317,16 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         adrt: defaultADRT,
       };
 
-      const ADRT_VERSION = "v3-2024";
-      function loadData() {
-        const saved = localStorage.getItem(DATA_KEY);
-        if (saved) {
-          try {
-            const d = JSON.parse(saved);
-            appData = { ...appData, ...d };
-          } catch (e) {}
-        }
-        const savedAdrtVer = localStorage.getItem("dr_adrt_version");
-        if (savedAdrtVer !== ADRT_VERSION) {
-          appData.adrt = defaultADRT;
-          const toSave = { ...appData, adrt: defaultADRT };
-          localStorage.setItem(DATA_KEY, JSON.stringify(toSave));
-          localStorage.setItem("dr_adrt_version", ADRT_VERSION);
-        }
-      }
-      function saveData() {
-        localStorage.setItem(DATA_KEY, JSON.stringify(appData));
-      }
+      // loadData & saveData dihapus — semua data dari Firebase
+      function saveData() {} // no-op, tetap ada agar tidak error
 
       // =========================================
       // ATTENDANCE DATA
       // =========================================
       let attendanceData = {}; // { eventId: { eventId, date, title, type, present: [memberId,...] } }
 
-      function loadAttendance() {
-        const saved = localStorage.getItem(ATTENDANCE_KEY);
-        if (saved) {
-          try {
-            attendanceData = JSON.parse(saved);
-          } catch (e) {
-            attendanceData = {};
-          }
-        }
-      }
-      function saveAttendance() {
-        localStorage.setItem(ATTENDANCE_KEY, JSON.stringify(attendanceData));
-      }
+     // loadAttendance & saveAttendance dihapus — data dari Firebase
+     function saveAttendance() {} // no-op
 
       // Get attendance for a specific event; returns array of member IDs present
       function getEventAttendance(eventId) {
@@ -4481,8 +4439,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
           document.getElementById("admin-logged-sections").style.display =
             "block";
           renderPengurusEditor();
-          const savedBg = localStorage.getItem(BG_KEY) || "";
-          document.getElementById("f-bg-url").value = savedBg;
+          
         } else {
           document.getElementById("admin-login-section").style.display =
             "block";
@@ -4552,7 +4509,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         const p2 = document.getElementById("f-new-pw2").value;
         if (!p1) return showToast("Password tidak boleh kosong", "error");
         if (p1 !== p2) return showToast("Password tidak cocok", "error");
-        localStorage.setItem(ADMIN_PW_KEY, p1);
+       
         closeModal("modal-change-pw");
         showToast("✅ Password berhasil diubah!", "success");
       }
@@ -4564,7 +4521,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
           return showToast("Konfirmasi password tidak cocok", "error");
         if (np.length < 6)
           return showToast("Password minimal 6 karakter", "error");
-        localStorage.setItem(ADMIN_PW_KEY, np);
+      
         document.getElementById("f-new-pw-admin").value = "";
         document.getElementById("f-confirm-pw-admin").value = "";
         showToast("✅ Password berhasil diubah! 🔑", "success");
@@ -4587,8 +4544,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         const url = document.getElementById("f-bg-url").value.trim();
         if (!url)
           return showToast("Masukkan URL gambar terlebih dahulu", "error");
-        localStorage.setItem(BG_KEY, url);
-        localStorage.removeItem(BG_COLOR_KEY);
+        
         const hero = document.getElementById("hero-beranda");
         hero.style.backgroundImage = `url('${url}')`;
         hero.style.backgroundColor = "";
@@ -4600,16 +4556,13 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
       }
       function applyBgColor() {
         const color = document.getElementById("f-bg-color").value;
-        localStorage.setItem(BG_COLOR_KEY, color);
-        localStorage.removeItem(BG_KEY);
+        
         const hero = document.getElementById("hero-beranda");
         hero.style.backgroundImage = "none";
         hero.style.backgroundColor = color;
         showToast("✅ Warna header berhasil diubah!");
       }
       function removeBg() {
-        localStorage.removeItem(BG_KEY);
-        localStorage.removeItem(BG_COLOR_KEY);
         const hero = document.getElementById("hero-beranda");
         hero.style.backgroundImage = "";
         hero.style.backgroundColor = "";
@@ -4618,16 +4571,8 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         showToast("Background dikembalikan ke default", "success");
       }
       function loadSavedBg() {
-        const hero = document.getElementById("hero-beranda");
-        const savedBg = localStorage.getItem(BG_KEY);
-        const savedColor = localStorage.getItem(BG_COLOR_KEY);
-        if (savedBg) {
-          hero.style.backgroundImage = `url('${savedBg}')`;
-        } else if (savedColor) {
-          hero.style.backgroundImage = "none";
-          hero.style.backgroundColor = savedColor;
-        }
-      }
+         // Background dimuat dari Firebase di loadSettingsFromFirebase()
+}
 
       // =========================================
       // PENGURUS EDITOR
@@ -4672,7 +4617,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
         renderPengurusEditor();
       }
       function savePengurusList() {
-        localStorage.setItem(PENGURUS_KEY, JSON.stringify(pengurusList));
+        
       }
 
       // =========================================
@@ -5761,8 +5706,7 @@ Molo adong sian anggota ni punguan di bagasan parsahiton (opname) 2 malam, laho 
       // =========================================
       // INIT
       // =========================================
-      loadData();
-      loadAttendance();
+      
       renderBeranda();
       populateDropdowns();
       updateAdminUI();
@@ -5987,17 +5931,6 @@ function loadScript(src) {
           return;
         }
 
-        const done = localStorage.getItem("firebase_migrated");
-        if (
-          done &&
-          !confirm(
-            "Data sudah pernah dimigrasikan sebelumnya.\n" +
-              "Jalankan lagi akan MENIMPA data di Firebase.\n" +
-              "Lanjutkan?",
-          )
-        )
-          return;
-
         showToast("⏳ Memulai migrasi... jangan tutup halaman!");
         let total = 0;
         let errors = 0;
@@ -6093,7 +6026,7 @@ function loadScript(src) {
             await FB.setDoc(FB.doc(db, "settings", "config"), {
               adrt: defaultADRT || "",
               pengurusList: pengurusList || [],
-              bgImage: localStorage.getItem("dr_bg_image") || "",
+              bgImage: "",
             });
             total++;
           } catch (e) {
@@ -6192,8 +6125,7 @@ function loadScript(src) {
 
       // Panggil saat DOM siap — ganti bagian init yang lama
       document.addEventListener("DOMContentLoaded", () => {
-        loadData(); // load localStorage sebagai fallback
-        loadAttendance(); // load attendance localStorage
+       
         populateDropdowns();
         updateAdminUI();
         loadSavedBg();
@@ -8850,21 +8782,7 @@ di dosroha.html — SETELAH semua patch sebelumnya
 
       // Cek saat halaman pertama load — sembunyikan addr dari defaultMembers
       // kalau user bukan admin
-      const _origLoadData = window.loadData;
-      window.loadData = function () {
-        _origLoadData();
-        // Hapus addr & phone dari memory untuk publik
-        if (!isAdmin) {
-          appData.members = appData.members.map((m) => ({
-            id: m.id,
-            name: m.name,
-            br: m.br,
-            nick: m.nick,
-            joined: m.joined,
-            // addr dan phone tidak di-expose ke publik
-          }));
-        }
-      };
+      
 
       console.log(
         "🔒 Privacy Patch loaded — addr & phone tersembunyi dari publik!",
