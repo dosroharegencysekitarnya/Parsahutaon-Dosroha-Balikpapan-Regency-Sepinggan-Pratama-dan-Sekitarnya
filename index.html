@@ -2,13 +2,12 @@
 <html lang="id">
   <head>
     <!-- Preconnect untuk Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<!-- Preconnect untuk Firebase -->
-<link rel="preconnect" href="https://parsahutaon-dosroha-brsps.firebaseapp.com">
-<link rel="preconnect" href="https://firestore.googleapis.com">
-<link rel="preconnect" href="https://apis.google.com">
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <!-- Preconnect untuk Firebase -->
+      <link rel="preconnect" href="https://parsahutaon-dosroha-brsps.firebaseapp.com">
+      <link rel="preconnect" href="https://firestore.googleapis.com">
+      <link rel="preconnect" href="https://apis.google.com">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Parsahutaon Dos Roha Regency & Sekitarnya</title>
@@ -63,10 +62,16 @@
         margin: 0 auto;
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 0 24px;
+        gap: 4px;
+        padding: 0 12px;
         height: 58px;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .nav-inner::-webkit-scrollbar {
+         display: none;
       }
       .nav-brand {
         display: flex;
@@ -207,17 +212,20 @@
       }
       .hero-sub {
         color: #b8d4d0;
-        font-size: 1rem;
+        font-size: 0.9rem;
         max-width: 520px;
-        margin: 0 auto 2.5rem;
+        margin: 0 auto 2rem;
         line-height: 1.7;
-        white-space: nowrap;
+        white-space: normal;
+        padding: 0 8px;
       }
       .hero-stats {
         display: flex;
-        gap: 2rem;
+        gap: 1rem;
         justify-content: center;
         flex-wrap: wrap;
+        width: 100%;
+        padding: 0 8px;
       }
       .hero-stat {
         text-align: center;
@@ -1359,6 +1367,58 @@
         .keaktifan-summary {
           grid-template-columns: repeat(2, 1fr);
         }
+        /* PART 1 - Hero */
+  #hero-beranda { min-height: 360px; }
+  .hero-inner { padding: 2rem 1rem; }
+  .hero-badge {
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 0.3rem 0.8rem;
+    white-space: normal;
+    text-align: center;
+  }
+  .hero-title { font-size: 1.6rem !important; }
+
+  /* PART 2 - Stats */
+  .hero-stat-num { font-size: 1.6rem; }
+  .hero-stat-label {
+    font-size: 10px;
+    white-space: normal;
+    text-align: center;
+    max-width: 80px;
+  }
+  .hero-stat { min-width: 70px; }
+
+  /* PART 3 - Nav */
+  .nav-btn {
+    font-size: 12px;
+    padding: 5px 9px;
+    flex-shrink: 0;
+  }
+  .nav-brand { margin-right: 8px; }
+  .nav-admin-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    flex-shrink: 0;
+  }
+
+  /* PART 4 - Section & Cards */
+  .section { padding: 24px 16px; }
+  .card { padding: 16px; }
+  .sejarah-card { padding: 1.2rem; }
+  .pengurus-awal { padding: 1.2rem; }
+  .pengurus-awal-grid { grid-template-columns: 1fr 1fr; }
+  .kegiatan-komunitas-grid { grid-template-columns: 1fr; }
+  .pengurus-aktif-grid { grid-template-columns: 1fr 1fr; }
+
+  /* PART 5 - Table & Global */
+  .tbl-wrap { font-size: 11px; }
+  table { font-size: 11px; }
+  thead th { font-size: 10px; padding: 8px 6px; }
+  tbody td { padding: 7px 6px; }
+  .cf-box .cf-num { font-size: 1.1rem; }
+  .member-grid { grid-template-columns: 1fr; }
+  .modal { padding: 20px 16px; max-height: 90vh; }
       }
     </style>
 
