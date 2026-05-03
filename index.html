@@ -1,0 +1,2881 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <!-- Preconnect untuk Google Fonts -->
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <!-- Preconnect untuk Firebase -->
+      <link rel="preconnect" href="https://parsahutaon-dosroha-brsps.firebaseapp.com">
+      <link rel="preconnect" href="https://firestore.googleapis.com">
+      <link rel="preconnect" href="https://apis.google.com">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parsahutaon Dos Roha Regency & Sekitarnya</title>
+    <meta name="description" content="Portal komunitas Parsahutaon Dos Roha Balikpapan Regency - Sepinggan Pratama. Informasi kegiatan, keuangan, dan keanggotaan komunitas Batak di Balikpapan." />
+<meta name="theme-color" content="#0d1b2a" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+
+    />
+    <style>
+      :root {
+        --navy: #0d1b2a;
+        --teal: #0d9488;
+        --teal-light: #14b8a6;
+        --gold: #d4a017;
+        --coral: #f97316;
+        --cream: #faf8f3;
+        --warm-white: #fffef9;
+        --text-dark: #1a1a2e;
+        --text-mid: #4a4a6a;
+        --text-light: #8888aa;
+        --border: #e8e4da;
+        --shadow: rgba(13, 27, 42, 0.08);
+        --shadow-md: rgba(13, 27, 42, 0.15);
+        --green-bg: #0d2b1f;
+        --success: #22c55e;
+        --danger: #ef4444;
+        --warn: #f59e0b;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Source Serif 4", Georgia, serif;
+        background: var(--cream);
+        color: var(--text-dark);
+        min-height: 100vh;
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      /* ===== NAV ===== */
+      nav {
+        background: var(--navy);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      }
+      .nav-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0 12px;
+        height: 58px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .nav-inner::-webkit-scrollbar {
+         display: none;
+      }
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Playfair Display", serif;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+        margin-right: 16px;
+        text-decoration: none;
+      }
+      .nav-logo {
+        width: 36px;
+        height: 36px;
+        background: var(--teal);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 900;
+        color: white;
+        flex-shrink: 0;
+      }
+      .nav-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.7);
+        font-family: "Source Serif 4", serif;
+        font-size: 13px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        white-space: nowrap;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      .nav-btn.active {
+        background: var(--teal);
+        color: white;
+      }
+      .nav-admin-btn {
+        margin-left: auto;
+        flex-shrink: 0;
+        background: rgba(212, 160, 23, 0.2);
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        font-size: 13px;
+        padding: 5px 14px;
+        border-radius: 20px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+        font-family: "Source Serif 4", serif;
+      }
+      .nav-admin-btn:hover {
+        background: var(--gold);
+        color: var(--navy);
+      }
+      .nav-admin-btn.active-admin {
+        background: var(--gold);
+        color: var(--navy);
+        font-weight: 600;
+      }
+
+      /* ===== PAGES ===== */
+      .page {
+        display: none;
+        min-height: calc(100vh - 58px);
+      }
+      .page.active {
+        display: block;
+      }
+
+      /* ===== HERO ===== */
+      #hero-beranda {
+        position: relative;
+        min-height: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+        background: linear-gradient(
+          135deg,
+          #0d2b1f 0%,
+          var(--navy) 50%,
+          #1a3a2a 100%
+        );
+        background-size: cover;
+        background-position: center;
+      }
+      #hero-beranda::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(13, 27, 42, 0.82) 0%,
+          rgba(13, 43, 31, 0.75) 100%
+        );
+        z-index: 1;
+      }
+      .hero-inner {
+        position: relative;
+        z-index: 2;
+        padding: 3rem 1.5rem;
+      }
+      .hero-badge {
+        display: inline-block;
+        background: rgba(212, 160, 23, 0.25);
+        border: 1px solid rgba(212, 160, 23, 0.5);
+        color: #f0d080;
+        font-size: 12px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 0.35rem 1rem;
+        border-radius: 20px;
+        margin-bottom: 1.2rem;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .hero-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+        font-weight: 900;
+        color: white;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+      }
+      .hero-sub {
+        color: #b8d4d0;
+        font-size: 0.9rem;
+        max-width: 520px;
+        margin: 0 auto 2rem;
+        line-height: 1.7;
+        white-space: normal;
+        padding: 0 8px;
+      }
+      .hero-stats {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        padding: 0 8px;
+      }
+      .hero-stat {
+        text-align: center;
+      }
+      .hero-stat-num {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        font-weight: 900;
+        color: white;
+        line-height: 1;
+      }
+      .hero-stat-label {
+        color: #8ab8b4;
+        font-size: 12px;
+        margin-top: 4px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* ===== SECTION ===== */
+      .section {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 24px;
+      }
+      .section-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+      .section-title::after {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 3px;
+        background: var(--teal);
+        margin-top: 8px;
+      }
+
+      /* ===== CARDS ===== */
+      .card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        box-shadow: 0 2px 12px var(--shadow);
+        padding: 24px;
+      }
+      .card-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--navy);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* ===== GRIDS ===== */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+
+      /* ===== BERANDA — SEJARAH ===== */
+      .sejarah-card {
+        background: var(--warm-white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 2px 12px var(--shadow);
+        margin-bottom: 2rem;
+      }
+      .sejarah-card h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.1rem;
+        color: var(--navy);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 700;
+      }
+      .sejarah-card p {
+        color: var(--text-mid);
+        line-height: 1.8;
+        margin-bottom: 0.9rem;
+      }
+      .sejarah-card p:last-child {
+        margin-bottom: 0;
+      }
+      .sejarah-card em {
+        color: var(--teal);
+      }
+
+      /* ===== BERANDA — PENGURUS PERTAMA ===== */
+      .pengurus-awal {
+        background: linear-gradient(135deg, var(--green-bg) 0%, #0d3d2f 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+      .pengurus-awal h3 {
+        font-family: "Playfair Display", serif;
+        color: #f0d080;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+      .pengurus-awal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .pengurus-item {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.2rem;
+        text-align: center;
+      }
+      .pengurus-item-icon {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+      .pengurus-item-role {
+        color: #aad4c8;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.4rem;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .pengurus-item-name {
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      /* ===== BERANDA — PENGURUS AKTIF ===== */
+      .pengurus-aktif-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2.5rem;
+      }
+      .pengurus-card-new {
+        background: var(--warm-white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px var(--shadow);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .role-badge-new {
+        display: inline-block;
+        background: rgba(13, 148, 136, 0.1);
+        color: var(--teal);
+        border: 1px solid rgba(13, 148, 136, 0.3);
+        border-radius: 20px;
+        font-size: 11px;
+        padding: 3px 10px;
+        font-family: "JetBrains Mono", monospace;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        width: fit-content;
+      }
+      .p-name-new {
+        font-weight: 600;
+        color: var(--navy);
+        font-size: 15px;
+        line-height: 1.4;
+      }
+
+      /* ===== BERANDA — KEGIATAN ===== */
+      .kegiatan-komunitas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2.5rem;
+      }
+      .kegiatan-kom-card {
+        background: var(--warm-white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.8rem;
+        box-shadow: 0 2px 12px var(--shadow);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .kegiatan-kom-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px var(--shadow-md);
+      }
+      .kegiatan-kom-card .k-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+      .kegiatan-kom-card h4 {
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 0.6rem;
+        font-size: 1.05rem;
+      }
+      .kegiatan-kom-card p {
+        color: var(--text-mid);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      /* ===== BERANDA — PEMBAYARAN ===== */
+      .payment-box {
+        background: linear-gradient(135deg, #f0fdf9 0%, #e6f4f1 100%);
+        border: 1px solid rgba(13, 148, 136, 0.25);
+        border-radius: 16px;
+        padding: 1.8rem;
+        margin-bottom: 2rem;
+      }
+      .payment-box h3 {
+        font-family: "Playfair Display", serif;
+        color: var(--teal);
+        margin-bottom: 1rem;
+        font-size: 1.05rem;
+        font-weight: 700;
+      }
+      .payment-box p {
+        color: var(--text-mid);
+        margin-bottom: 0.5rem;
+        font-size: 14px;
+      }
+      .payment-bullet {
+        display: flex;
+        gap: 0.5rem;
+        align-items: flex-start;
+        margin-bottom: 0.4rem;
+        font-size: 14px;
+        color: var(--text-mid);
+      }
+      .payment-bullet::before {
+        content: "•";
+        color: var(--teal);
+        font-weight: 900;
+        margin-top: 1px;
+      }
+
+      /* ===== STAT BOXES ===== */
+      .stat-box {
+        background: var(--navy);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        color: white;
+      }
+      .stat-box .num {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gold);
+      }
+      .stat-box .lbl {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 4px;
+      }
+
+      /* ===== TABLE ===== */
+      .tbl-wrap {
+        overflow-x: auto;
+        margin-top: 16px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      thead th {
+        background: var(--navy);
+        color: white;
+        padding: 10px 12px;
+        text-align: left;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+      }
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+      }
+      tbody tr:hover {
+        background: rgba(13, 148, 136, 0.04);
+      }
+      tbody td {
+        padding: 9px 12px;
+      }
+      .lunas-badge {
+        background: rgba(34, 197, 94, 0.1);
+        color: #16a34a;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .belum-badge {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .partial-badge {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      /* ===== FORM ===== */
+      .form-group {
+        margin-bottom: 14px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-mid);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .form-control {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-family: "Source Serif 4", serif;
+        font-size: 14px;
+        color: var(--text-dark);
+        background: white;
+        transition: border-color 0.2s;
+        outline: none;
+      }
+      .form-control:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+      }
+      select.form-control {
+        cursor: pointer;
+      }
+
+      /* ===== BUTTONS ===== */
+      .btn {
+        padding: 9px 20px;
+        border: none;
+        border-radius: 8px;
+        font-family: "Source Serif 4", serif;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: var(--teal);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: var(--teal-light);
+      }
+      .btn-secondary {
+        background: white;
+        color: var(--navy);
+        border: 1px solid var(--border);
+      }
+      .btn-secondary:hover {
+        background: var(--cream);
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      .btn-danger:hover {
+        opacity: 0.85;
+      }
+      .btn-gold {
+        background: var(--gold);
+        color: var(--navy);
+      }
+      .btn-gold:hover {
+        opacity: 0.9;
+      }
+      .btn-sm {
+        padding: 5px 12px;
+        font-size: 12px;
+      }
+      .btn-navy {
+        background: var(--navy);
+        color: white;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-mid);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover {
+        background: #f0f0f4;
+      }
+
+      /* ===== CASH FLOW ===== */
+      .cf-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .cf-box {
+        border-radius: 10px;
+        padding: 18px;
+        text-align: center;
+      }
+      .cf-box.income {
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+      }
+      .cf-box.expense {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+      .cf-box.balance {
+        background: var(--navy);
+        color: white;
+      }
+      .cf-box .cf-num {
+        font-family: "Playfair Display", serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+      .cf-box.income .cf-num {
+        color: #16a34a;
+      }
+      .cf-box.expense .cf-num {
+        color: #dc2626;
+      }
+      .cf-box.balance .cf-num {
+        color: var(--gold);
+      }
+      .cf-box .cf-lbl {
+        font-size: 11px;
+        opacity: 0.6;
+        margin-top: 4px;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ===== BAR CHART ===== */
+      .bar-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        height: 140px;
+        margin: 20px 0 8px;
+      }
+      .bar {
+        width: 100%;
+        border-radius: 4px 4px 0 0;
+        transition: opacity 0.2s;
+        cursor: pointer;
+        min-height: 4px;
+      }
+      .bar:hover {
+        opacity: 0.8;
+      }
+      .bar-in {
+        background: var(--teal);
+      }
+      .bar-out {
+        background: var(--coral);
+      }
+
+      /* ===== KEGIATAN TIMELINE ===== */
+      .event-card {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        transition: transform 0.15s;
+      }
+      .event-card:hover {
+        transform: translateX(4px);
+      }
+      .event-date {
+        flex-shrink: 0;
+        text-align: center;
+        background: var(--navy);
+        color: white;
+        border-radius: 8px;
+        padding: 8px 12px;
+        min-width: 60px;
+      }
+      .event-date .day {
+        font-family: "Playfair Display", serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+      .event-date .month {
+        font-size: 10px;
+        letter-spacing: 1px;
+        opacity: 0.7;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .event-body {
+        flex: 1;
+      }
+      .event-type {
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--teal);
+        font-family: "JetBrains Mono", monospace;
+        margin-bottom: 3px;
+      }
+      .event-title {
+        font-family: "Playfair Display", serif;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .event-desc {
+        color: var(--text-mid);
+        font-size: 13px;
+        margin-top: 4px;
+      }
+
+      /* ===== ATTENDANCE BADGE (di event card) ===== */
+      .attendance-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(13, 148, 136, 0.08);
+        border: 1px solid rgba(13, 148, 136, 0.2);
+        color: var(--teal);
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-family: "JetBrains Mono", monospace;
+        margin-top: 6px;
+        cursor: default;
+      }
+      .attendance-badge.no-data {
+        background: rgba(136, 136, 170, 0.08);
+        border-color: rgba(136, 136, 170, 0.2);
+        color: var(--text-light);
+      }
+
+      /* ===== ANGGOTA KEAKTIFAN TAB ===== */
+      .anggota-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 24px;
+        border-bottom: 2px solid var(--border);
+      }
+      .anggota-tab-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        font-family: "Source Serif 4", serif;
+        font-size: 14px;
+        color: var(--text-mid);
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.2s;
+      }
+      .anggota-tab-btn.active {
+        color: var(--teal);
+        border-bottom-color: var(--teal);
+        font-weight: 600;
+      }
+      .anggota-tab-btn:hover {
+        color: var(--navy);
+      }
+
+      /* ===== KEAKTIFAN STATS ===== */
+      .keaktifan-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .keaktifan-box {
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+      }
+      .keaktifan-box.aktif {
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+      }
+      .keaktifan-box.cukup {
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+      }
+      .keaktifan-box.perlu {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+      .keaktifan-box.total {
+        background: var(--navy);
+      }
+      .keaktifan-box .kb-num {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      .keaktifan-box.aktif .kb-num {
+        color: #16a34a;
+      }
+      .keaktifan-box.cukup .kb-num {
+        color: #d97706;
+      }
+      .keaktifan-box.perlu .kb-num {
+        color: #dc2626;
+      }
+      .keaktifan-box.total .kb-num {
+        color: var(--gold);
+      }
+      .keaktifan-box .kb-lbl {
+        font-size: 11px;
+        opacity: 0.65;
+        margin-top: 4px;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .keaktifan-box.total .kb-lbl {
+        color: white;
+      }
+
+      /* ===== STATUS BADGE KEAKTIFAN ===== */
+      .aktif-badge {
+        background: rgba(34, 197, 94, 0.1);
+        color: #16a34a;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .cukup-badge {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .perlu-badge {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .nodata-badge {
+        background: rgba(136, 136, 170, 0.1);
+        color: var(--text-light);
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      /* ===== PROGRESS BAR ===== */
+      .progress-wrap {
+        background: #eee;
+        border-radius: 999px;
+        height: 8px;
+        width: 120px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.4s;
+      }
+
+      /* ===== MEMBER CARD ATTENDANCE INFO ===== */
+      .member-attendance-info {
+        font-size: 11px;
+        margin-top: 3px;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ===== MODAL ===== */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .modal-overlay.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .modal {
+        background: white;
+        border-radius: 16px;
+        padding: 28px;
+        max-width: 560px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        transform: translateY(20px);
+        transition: transform 0.2s;
+      }
+      .modal-overlay.show .modal {
+        transform: translateY(0);
+      }
+      .modal-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--text-light);
+        line-height: 1;
+      }
+
+      /* ===== MODAL ATTENDANCE (checklist) ===== */
+      .attendance-modal {
+        max-width: 700px;
+      }
+      .attendance-member-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 8px;
+        margin: 16px 0;
+      }
+      .attendance-member-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s;
+        background: white;
+        user-select: none;
+      }
+      .attendance-member-item:hover {
+        border-color: var(--teal);
+        background: rgba(13, 148, 136, 0.04);
+      }
+      .attendance-member-item.checked {
+        background: rgba(13, 148, 136, 0.08);
+        border-color: var(--teal);
+      }
+      .attendance-member-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--teal);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .attendance-member-item label {
+        font-size: 13px;
+        cursor: pointer;
+        line-height: 1.4;
+        flex: 1;
+      }
+      .attendance-controls {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .att-count-display {
+        margin-left: auto;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        color: var(--teal);
+        font-weight: 600;
+      }
+
+      /* ===== ADMIN PANEL ===== */
+      #admin-panel-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 3000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      #admin-panel-overlay.open {
+        display: flex;
+      }
+      .admin-box {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      .admin-box h2 {
+        font-family: "Playfair Display", serif;
+        color: var(--navy);
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
+      }
+      .admin-section {
+        background: #f9f9fb;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin-bottom: 1.2rem;
+      }
+      .admin-section h3 {
+        font-size: 13px;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+        font-family: "JetBrains Mono", monospace;
+      }
+      #bg-preview-img {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        display: none;
+        margin-top: 0.5rem;
+      }
+
+      /* ===== TOAST ===== */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--navy);
+        color: white;
+        padding: 14px 20px;
+        border-radius: 10px;
+        z-index: 9999;
+        font-size: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        transform: translateY(20px);
+        opacity: 0;
+        transition: all 0.3s;
+        max-width: 320px;
+      }
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .toast.success {
+        border-left: 4px solid var(--success);
+      }
+      .toast.error {
+        border-left: 4px solid var(--danger);
+      }
+
+      /* ===== YEAR TABS ===== */
+      .year-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .year-tab {
+        padding: 6px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 13px;
+        border: 1px solid var(--border);
+        background: white;
+        transition: all 0.2s;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .year-tab.active {
+        background: var(--navy);
+        color: white;
+        border-color: var(--navy);
+      }
+
+      /* ===== ACTION ROW ===== */
+      .action-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        align-items: center;
+      }
+
+      /* ===== TYPE BADGES ===== */
+      .type-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-family: "JetBrains Mono", monospace;
+        letter-spacing: 0.5px;
+      }
+      .type-kebaktian {
+        background: rgba(13, 148, 136, 0.1);
+        color: var(--teal);
+      }
+      .type-duka {
+        background: rgba(100, 100, 100, 0.1);
+        color: #555;
+      }
+      .type-sakit {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+      }
+      .type-pernikahan {
+        background: rgba(212, 160, 23, 0.1);
+        color: #b45309;
+      }
+      .type-sidi {
+        background: rgba(139, 92, 246, 0.1);
+        color: #7c3aed;
+      }
+      .type-lainnya {
+        background: rgba(13, 27, 42, 0.1);
+        color: var(--navy);
+      }
+
+      /* ===== INFO BOX ===== */
+      .info-box {
+        background: rgba(13, 148, 136, 0.06);
+        border: 1px solid rgba(13, 148, 136, 0.2);
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 13px;
+        color: var(--teal);
+        margin-bottom: 16px;
+      }
+
+      /* ===== ANGGOTA ===== */
+      .member-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 12px;
+      }
+      .member-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .member-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--navy);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .member-name {
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .member-info {
+        font-size: 11px;
+        color: var(--text-light);
+      }
+
+      /* ===== SEARCH ===== */
+      .search-input {
+        width: 100%;
+        padding: 9px 14px 9px 36px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 14px;
+        background: white
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238888aa' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.44.819a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E")
+          no-repeat 12px center;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-input:focus {
+        border-color: var(--teal);
+      }
+
+      /* ===== ADRT ===== */
+      .adrt-article {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        padding: 32px;
+        max-width: 800px;
+      }
+      .adrt-article h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--navy);
+        margin: 28px 0 10px;
+        border-bottom: 2px solid var(--teal);
+        padding-bottom: 6px;
+      }
+      .adrt-article h2:first-of-type {
+        margin-top: 0;
+      }
+      .adrt-article h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 20px 0 8px;
+      }
+      .adrt-article p {
+        color: var(--text-mid);
+        font-size: 14px;
+        margin-bottom: 10px;
+        line-height: 1.8;
+      }
+      .adrt-article ul {
+        padding-left: 22px;
+        color: var(--text-mid);
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .adrt-article li {
+        margin-bottom: 8px;
+        line-height: 1.7;
+      }
+      .adrt-article strong {
+        color: var(--navy);
+      }
+      .adrt-article em {
+        font-style: italic;
+      }
+
+      /* ===== ACTION BUTTONS ===== */
+      .delete-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--danger);
+        font-size: 16px;
+        padding: 4px;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+      }
+      .delete-btn:hover {
+        opacity: 1;
+      }
+      .edit-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--teal);
+        font-size: 15px;
+        padding: 4px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+      }
+      .edit-btn:hover {
+        opacity: 1;
+      }
+      .rp {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 640px) {
+        .cf-summary {
+          grid-template-columns: 1fr;
+        }
+        .hero-title {
+          font-size: 2rem;
+        }
+        .keaktifan-summary {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        /* PART 1 - Hero */
+  #hero-beranda { min-height: 360px; }
+  .hero-inner { padding: 2rem 1rem; }
+  .hero-badge {
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 0.3rem 0.8rem;
+    white-space: normal;
+    text-align: center;
+  }
+  .hero-title { font-size: 1.6rem !important; }
+
+  /* PART 2 - Stats */
+  .hero-stat-num { font-size: 1.6rem; }
+  .hero-stat-label {
+    font-size: 10px;
+    white-space: normal;
+    text-align: center;
+    max-width: 80px;
+  }
+  .hero-stat { min-width: 70px; }
+
+  /* PART 3 - Nav */
+  .nav-btn {
+    font-size: 12px;
+    padding: 5px 9px;
+    flex-shrink: 0;
+  }
+  .nav-brand { margin-right: 8px; }
+  .nav-admin-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    flex-shrink: 0;
+  }
+
+  /* PART 4 - Section & Cards */
+  .section { padding: 24px 16px; }
+  .card { padding: 16px; }
+  .sejarah-card { padding: 1.2rem; }
+  .pengurus-awal { padding: 1.2rem; }
+  .pengurus-awal-grid { grid-template-columns: 1fr 1fr; }
+  .kegiatan-komunitas-grid { grid-template-columns: 1fr; }
+  .pengurus-aktif-grid { grid-template-columns: 1fr 1fr; }
+
+  /* PART 5 - Table & Global */
+  .tbl-wrap { font-size: 11px; }
+  table { font-size: 11px; }
+  thead th { font-size: 10px; padding: 8px 6px; }
+  tbody td { padding: 7px 6px; }
+  .cf-box .cf-num { font-size: 1.1rem; }
+  .member-grid { grid-template-columns: 1fr; }
+  .modal { padding: 20px 16px; max-height: 90vh; }
+      }
+    </style>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        setDoc,
+        getDocs,
+        addDoc,
+        deleteDoc,
+        updateDoc,
+        onSnapshot,
+        query,
+        orderBy,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+      // !! GANTI dengan config dari Firebase Console kamu !!
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyBJ4zcSIO5FC4wWn5nKJBEDybIOnSZF0ag",
+        authDomain: "parsahutaon-dosroha-brsps.firebaseapp.com",
+        projectId: "parsahutaon-dosroha-brsps",
+        storageBucket: "parsahutaon-dosroha-brsps.firebasestorage.app",
+        messagingSenderId: "7696731278",
+        appId: "1:7696731278:web:e3358dafa716227c278ddf",
+        measurementId: "G-7PMSS208Z2",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+
+      // Buat global agar bisa diakses script lain di halaman
+      window.db = db;
+      window.auth = auth;
+      window.FB = {
+        collection,
+        doc,
+        setDoc,
+        getDocs,
+        addDoc,
+        deleteDoc,
+        updateDoc,
+        onSnapshot,
+        query,
+        orderBy,
+        getDoc,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      };
+      console.log("✅ Firebase terkoneksi:", app.options.projectId);
+    </script>
+  </head>
+  <body>
+    <!-- ===== NAV ===== -->
+    <nav>
+      <div class="nav-inner">
+        <a class="nav-brand" href="#" onclick="showPage('beranda')">
+          <div class="nav-logo">DR</div>
+        </a>
+        <button
+          class="nav-btn active"
+          onclick="showPage('beranda')"
+          id="nav-beranda"
+        >
+          🏠 Beranda
+        </button>
+        <button
+          class="nav-btn"
+          onclick="showPage('kegiatan')"
+          id="nav-kegiatan"
+        >
+          📅 Kegiatan
+        </button>
+        <button
+          class="nav-btn"
+          onclick="showPage('bonataon')"
+          id="nav-bonataon"
+        >
+          🎉 Bonataon
+        </button>
+        <button
+          class="nav-btn"
+          onclick="showPage('keuangan')"
+          id="nav-keuangan"
+        >
+          💰 Keuangan
+        </button>
+        <button class="nav-btn" onclick="showPage('anggota')" id="nav-anggota">
+          👥 Anggota
+        </button>
+        <button
+          class="nav-btn"
+          onclick="showPage('pengumuman')"
+          id="nav-pengumuman"
+        >
+          📢 Pengumuman
+        </button>
+        <button class="nav-btn" onclick="showPage('adrt')" id="nav-adrt">
+          📋 ADRT
+        </button>
+        <button
+          class="nav-admin-btn"
+          id="admin-toggle-btn"
+          onclick="openAdminPanel()"
+        >
+          ⚙ Admin
+        </button>
+      </div>
+    </nav>
+
+    <!-- =================== BERANDA =================== -->
+    <div class="page active" id="page-beranda">
+      <div id="hero-beranda">
+        <div class="hero-inner">
+          <div class="hero-badge">Est. 2010 · Balikpapan, Kalimantan Timur</div>
+          <h1 class="hero-title">
+            Parsahutaon Dos Roha<br />
+            Balikpapan Regency - Sepinggan Pratama & Sekitarnya
+          </h1>
+          <p class="hero-sub">
+            Komunitas Masyarakat Batak yang bersatu dalam kasih dan persaudaraan
+          </p>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="hero-stat-num" id="stat-anggota">44</div>
+              <div class="hero-stat-label">Keluarga Anggota</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-num" id="stat-tahun"></div>
+              <div class="hero-stat-label">Tahun Berdiri</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-num" id="stat-kegiatan">-</div>
+              <div class="hero-stat-label">Kegiatan/Tahun</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sejarah-card" style="margin-top: 2rem">
+          <h3>📖 Sejarah Singkat</h3>
+          <p>
+            Parsahutaon Dos Roha Regency dan Sekitarnya didirikan pada tahun
+            2010 sebagai wadah persatuan bagi keluarga-keluarga Batak yang
+            bermukim di kawasan Perumahan Balikpapan Regency, Sepinggan Pratama,
+            dan sekitarnya.
+          </p>
+          <p>
+            Komunitas ini lahir dari kerinduan untuk mempererat tali
+            persaudaraan (parsaripean), saling membantu dalam suka maupun duka
+            (gotong royong), dan memelihara adat budaya Batak di perantauan.
+          </p>
+          <p>
+            Dengan semangat <em>"Dos Roha"</em> — sehati sepikir — komunitas ini
+            terus berkembang menjadi keluarga besar yang saling menopang.
+          </p>
+        </div>
+        <div class="pengurus-awal">
+          <h3>🏛 Pengurus Pertama (2010)</h3>
+          <div class="pengurus-awal-grid">
+            <div class="pengurus-item">
+              <span class="pengurus-item-icon">👑</span>
+              <div class="pengurus-item-role">Ketua</div>
+              <div class="pengurus-item-name">
+                Kel. Simorangkir / br. Tampubolon
+              </div>
+            </div>
+            <div class="pengurus-item">
+              <span class="pengurus-item-icon">✍</span>
+              <div class="pengurus-item-role">Sekretaris</div>
+              <div class="pengurus-item-name">
+                Kel. R. Sihombing / br. Pangaribuan
+              </div>
+            </div>
+            <div class="pengurus-item">
+              <span class="pengurus-item-icon">💰</span>
+              <div class="pengurus-item-role">Bendahara</div>
+              <div class="pengurus-item-name">Ny. Pasaribu / br. Simamora</div>
+            </div>
+          </div>
+        </div>
+        <h2 class="section-title">Pengurus Aktif</h2>
+        <div class="pengurus-aktif-grid" id="pengurus-aktif-grid"></div>
+        <h2 class="section-title">Kegiatan Komunitas</h2>
+        <div class="kegiatan-komunitas-grid">
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">⛪</span>
+            <h4>Kebaktian Bulanan</h4>
+            <p>
+              Ibadah bulanan yang diselenggarakan secara bergilir di rumah
+              anggota atau sopo met-met.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">💝</span>
+            <h4>Kegiatan Sosial</h4>
+            <p>
+              Saling membantu dalam duka, sakit, dan bencana. Amplop pengganti
+              buah, krans bunga, dan sipaet-paet.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">🎉</span>
+            <h4>Bonataon</h4>
+            <p>
+              Pesta tahunan sebagai ajang persaudaraan dan gotong royong bersama
+              seluruh anggota.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">🤝</span>
+            <h4>Gotong Royong</h4>
+            <p>
+              Kegiatan bersama membantu acara pernikahan, mamoholi, dan kegiatan
+              sosial lainnya.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">🎊</span>
+            <h4>Pemberkatan & Sidi</h4>
+            <p>
+              Hadir dan mendukung momen sakral anggota seperti pemberkatan
+              pernikahan dan pemberkatan sidi.
+            </p>
+          </div>
+          <div class="kegiatan-kom-card">
+            <span class="k-icon">📖</span>
+            <h4>Pemahaman Adat</h4>
+            <p>
+              Melestarikan dan mengenalkan adat budaya Batak kepada generasi
+              muda di perantauan.
+            </p>
+          </div>
+        </div>
+        <div class="payment-box">
+          <h3>💳 Informasi Pembayaran</h3>
+          <p>
+            Iuran bulanan sebesar
+            <strong style="color: var(--navy)"
+              >Rp 10.000/bulan (Rp 120.000/tahun)</strong
+            >
+            per keluarga. Untuk pembayaran, hubungi Bendahara secara langsung.
+          </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== KEGIATAN =================== -->
+    <div class="page" id="page-kegiatan">
+      <div class="section">
+        <div class="action-row">
+          <h2 class="section-title" style="margin-bottom: 0">📅 Kegiatan</h2>
+          <div
+            class="year-tabs"
+            id="kegiatan-year-tabs"
+            style="margin-bottom: 0"
+          ></div>
+          <button
+            class="btn btn-primary admin-only"
+            onclick="openModal('modal-add-kegiatan')"
+          >
+            + Tambah Kegiatan
+          </button>
+        </div>
+        <div id="kegiatan-list" style="margin-top: 16px"></div>
+      </div>
+    </div>
+
+    <!-- =================== BONATAON =================== -->
+    <div class="page" id="page-bonataon">
+      <div class="section">
+        <div class="action-row">
+          <h2 class="section-title" style="margin-bottom: 0">
+            🎉 Bonataon (Pesta Tahunan)
+          </h2>
+          <div
+            class="year-tabs"
+            id="bonataon-year-tabs"
+            style="margin-bottom: 0"
+          ></div>
+          <button
+            class="btn btn-primary admin-only"
+            onclick="openModal('modal-add-bonataon-entry')"
+          >
+            + Tambah Data Lelang
+          </button>
+        </div>
+        <div id="bonataon-content"></div>
+      </div>
+    </div>
+
+    <!-- =================== KEUANGAN =================== -->
+    <div class="page" id="page-keuangan">
+      <div class="section">
+        <div class="action-row">
+          <h2 class="section-title" style="margin-bottom: 0">
+            💰 Laporan Keuangan
+          </h2>
+          <div
+            class="year-tabs"
+            id="keuangan-year-tabs"
+            style="margin-bottom: 0"
+          ></div>
+        </div>
+        <div class="cf-summary" id="cf-summary"></div>
+        <div class="card" style="margin-bottom: 20px">
+          <div class="card-title">📊 Pemasukan vs Pengeluaran</div>
+          <div class="bar-chart" id="bar-chart"></div>
+          <div
+            style="
+              display: flex;
+              gap: 16px;
+              font-size: 12px;
+              color: var(--text-light);
+            "
+          >
+            <span style="display: flex; align-items: center; gap: 4px"
+              ><span
+                style="
+                  width: 12px;
+                  height: 12px;
+                  background: var(--teal);
+                  border-radius: 2px;
+                  display: inline-block;
+                "
+              ></span
+              >Pemasukan</span
+            >
+            <span style="display: flex; align-items: center; gap: 4px"
+              ><span
+                style="
+                  width: 12px;
+                  height: 12px;
+                  background: var(--coral);
+                  border-radius: 2px;
+                  display: inline-block;
+                "
+              ></span
+              >Pengeluaran</span
+            >
+          </div>
+        </div>
+        <div class="card" style="margin-bottom: 20px">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 16px;
+              flex-wrap: wrap;
+              gap: 10px;
+            "
+          >
+            <div class="card-title" style="margin-bottom: 0">
+              📋 Rincian Cashflow
+            </div>
+            <div style="display: flex; gap: 8px">
+              <button
+                class="btn btn-primary btn-sm"
+                onclick="openModal('modal-add-income')"
+              >
+                + Pemasukan
+              </button>
+              <button
+                class="btn btn-secondary btn-sm admin-only"
+                onclick="openModal('modal-add-expense')"
+              >
+                + Pengeluaran
+              </button>
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table id="cashflow-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Keterangan</th>
+                  <th>Masuk (Rp)</th>
+                  <th>Keluar (Rp)</th>
+                  <th>Saldo (Rp)</th>
+                  <th class="admin-only">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="cashflow-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">📁 Laporan Iuran Tahunan</div>
+          <div class="year-tabs" id="iuran-year-tabs"></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama Keluarga</th>
+                  <th>Status</th>
+                  <th>Nominal (Rp)</th>
+                </tr>
+              </thead>
+              <tbody id="iuran-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="adminDownloadSection"
+      style="
+        display: none;
+        margin: 20px 0;
+        padding: 18px;
+        background: linear-gradient(135deg, #0d1b2a, #0d2a28);
+        border-radius: 12px;
+        border-top: 3px solid #d4a017;
+        text-align: center;
+      "
+    >
+      <p
+        style="
+          color: #d4a017;
+          font-weight: bold;
+          margin: 0 0 6px;
+          font-size: 15px;
+        "
+      >
+        📊 Laporan Resmi Admin
+      </p>
+      <p
+        style="
+          color: #9ca3af;
+          font-size: 13px;
+          margin: 0 0 14px;
+          line-height: 1.6;
+        "
+      >
+        Download file Excel 3-sheet: Iuran, Cashflow, dan Master Summary.
+      </p>
+      <button
+        onclick="downloadLaporanExcel()"
+        style="
+          background: #d4a017;
+          color: #0d1b2a;
+          border: none;
+          padding: 11px 26px;
+          border-radius: 8px;
+          font-weight: bold;
+          font-size: 14px;
+          cursor: pointer;
+        "
+      >
+        📥 Download Laporan Excel
+      </button>
+      <p
+        id="downloadStatus"
+        style="color: #14b8a6; font-size: 12px; margin: 10px 0 0"
+      ></p>
+    </div>
+
+    <!-- =================== ANGGOTA =================== -->
+    <div class="page" id="page-anggota">
+      <div class="section">
+        <!-- Tab Header -->
+        <div class="anggota-tabs">
+          <button
+            class="anggota-tab-btn active"
+            id="tab-daftar-btn"
+            onclick="switchAnggotaTab('daftar')"
+          >
+            👥 Daftar Anggota
+          </button>
+          <button
+            class="anggota-tab-btn"
+            id="tab-keaktifan-btn"
+            onclick="switchAnggotaTab('keaktifan')"
+          >
+            📊 Keaktifan
+          </button>
+        </div>
+
+        <!-- TAB: DAFTAR ANGGOTA -->
+        <div id="tab-daftar">
+          <div class="action-row" style="flex-wrap: wrap">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Cari nama keluarga..."
+              id="member-search"
+              oninput="renderMembers()"
+              style="max-width: 280px"
+            />
+            <button
+              class="btn btn-primary admin-only"
+              onclick="openModal('modal-add-member')"
+            >
+              + Anggota Baru
+            </button>
+          </div>
+          <p
+            style="color: var(--text-mid); font-size: 13px; margin-bottom: 16px"
+          >
+            Total: <strong id="member-count">0</strong> keluarga terdaftar
+          </p>
+          <div class="member-grid" id="member-grid"></div>
+        </div>
+
+        <!-- TAB: KEAKTIFAN -->
+        <div id="tab-keaktifan" style="display: none">
+          <div class="action-row" style="flex-wrap: wrap; margin-bottom: 8px">
+            <div
+              class="year-tabs"
+              id="keaktifan-year-tabs"
+              style="margin-bottom: 0"
+            ></div>
+            <div
+              style="margin-left: auto; font-size: 13px; color: var(--text-mid)"
+            >
+              <span style="display: inline-flex; align-items: center; gap: 6px">
+                <span
+                  style="
+                    width: 10px;
+                    height: 10px;
+                    background: #16a34a;
+                    border-radius: 50%;
+                    display: inline-block;
+                  "
+                ></span
+                >Aktif ≥75%
+              </span>
+              &nbsp;
+              <span style="display: inline-flex; align-items: center; gap: 6px">
+                <span
+                  style="
+                    width: 10px;
+                    height: 10px;
+                    background: #d97706;
+                    border-radius: 50%;
+                    display: inline-block;
+                  "
+                ></span
+                >Cukup 50–74%
+              </span>
+              &nbsp;
+              <span style="display: inline-flex; align-items: center; gap: 6px">
+                <span
+                  style="
+                    width: 10px;
+                    height: 10px;
+                    background: #dc2626;
+                    border-radius: 50%;
+                    display: inline-block;
+                  "
+                ></span
+                >Perlu Perhatian &lt;50%
+              </span>
+            </div>
+          </div>
+          <div class="keaktifan-summary" id="keaktifan-summary"></div>
+          <div class="card" style="margin-bottom: 20px">
+            <div class="card-title">
+              📊 Grafik Kehadiran Anggota (Top Tertinggi)
+            </div>
+            <div id="keaktifan-chart" style="margin-top: 12px"></div>
+          </div>
+          <div class="card">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+              "
+            >
+              <div class="card-title" style="margin-bottom: 0">
+                🏆 Ranking Keaktifan Anggota
+              </div>
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Cari nama..."
+                id="keaktifan-search"
+                oninput="renderKeaktifanTable()"
+                style="max-width: 220px; font-size: 13px"
+              />
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nama Keluarga</th>
+                    <th>Hadir</th>
+                    <th>Total Event</th>
+                    <th>Persentase</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="keaktifan-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card" style="margin-top: 20px">
+            <div class="card-title">📋 Detail Kehadiran per Kegiatan</div>
+            <div class="info-box" style="margin-bottom: 12px">
+              Klik nama anggota di tabel ranking untuk melihat detail kehadiran
+              mereka di setiap kegiatan.
+            </div>
+            <div
+              id="keaktifan-detail"
+              style="
+                color: var(--text-light);
+                font-size: 13px;
+                text-align: center;
+                padding: 20px;
+              "
+            >
+              Pilih anggota dari tabel ranking di atas untuk melihat detail
+              kehadiran.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== PENGUMUMAN =================== -->
+    <div class="page" id="page-pengumuman">
+      <div class="section">
+        <h2 class="section-title">📢 Pengumuman & Arsip Kegiatan</h2>
+        <div class="info-box">
+          Menampilkan ringkasan semua kegiatan berdasarkan tahun. Data diambil
+          otomatis dari menu Kegiatan.
+        </div>
+        <div class="year-tabs" id="pengumuman-year-tabs"></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Jenis</th>
+                <th>Kegiatan</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody id="pengumuman-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== ADRT =================== -->
+    <div class="page" id="page-adrt">
+      <div class="section">
+        <div class="action-row">
+          <h2 class="section-title" style="margin-bottom: 0">
+            📋 Anggaran Dasar & Rumah Tangga
+          </h2>
+          <button
+            class="btn btn-secondary btn-sm admin-only"
+            onclick="openModal('modal-adrt-edit')"
+          >
+            ✏ Edit ADRT
+          </button>
+        </div>
+        <div class="adrt-article" id="adrt-content"></div>
+      </div>
+    </div>
+
+    <!-- =================== MODALS =================== -->
+
+    <!-- Add Kegiatan -->
+    <div class="modal-overlay" id="modal-add-kegiatan">
+      <div class="modal">
+        <div class="modal-title">
+          Tambah Kegiatan
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-add-kegiatan')"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label
+          ><input type="date" class="form-control" id="f-keg-date" />
+        </div>
+        <div class="form-group">
+          <label>Jenis Kegiatan</label
+          ><select class="form-control" id="f-keg-type">
+            <option value="Kebaktian">Kebaktian</option>
+            <option value="Duka">Duka / Mangapuli</option>
+            <option value="Sakit">Menjenguk Sakit</option>
+            <option value="Pernikahan">Pernikahan / Mangamai</option>
+            <option value="Sidi">Pemberkatan Sidi</option>
+            <option value="Mamoholi">Mamoholi</option>
+            <option value="Manise">Manise</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Judul Kegiatan</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-keg-title"
+            placeholder="Mis: Kebaktian Kelompok 7"
+          />
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label
+          ><textarea
+            class="form-control"
+            id="f-keg-desc"
+            rows="3"
+            placeholder="Keterangan tambahan..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tempat / Lokasi</label
+          ><input type="text" class="form-control" id="f-keg-place" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-kegiatan')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="addKegiatan()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL KEHADIRAN (ATTENDANCE) -->
+    <div class="modal-overlay" id="modal-attendance">
+      <div class="modal attendance-modal" style="max-width: 700px">
+        <div class="modal-title">
+          <span>✅ Daftar Hadir</span>
+          <button class="modal-close" onclick="closeModal('modal-attendance')">
+            ✕
+          </button>
+        </div>
+        <div
+          id="attendance-event-info"
+          style="
+            background: rgba(13, 148, 136, 0.07);
+            border: 1px solid rgba(13, 148, 136, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--navy);
+          "
+        ></div>
+        <div class="attendance-controls">
+          <button
+            class="btn btn-sm btn-secondary"
+            onclick="toggleAllAttendance(true)"
+          >
+            ✅ Pilih Semua
+          </button>
+          <button
+            class="btn btn-sm btn-ghost"
+            onclick="toggleAllAttendance(false)"
+          >
+            ☐ Hapus Semua
+          </button>
+          <span class="att-count-display" id="att-count-display"
+            >0 / 0 hadir</span
+          >
+        </div>
+        <div class="attendance-member-list" id="attendance-member-list"></div>
+        <div
+          style="
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+          "
+        >
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-attendance')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveAttendanceData()">
+            💾 Simpan Kehadiran
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Income -->
+    <div class="modal-overlay" id="modal-add-income">
+      <div class="modal">
+        <div class="modal-title">
+          Tambah Pemasukan
+          <button class="modal-close" onclick="closeModal('modal-add-income')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label
+          ><input type="date" class="form-control" id="f-inc-date" />
+        </div>
+        <div class="form-group">
+          <label>Keluarga</label
+          ><select class="form-control" id="f-inc-family">
+            <option value="">-- Pilih Keluarga --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Jenis Pembayaran</label
+          ><select class="form-control" id="f-inc-type">
+            <option value="Iuran">Iuran Anggota</option>
+            <option value="Lelang">Lelang Bonataon</option>
+            <option value="Persembahan">Persembahan Kebaktian</option>
+            <option value="Pendaftaran">Pendaftaran Anggota Baru</option>
+            <option value="Transfer Panitia">Transfer dari Panitia</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tahun</label
+          ><select class="form-control" id="f-inc-year">
+            <option>2022</option>
+            <option>2023</option>
+            <option>2024</option>
+            <option selected>2025</option>
+            <option>2026</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nominal (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-inc-amount"
+            placeholder="120000"
+          />
+        </div>
+        <div class="form-group">
+          <label>Keterangan Tambahan</label
+          ><input type="text" class="form-control" id="f-inc-note" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-income')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="addIncome()">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Expense -->
+    <div class="modal-overlay" id="modal-add-expense">
+      <div class="modal">
+        <div class="modal-title">
+          Tambah Pengeluaran
+          <button class="modal-close" onclick="closeModal('modal-add-expense')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label
+          ><input type="date" class="form-control" id="f-exp-date" />
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-exp-desc"
+            placeholder="Mis: Krans bunga..."
+          />
+        </div>
+        <div class="form-group">
+          <label>Nominal (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-exp-amount"
+            placeholder="500000"
+          />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-expense')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-danger" onclick="addExpense()">
+            Simpan Pengeluaran
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Member -->
+    <div class="modal-overlay" id="modal-add-member">
+      <div class="modal">
+        <div class="modal-title">
+          Daftarkan Anggota Baru
+          <button class="modal-close" onclick="closeModal('modal-add-member')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Nama Keluarga</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-mem-name"
+            placeholder="Mis: Pangaribuan / br.Simanjuntak"
+          />
+        </div>
+        <div class="form-group">
+          <label>Nama Panggilan / Anak</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-mem-nick"
+            placeholder="Mis: Anabel"
+          />
+        </div>
+        <div class="form-group">
+          <label>Alamat</label
+          ><input
+            type="text"
+            class="form-control"
+            id="f-mem-addr"
+            placeholder="Blok/No rumah di Regency..."
+          />
+        </div>
+        <div class="form-group admin-only">
+          <label>No. Telepon (Hanya tampil untuk Admin)</label
+          ><input type="text" class="form-control" id="f-mem-phone" />
+        </div>
+        <div class="form-group">
+          <label>Tanggal Bergabung</label
+          ><input type="date" class="form-control" id="f-mem-joined" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-member')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="addMember()">
+            Daftarkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Member -->
+    <div class="modal-overlay" id="modal-edit-member">
+      <div class="modal">
+        <div class="modal-title">
+          Edit Data Anggota
+          <button class="modal-close" onclick="closeModal('modal-edit-member')">
+            ✕
+          </button>
+        </div>
+        <input type="hidden" id="f-edit-mem-idx" />
+        <div class="form-group">
+          <label>Nama Keluarga</label
+          ><input type="text" class="form-control" id="f-edit-mem-name" />
+        </div>
+        <div class="form-group">
+          <label>Nama Panggilan / Anak</label
+          ><input type="text" class="form-control" id="f-edit-mem-nick" />
+        </div>
+        <div class="form-group">
+          <label>Alamat</label
+          ><input type="text" class="form-control" id="f-edit-mem-addr" />
+        </div>
+        <div class="form-group admin-only">
+          <label>No. Telepon</label
+          ><input type="text" class="form-control" id="f-edit-mem-phone" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-edit-member')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveEditMember()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bonataon Entry -->
+    <div class="modal-overlay" id="modal-add-bonataon-entry">
+      <div class="modal">
+        <div class="modal-title">
+          Tambah Data Lelang
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-add-bonataon-entry')"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Tahun Bonataon</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-year"
+            value="2025"
+          />
+        </div>
+        <div class="form-group">
+          <label>Nama Keluarga</label
+          ><select class="form-control" id="f-bon-family">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Gotong Royong (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-gr"
+            placeholder="100000"
+          />
+        </div>
+        <div class="form-group">
+          <label>Arsik (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-arsik"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Ayam Pinadar (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-ayam"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Buah (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-buah"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Bir (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-bir"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Minuman Ama (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-mina"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Minuman Ina (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-mini"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label>Sudah Dibayar (Rp)</label
+          ><input
+            type="number"
+            class="form-control"
+            id="f-bon-paid"
+            placeholder="0"
+          />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-add-bonataon-entry')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="addBonataonEntry()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Cashflow -->
+    <div class="modal-overlay" id="modal-edit-cf">
+      <div class="modal">
+        <div class="modal-title">
+          Edit Transaksi
+          <button class="modal-close" onclick="closeModal('modal-edit-cf')">
+            ✕
+          </button>
+        </div>
+        <input type="hidden" id="f-cf-edit-idx" />
+        <div class="form-group">
+          <label>Tanggal</label
+          ><input type="date" class="form-control" id="f-cf-edit-date" />
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label
+          ><input type="text" class="form-control" id="f-cf-edit-desc" />
+        </div>
+        <div class="form-group">
+          <label>Masuk (Rp)</label
+          ><input type="number" class="form-control" id="f-cf-edit-in" />
+        </div>
+        <div class="form-group">
+          <label>Keluar (Rp)</label
+          ><input type="number" class="form-control" id="f-cf-edit-out" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-edit-cf')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveCfEdit()">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADRT Edit -->
+    <div class="modal-overlay" id="modal-adrt-edit">
+      <div class="modal" style="max-width: 700px">
+        <div class="modal-title">
+          Edit ADRT
+          <button class="modal-close" onclick="closeModal('modal-adrt-edit')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Konten ADRT (HTML)</label
+          ><textarea
+            class="form-control"
+            id="f-adrt-content"
+            rows="14"
+            style="font-family: monospace; font-size: 12px"
+          ></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-adrt-edit')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveADRT()">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change PW -->
+    <div class="modal-overlay" id="modal-change-pw">
+      <div class="modal" style="max-width: 360px">
+        <div class="modal-title">
+          Ganti Password Admin
+          <button class="modal-close" onclick="closeModal('modal-change-pw')">
+            ✕
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Password Baru</label
+          ><input
+            type="password"
+            class="form-control"
+            id="f-new-pw1"
+            placeholder="Password baru"
+          />
+        </div>
+        <div class="form-group">
+          <label>Konfirmasi Password</label
+          ><input
+            type="password"
+            class="form-control"
+            id="f-new-pw2"
+            placeholder="Ulangi password baru"
+          />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-change-pw')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="changePassword()">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Kegiatan -->
+    <div class="modal-overlay" id="modal-edit-kegiatan">
+      <div class="modal">
+        <div class="modal-title">
+          Edit Kegiatan
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-edit-kegiatan')"
+          >
+            ✕
+          </button>
+        </div>
+        <input type="hidden" id="f-edit-keg-id" />
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" class="form-control" id="f-edit-keg-date" />
+        </div>
+        <div class="form-group">
+          <label>Jenis Kegiatan</label>
+          <select class="form-control" id="f-edit-keg-type">
+            <option value="Kebaktian">Kebaktian</option>
+            <option value="Duka">Duka / Mangapuli</option>
+            <option value="Sakit">Menjenguk Sakit</option>
+            <option value="Pernikahan">Pernikahan / Mangamai</option>
+            <option value="Sidi">Pemberkatan Sidi</option>
+            <option value="Mamoholi">Mamoholi</option>
+            <option value="Manise">Manise</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Judul Kegiatan</label>
+          <input type="text" class="form-control" id="f-edit-keg-title" />
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label>
+          <textarea
+            class="form-control"
+            id="f-edit-keg-desc"
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tempat / Lokasi</label>
+          <input type="text" class="form-control" id="f-edit-keg-place" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modal-edit-kegiatan')"
+          >
+            Batal
+          </button>
+          <button class="btn btn-primary" onclick="saveEditKegiatan()">
+            💾 Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- =================== ADMIN PANEL =================== -->
+    <div id="admin-panel-overlay">
+      <div class="admin-box">
+        <h2>⚙ Panel Admin</h2>
+        <div id="admin-login-section" class="admin-section">
+          <h3>🔐 Login Admin</h3>
+          <div class="form-group">
+            <label>Email Admin</label>
+            <input
+              type="email"
+              class="form-control"
+              id="f-admin-email"
+              placeholder="Masukkan email admin"
+              onkeydown="if (event.key === 'Enter') doAdminLogin();"
+            />
+          </div>
+          <div class="form-group">
+            <label>Password Admin</label>
+            <input
+              type="password"
+              class="form-control"
+              id="f-admin-pw"
+              placeholder="Masukkan password"
+              onkeydown="if (event.key === 'Enter') doAdminLogin();"
+            />
+          </div>
+          <div style="display: flex; gap: 8px">
+            <button
+              class="btn btn-navy"
+              style="flex: 1"
+              onclick="doAdminLogin()"
+            >
+              Masuk sebagai Admin
+            </button>
+            <button class="btn btn-ghost" onclick="closeAdminPanel()">
+              Batal
+            </button>
+          </div>
+        </div>
+        <div id="admin-logged-sections" style="display: none">
+          <div class="admin-section">
+            <h3>🖼 Ganti Background Header</h3>
+            <div class="form-group">
+              <label>URL Gambar atau Warna</label>
+              <input
+                type="text"
+                class="form-control"
+                id="f-bg-url"
+                placeholder="https://contoh.com/foto.jpg"
+                oninput="previewBgInput()"
+              />
+              <img id="bg-preview-img" alt="preview" />
+            </div>
+            <div class="form-group">
+              <label>Atau Pilih Warna Latar</label>
+              <input
+                type="color"
+                class="form-control"
+                id="f-bg-color"
+                value="#0d2b1f"
+                style="height: 42px; padding: 4px 8px; cursor: pointer"
+                oninput="previewBgColor()"
+              />
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <button class="btn btn-primary btn-sm" onclick="applyBgImage()">
+                ✅ Terapkan Gambar
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="applyBgColor()">
+                🎨 Terapkan Warna
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="removeBg()">
+                🗑 Reset Default
+              </button>
+            </div>
+            <p
+              style="
+                font-size: 12px;
+                color: var(--text-light);
+                margin-top: 0.6rem;
+              "
+            >
+              Tips: Upload foto ke Imgur / Google Drive dan ambil link langsung
+              ke file gambarnya.
+            </p>
+          </div>
+          <div class="admin-section">
+            <h3>👥 Edit Pengurus Aktif</h3>
+            <p
+              style="
+                font-size: 13px;
+                color: var(--text-mid);
+                margin-bottom: 1rem;
+              "
+            >
+              Perubahan langsung tampil di beranda. Data tersimpan otomatis.
+            </p>
+            <div id="pengurus-editor"></div>
+            <button
+              class="btn btn-gold btn-sm"
+              style="margin-top: 8px"
+              onclick="tambahPengurus()"
+            >
+              + Tambah Jabatan
+            </button>
+          </div>
+          <div class="admin-section">
+            <h3>🔑 Ganti Password Admin</h3>
+            <div class="form-group">
+              <label>Password Baru</label
+              ><input
+                type="password"
+                class="form-control"
+                id="f-new-pw-admin"
+                placeholder="Password baru..."
+              />
+            </div>
+            <div class="form-group">
+              <label>Konfirmasi</label
+              ><input
+                type="password"
+                class="form-control"
+                id="f-confirm-pw-admin"
+                placeholder="Ulangi password..."
+              />
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="gantiPassword()">
+              Simpan Password Baru
+            </button>
+          </div>
+          <!-- TOMBOL MIGRASI — HAPUS SETELAH MIGRASI SELESAI -->
+
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              justify-content: flex-end;
+              margin-top: 1rem;
+              padding-top: 1rem;
+              border-top: 1px solid var(--border);
+            "
+          >
+            <button class="btn btn-ghost" onclick="doAdminLogout()">
+              🚪 Logout
+            </button>
+            <button class="btn btn-ghost" onclick="closeAdminPanel()">
+              Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="toast" id="toast"></div>
+<script src="js/app-core.js"></script>
+</body>
+</html>
