@@ -216,7 +216,20 @@ function fmtRp(n) {
 function fmtDate(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
-  const months = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Ags",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
+  ];
   return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
@@ -233,7 +246,16 @@ function memberDisplayName(m) {
 }
 
 function memberColor(id) {
-  const c = ["#0D9488","#0D1B2A","#D4A017","#F97316","#7c3aed","#0891b2","#059669","#dc2626"];
+  const c = [
+    "#0D9488",
+    "#0D1B2A",
+    "#D4A017",
+    "#F97316",
+    "#7c3aed",
+    "#0891b2",
+    "#059669",
+    "#dc2626",
+  ];
   return c[id % c.length];
 }
 
@@ -244,7 +266,12 @@ function memberColor(id) {
 
 function showToast(msg, type = "success") {
   // Filter pesan teknikal dari user — tampilkan di console saja
-  if (["Firebase bermasalah","Koneksi Firebase","Error:","error:"].some(t => msg.includes(t)) && type === "error") {
+  if (
+    ["Firebase bermasalah", "Koneksi Firebase", "Error:", "error:"].some((t) =>
+      msg.includes(t),
+    ) &&
+    type === "error"
+  ) {
     console.warn("Toast disembunyikan:", msg);
     return;
   }
@@ -267,7 +294,9 @@ function openModal(id) {
   }
   if (id === "modal-add-income") {
     populateDropdowns();
-    setTimeout(() => { if (typeof clearBukti === "function") clearBukti(); }, 50);
+    setTimeout(() => {
+      if (typeof clearBukti === "function") clearBukti();
+    }, 50);
   }
   if (id === "modal-add-bonataon-entry") {
     populateDropdowns();
@@ -296,14 +325,57 @@ document.addEventListener("DOMContentLoaded", () => {
 // ============================================================
 
 function showPage(page) {
-  document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
-  document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+  document
+    .querySelectorAll(".page")
+    .forEach((p) => p.classList.remove("active"));
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach((b) => b.classList.remove("active"));
   document.getElementById("page-" + page).classList.add("active");
   const nb = document.getElementById("nav-" + page);
   if (nb) nb.classList.add("active");
 
-  // Konsep Step 2 (Lazy Listeners) — akan diisi di step berikutnya
+  // Matikan listener halaman sebelumnya
+  stopPageListeners();
+
+  // Aktifkan listener hanya untuk halaman yang dibuka
+  startPageListeners(page);
+
   renderPage(page);
+}
+function stopPageListeners() {
+  if (activeListeners.kegiatan) {
+    activeListeners.kegiatan();
+    delete activeListeners.kegiatan;
+  }
+  if (activeListeners.cashflow) {
+    activeListeners.cashflow();
+    delete activeListeners.cashflow;
+  }
+  if (activeListeners.bonataon) {
+    activeListeners.bonataon();
+    delete activeListeners.bonataon;
+  }
+  if (activeListeners.attendance) {
+    activeListeners.attendance();
+    delete activeListeners.attendance;
+  }
+  if (activeListeners.iuran) {
+    activeListeners.iuran();
+    delete activeListeners.iuran;
+  }
+}
+
+function startPageListeners(page) {
+  if (page === "kegiatan") {
+    startKegiatanListener();
+    startAttendanceListener();
+  } else if (page === "keuangan") {
+    startCashflowListener();
+    startIuranListener();
+  } else if (page === "bonataon") {
+    startBonataonListener();
+  }
 }
 
 function renderPage(page) {
@@ -314,8 +386,7 @@ function renderPage(page) {
   else if (page === "anggota") {
     renderMembers();
     if (currentAnggotaTab === "keaktifan") renderKeaktifan();
-  }
-  else if (page === "pengumuman") renderPengumuman();
+  } else if (page === "pengumuman") renderPengumuman();
   else if (page === "adrt") renderADRT();
 }
 
@@ -355,7 +426,7 @@ function closeAdminPanel() {
 document.addEventListener("DOMContentLoaded", () => {
   const overlay = document.getElementById("admin-panel-overlay");
   if (overlay) {
-    overlay.addEventListener("click", function(e) {
+    overlay.addEventListener("click", function (e) {
       if (e.target === this) closeAdminPanel();
     });
   }
@@ -373,9 +444,12 @@ function initFirebaseAuth() {
       console.log("✅ Firebase Auth: logged in as", user.email);
       isAdmin = true;
       updateAdminDownloadVisibility(true);
-      document.getElementById("admin-toggle-btn").textContent = "✅ Admin (Keluar)";
+      document.getElementById("admin-toggle-btn").textContent =
+        "✅ Admin (Keluar)";
       document.getElementById("admin-toggle-btn").classList.add("active-admin");
-      document.querySelectorAll(".admin-only").forEach((el) => (el.style.display = ""));
+      document
+        .querySelectorAll(".admin-only")
+        .forEach((el) => (el.style.display = ""));
       // Reload members dengan data lengkap saat login
       if (window.FB && window.db) {
         await loadMembersFromFirebase();
@@ -386,7 +460,11 @@ function initFirebaseAuth() {
       isAdmin = false;
       // Saat logout, bersihkan data sensitif dari memory
       appData.members = appData.members.map((m) => ({
-        id: m.id, name: m.name, br: m.br, nick: m.nick, joined: m.joined,
+        id: m.id,
+        name: m.name,
+        br: m.br,
+        nick: m.nick,
+        joined: m.joined,
       }));
       renderMembers();
     }
@@ -410,9 +488,12 @@ async function doAdminLogin() {
     closeAdminPanel();
   } catch (err) {
     console.error("Login error:", err);
-    const msg = err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential"
-      ? "❌ Email atau password salah!"
-      : "❌ Error: " + err.message;
+    const msg =
+      err.code === "auth/user-not-found" ||
+      err.code === "auth/wrong-password" ||
+      err.code === "auth/invalid-credential"
+        ? "❌ Email atau password salah!"
+        : "❌ Error: " + err.message;
     showToast(msg, "error");
   }
 }
@@ -423,8 +504,12 @@ async function doAdminLogout() {
     isAdmin = false;
     updateAdminDownloadVisibility(false);
     document.getElementById("admin-toggle-btn").textContent = "⚙ Admin";
-    document.getElementById("admin-toggle-btn").classList.remove("active-admin");
-    document.querySelectorAll(".admin-only").forEach((el) => (el.style.display = "none"));
+    document
+      .getElementById("admin-toggle-btn")
+      .classList.remove("active-admin");
+    document
+      .querySelectorAll(".admin-only")
+      .forEach((el) => (el.style.display = "none"));
     closeAdminPanel();
     showToast("Logout berhasil");
   } catch (err) {
@@ -448,7 +533,10 @@ async function gantiPassword() {
     showToast("✅ Password berhasil diubah! 🔑");
   } catch (err) {
     if (err.code === "auth/requires-recent-login") {
-      showToast("Silakan logout dan login ulang sebelum ganti password", "error");
+      showToast(
+        "Silakan logout dan login ulang sebelum ganti password",
+        "error",
+      );
     } else {
       showToast("❌ Gagal: " + err.message, "error");
     }
@@ -474,11 +562,16 @@ function previewBgInput() {
 async function applyBgImage() {
   const url = document.getElementById("f-bg-url").value.trim();
   if (!url) return showToast("Masukkan URL gambar terlebih dahulu", "error");
-  document.getElementById("hero-beranda").style.backgroundImage = `url('${url}')`;
+  document.getElementById("hero-beranda").style.backgroundImage =
+    `url('${url}')`;
   try {
-    await FB.setDoc(FB.doc(db, "settings", "config"), { bgImage: url }, { merge: true });
+    await FB.setDoc(
+      FB.doc(db, "settings", "config"),
+      { bgImage: url },
+      { merge: true },
+    );
     showToast("✅ Background header berhasil diubah!");
-  } catch(e) {
+  } catch (e) {
     showToast("✅ Background diubah (lokal saja)");
   }
 }
@@ -493,9 +586,13 @@ async function applyBgColor() {
   document.getElementById("hero-beranda").style.backgroundImage = "none";
   document.getElementById("hero-beranda").style.backgroundColor = color;
   try {
-    await FB.setDoc(FB.doc(db, "settings", "config"), { bgColor: color, bgImage: "" }, { merge: true });
+    await FB.setDoc(
+      FB.doc(db, "settings", "config"),
+      { bgColor: color, bgImage: "" },
+      { merge: true },
+    );
     showToast("✅ Warna header berhasil diubah!");
-  } catch(e) {
+  } catch (e) {
     showToast("✅ Warna diubah (lokal saja)");
   }
 }
@@ -542,7 +639,7 @@ async function loadMembersFromFirebase() {
     appData.members.sort((a, b) => a.id - b.id);
     renderMembers();
     populateDropdowns();
-  } catch(e) {
+  } catch (e) {
     console.warn("loadMembersFromFirebase error:", e.message);
   }
 }
@@ -550,7 +647,9 @@ async function loadMembersFromFirebase() {
 async function loadAllAttendanceFromFirebase() {
   const snap = await FB.getDocs(FB.collection(db, "attendance"));
   attendanceData = {};
-  snap.forEach((d) => { attendanceData[d.id] = d.data(); });
+  snap.forEach((d) => {
+    attendanceData[d.id] = d.data();
+  });
 }
 
 async function loadSettingsFromFirebase() {
@@ -575,8 +674,10 @@ async function loadIuranFromFirebase() {
   try {
     const snap = await FB.getDocs(FB.collection(db, "iuran"));
     iuranFirebase = {};
-    snap.forEach((d) => { iuranFirebase[d.id] = d.data(); });
-  } catch(e) {
+    snap.forEach((d) => {
+      iuranFirebase[d.id] = d.data();
+    });
+  } catch (e) {
     console.warn("loadIuranFromFirebase error:", e.message);
   }
 }
@@ -592,7 +693,9 @@ function startKegiatanListener() {
   const q = FB.query(FB.collection(db, "kegiatan"), FB.orderBy("date", "desc"));
   activeListeners.kegiatan = FB.onSnapshot(q, (snap) => {
     appData.kegiatan = [];
-    snap.forEach((d) => appData.kegiatan.push({ id: parseInt(d.id), ...d.data() }));
+    snap.forEach((d) =>
+      appData.kegiatan.push({ id: parseInt(d.id), ...d.data() }),
+    );
     renderKegiatan();
     updateStatKegiatan();
     // Update Pengumuman jika halaman aktif
@@ -604,48 +707,69 @@ function startKegiatanListener() {
 
 function startMembersListener() {
   if (activeListeners.members) activeListeners.members();
-  activeListeners.members = FB.onSnapshot(FB.collection(db, "members"), (snap) => {
-    appData.members = [];
-    snap.forEach((d) => appData.members.push({ id: parseInt(d.id), ...d.data() }));
-    appData.members.sort((a, b) => a.id - b.id);
-    document.getElementById("stat-anggota").textContent = appData.members.length;
-    renderMembers();
-    populateDropdowns();
-  });
+  activeListeners.members = FB.onSnapshot(
+    FB.collection(db, "members"),
+    (snap) => {
+      appData.members = [];
+      snap.forEach((d) =>
+        appData.members.push({ id: parseInt(d.id), ...d.data() }),
+      );
+      appData.members.sort((a, b) => a.id - b.id);
+      document.getElementById("stat-anggota").textContent =
+        appData.members.length;
+      renderMembers();
+      populateDropdowns();
+    },
+  );
   return activeListeners.members;
 }
 
 function startCashflowListener() {
   if (activeListeners.cashflow) activeListeners.cashflow();
-  activeListeners.cashflow = FB.onSnapshot(FB.collection(db, "cashflow"), (snap) => {
-    appData.cashflow = [];
-    snap.forEach((d) => appData.cashflow.push({ id: parseInt(d.id), ...d.data() }));
-    const pg = document.getElementById("page-keuangan");
-    if (pg?.classList.contains("active")) renderKeuangan();
-  });
+  activeListeners.cashflow = FB.onSnapshot(
+    FB.collection(db, "cashflow"),
+    (snap) => {
+      appData.cashflow = [];
+      snap.forEach((d) =>
+        appData.cashflow.push({ id: parseInt(d.id), ...d.data() }),
+      );
+      const pg = document.getElementById("page-keuangan");
+      if (pg?.classList.contains("active")) renderKeuangan();
+    },
+  );
   return activeListeners.cashflow;
 }
 
 function startBonataonListener() {
   if (activeListeners.bonataon) activeListeners.bonataon();
-  activeListeners.bonataon = FB.onSnapshot(FB.collection(db, "bonataon"), (snap) => {
-    appData.bonataon = {};
-    snap.forEach((d) => { appData.bonataon[parseInt(d.id)] = d.data().entries || []; });
-    const pg = document.getElementById("page-bonataon");
-    if (pg?.classList.contains("active")) renderBonataon();
-  });
+  activeListeners.bonataon = FB.onSnapshot(
+    FB.collection(db, "bonataon"),
+    (snap) => {
+      appData.bonataon = {};
+      snap.forEach((d) => {
+        appData.bonataon[parseInt(d.id)] = d.data().entries || [];
+      });
+      const pg = document.getElementById("page-bonataon");
+      if (pg?.classList.contains("active")) renderBonataon();
+    },
+  );
   return activeListeners.bonataon;
 }
 
 function startAttendanceListener() {
   if (activeListeners.attendance) activeListeners.attendance();
-  activeListeners.attendance = FB.onSnapshot(FB.collection(db, "attendance"), (snap) => {
-    attendanceData = {};
-    snap.forEach((d) => { attendanceData[d.id] = d.data(); });
-    const pg = document.getElementById("page-kegiatan");
-    if (pg?.classList.contains("active")) renderKegiatan();
-    if (currentAnggotaTab === "keaktifan") renderKeaktifan();
-  });
+  activeListeners.attendance = FB.onSnapshot(
+    FB.collection(db, "attendance"),
+    (snap) => {
+      attendanceData = {};
+      snap.forEach((d) => {
+        attendanceData[d.id] = d.data();
+      });
+      const pg = document.getElementById("page-kegiatan");
+      if (pg?.classList.contains("active")) renderKegiatan();
+      if (currentAnggotaTab === "keaktifan") renderKeaktifan();
+    },
+  );
   return activeListeners.attendance;
 }
 
@@ -653,7 +777,9 @@ function startIuranListener() {
   if (activeListeners.iuran) activeListeners.iuran();
   activeListeners.iuran = FB.onSnapshot(FB.collection(db, "iuran"), (snap) => {
     iuranFirebase = {};
-    snap.forEach((d) => { iuranFirebase[d.id] = d.data(); });
+    snap.forEach((d) => {
+      iuranFirebase[d.id] = d.data();
+    });
     const pg = document.getElementById("page-keuangan");
     if (pg?.classList.contains("active")) renderIuranTable();
   });
@@ -682,20 +808,31 @@ async function initFirebase() {
       (async () => {
         const snap = await FB.getDocs(FB.collection(db, "bonataon"));
         appData.bonataon = {};
-        snap.forEach((d) => { appData.bonataon[parseInt(d.id)] = d.data().entries || []; });
+        snap.forEach((d) => {
+          appData.bonataon[parseInt(d.id)] = d.data().entries || [];
+        });
       })(),
       // Load cashflow
       (async () => {
         const snap = await FB.getDocs(FB.collection(db, "cashflow"));
         if (snap.size > 0) {
           appData.cashflow = [];
-          snap.forEach((d) => appData.cashflow.push({ id: parseInt(d.id), ...d.data() }));
+          snap.forEach((d) =>
+            appData.cashflow.push({ id: parseInt(d.id), ...d.data() }),
+          );
         }
       })(),
     ]);
 
     // Log status setiap koleksi untuk debugging
-    const labels = ["members", "attendance", "settings", "iuran", "bonataon", "cashflow"];
+    const labels = [
+      "members",
+      "attendance",
+      "settings",
+      "iuran",
+      "bonataon",
+      "cashflow",
+    ];
     results.forEach((r, i) => {
       if (r.status === "rejected") {
         console.warn(`⚠️ Firebase [${labels[i]}] gagal:`, r.reason?.message);
@@ -707,13 +844,9 @@ async function initFirebase() {
     renderKegiatan();
     updateStatKegiatan();
 
-    // Step 4: Mulai semua real-time listeners
-    startKegiatanListener();
-    startCashflowListener();
-    startBonataonListener();
-    startAttendanceListener();
+    // Step 4: Mulai listener — members aktif permanen, lainnya lazy
     startMembersListener();
-    startIuranListener();
+    startPageListeners("beranda"); // aktifkan untuk halaman pertama
 
     console.log("✅ Firebase siap — semua listener aktif");
   } catch (err) {
@@ -730,7 +863,9 @@ async function initFirebase() {
 function renderPengurusEditor() {
   const editor = document.getElementById("pengurus-editor");
   if (!editor) return;
-  editor.innerHTML = pengurusList.map((p, i) => `
+  editor.innerHTML = pengurusList
+    .map(
+      (p, i) => `
     <div style="background:white;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;">
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
         <input value="${p.emoji || ""}" style="width:46px;padding:4px;border:1px solid #ccc;border-radius:6px;text-align:center;font-size:16px;" oninput="updatePengurus(${i},'emoji',this.value)">
@@ -738,7 +873,9 @@ function renderPengurusEditor() {
         <button onclick="hapusPengurus(${i})" style="background:#fee2e2;border:none;color:#dc2626;border-radius:6px;padding:4px 8px;cursor:pointer;">✕</button>
       </div>
       <input value="${p.name || ""}" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:6px;font-size:13px;" oninput="updatePengurus(${i},'name',this.value)" placeholder="Nama pengurus">
-    </div>`).join("");
+    </div>`,
+    )
+    .join("");
 }
 
 async function updatePengurus(i, field, val) {
@@ -747,8 +884,14 @@ async function updatePengurus(i, field, val) {
   clearTimeout(window._pengurusDebounce);
   window._pengurusDebounce = setTimeout(async () => {
     try {
-      await FB.setDoc(FB.doc(db, "settings", "config"), { pengurusList }, { merge: true });
-    } catch(e) { console.warn("Pengurus save error:", e.message); }
+      await FB.setDoc(
+        FB.doc(db, "settings", "config"),
+        { pengurusList },
+        { merge: true },
+      );
+    } catch (e) {
+      console.warn("Pengurus save error:", e.message);
+    }
   }, 1000);
 }
 
@@ -758,17 +901,33 @@ async function hapusPengurus(i) {
   renderBeranda();
   renderPengurusEditor();
   try {
-    await FB.setDoc(FB.doc(db, "settings", "config"), { pengurusList }, { merge: true });
-  } catch(e) { console.warn("hapusPengurus error:", e.message); }
+    await FB.setDoc(
+      FB.doc(db, "settings", "config"),
+      { pengurusList },
+      { merge: true },
+    );
+  } catch (e) {
+    console.warn("hapusPengurus error:", e.message);
+  }
 }
 
 async function tambahPengurus() {
-  pengurusList.push({ emoji: "🏅", role: "Jabatan Baru", name: "Nama Pengurus" });
+  pengurusList.push({
+    emoji: "🏅",
+    role: "Jabatan Baru",
+    name: "Nama Pengurus",
+  });
   renderBeranda();
   renderPengurusEditor();
   try {
-    await FB.setDoc(FB.doc(db, "settings", "config"), { pengurusList }, { merge: true });
-  } catch(e) { console.warn("tambahPengurus error:", e.message); }
+    await FB.setDoc(
+      FB.doc(db, "settings", "config"),
+      { pengurusList },
+      { merge: true },
+    );
+  } catch (e) {
+    console.warn("tambahPengurus error:", e.message);
+  }
 }
 
 // ============================================================
@@ -778,12 +937,16 @@ async function tambahPengurus() {
 function renderBeranda() {
   const grid = document.getElementById("pengurus-aktif-grid");
   if (grid) {
-    grid.innerHTML = pengurusList.map((p) => `
+    grid.innerHTML = pengurusList
+      .map(
+        (p) => `
       <div class="pengurus-card-new">
         <span style="font-size:1.5rem">${p.emoji || ""}</span>
         <span class="role-badge-new">${p.role || ""}</span>
         <div class="p-name-new">${p.name || ""}</div>
-      </div>`).join("");
+      </div>`,
+      )
+      .join("");
   }
   const statAnggota = document.getElementById("stat-anggota");
   if (statAnggota) statAnggota.textContent = appData.members.length;
@@ -791,16 +954,24 @@ function renderBeranda() {
 
 function updateStatKegiatan() {
   const tahunIni = new Date().getFullYear();
-  const jumlah = appData.kegiatan.filter(k => new Date(k.date).getFullYear() === tahunIni).length;
-  const jumlahLalu = appData.kegiatan.filter(k => new Date(k.date).getFullYear() === tahunIni - 1).length;
+  const jumlah = appData.kegiatan.filter(
+    (k) => new Date(k.date).getFullYear() === tahunIni,
+  ).length;
+  const jumlahLalu = appData.kegiatan.filter(
+    (k) => new Date(k.date).getFullYear() === tahunIni - 1,
+  ).length;
   const el = document.getElementById("stat-kegiatan");
-  if (el) el.textContent = jumlah >= 1 ? jumlah : (jumlahLalu > 0 ? jumlahLalu + "+" : "-");
+  if (el)
+    el.textContent =
+      jumlah >= 1 ? jumlah : jumlahLalu > 0 ? jumlahLalu + "+" : "-";
 }
 
 function computeSaldo() {
   // TODO Step 3: Saldo awal seharusnya dari Firestore settings, bukan hardcode
   let s = 10364300;
-  appData.cashflow.forEach((r) => { s += (r.in || 0) - (r.out || 0); });
+  appData.cashflow.forEach((r) => {
+    s += (r.in || 0) - (r.out || 0);
+  });
   return s;
 }
 
@@ -810,8 +981,11 @@ function computeSaldo() {
 // ============================================================
 
 function getKegiatanYears() {
-  const years = [...new Set(appData.kegiatan.map(k => getYear(k.date)))].sort((a, b) => b - a);
-  if (!years.includes(new Date().getFullYear())) years.unshift(new Date().getFullYear());
+  const years = [...new Set(appData.kegiatan.map((k) => getYear(k.date)))].sort(
+    (a, b) => b - a,
+  );
+  if (!years.includes(new Date().getFullYear()))
+    years.unshift(new Date().getFullYear());
   return years;
 }
 
@@ -819,16 +993,19 @@ function renderKegiatan() {
   const years = getKegiatanYears();
   const tabsEl = document.getElementById("kegiatan-year-tabs");
   if (tabsEl) {
-    tabsEl.innerHTML = years.map(y =>
-      `<div class="year-tab ${y === currentKegYear ? "active" : ""}" onclick="currentKegYear=${y};renderKegiatan()">${y}</div>`
-    ).join("");
+    tabsEl.innerHTML = years
+      .map(
+        (y) =>
+          `<div class="year-tab ${y === currentKegYear ? "active" : ""}" onclick="currentKegYear=${y};renderKegiatan()">${y}</div>`,
+      )
+      .join("");
   }
 
   const list = document.getElementById("kegiatan-list");
   if (!list) return;
 
   const filtered = appData.kegiatan
-    .filter(k => getYear(k.date) === currentKegYear)
+    .filter((k) => getYear(k.date) === currentKegYear)
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   if (!filtered.length) {
@@ -836,22 +1013,41 @@ function renderKegiatan() {
     return;
   }
 
-  const months = ["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGS","SEP","OKT","NOV","DES"];
-  list.innerHTML = filtered.map(k => {
-    const d = new Date(k.date);
-    const tc = "type-" + k.type.toLowerCase().replace(/[^a-z]/g, "");
-    const att = getEventAttendance(k.id);
-    const totalMembers = appData.members.length;
-    const attBadge = att !== null
-      ? `<span class="attendance-badge">✅ ${att.length} / ${totalMembers} hadir</span>`
-      : `<span class="attendance-badge no-data">— Belum ada data kehadiran</span>`;
-    const attBtn = isAdmin
-      ? `<button class="btn btn-sm" style="background:rgba(13,148,136,0.1);color:var(--teal);border:1px solid rgba(13,148,136,0.3);margin-left:4px;" onclick="openAttendanceModal(${k.id})">✍ Isi Daftar Hadir</button>`
-      : "";
-    const adminEdit = isAdmin ? `<button class="edit-btn" onclick="openEditKegiatan(${k.id})">✏</button>` : "";
-    const adminDel = isAdmin ? `<button class="delete-btn" onclick="deleteKegiatan(${k.id})">🗑</button>` : "";
+  const months = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MEI",
+    "JUN",
+    "JUL",
+    "AGS",
+    "SEP",
+    "OKT",
+    "NOV",
+    "DES",
+  ];
+  list.innerHTML = filtered
+    .map((k) => {
+      const d = new Date(k.date);
+      const tc = "type-" + k.type.toLowerCase().replace(/[^a-z]/g, "");
+      const att = getEventAttendance(k.id);
+      const totalMembers = appData.members.length;
+      const attBadge =
+        att !== null
+          ? `<span class="attendance-badge">✅ ${att.length} / ${totalMembers} hadir</span>`
+          : `<span class="attendance-badge no-data">— Belum ada data kehadiran</span>`;
+      const attBtn = isAdmin
+        ? `<button class="btn btn-sm" style="background:rgba(13,148,136,0.1);color:var(--teal);border:1px solid rgba(13,148,136,0.3);margin-left:4px;" onclick="openAttendanceModal(${k.id})">✍ Isi Daftar Hadir</button>`
+        : "";
+      const adminEdit = isAdmin
+        ? `<button class="edit-btn" onclick="openEditKegiatan(${k.id})">✏</button>`
+        : "";
+      const adminDel = isAdmin
+        ? `<button class="delete-btn" onclick="deleteKegiatan(${k.id})">🗑</button>`
+        : "";
 
-    return `<div class="event-card">
+      return `<div class="event-card">
       <div class="event-date"><div class="day">${d.getDate()}</div><div class="month">${months[d.getMonth()]}</div></div>
       <div class="event-body">
         <div class="event-type"><span class="type-badge ${tc}">${k.type}</span></div>
@@ -862,7 +1058,8 @@ function renderKegiatan() {
       </div>
       <div style="display:flex;gap:4px;margin-left:auto;flex-shrink:0">${adminEdit}${adminDel}</div>
     </div>`;
-  }).join("");
+    })
+    .join("");
 }
 
 async function addKegiatan() {
@@ -872,22 +1069,29 @@ async function addKegiatan() {
   const title = document.getElementById("f-keg-title").value.trim();
   const desc = document.getElementById("f-keg-desc").value.trim();
   const place = document.getElementById("f-keg-place").value.trim();
-  if (!date || !title) return showToast("Tanggal dan judul wajib diisi", "error");
+  if (!date || !title)
+    return showToast("Tanggal dan judul wajib diisi", "error");
 
   const id = genId();
   try {
-    await FB.setDoc(FB.doc(db, "kegiatan", String(id)), { date, type, title, desc, place });
+    await FB.setDoc(FB.doc(db, "kegiatan", String(id)), {
+      date,
+      type,
+      title,
+      desc,
+      place,
+    });
     currentKegYear = getYear(date);
     closeModal("modal-add-kegiatan");
     showToast("✅ Kegiatan berhasil ditambahkan");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal simpan: " + e.message, "error");
   }
 }
 
 // FIX: Hanya ada 1 openEditKegiatan (tidak duplikat)
 function openEditKegiatan(id) {
-  const k = appData.kegiatan.find(x => x.id === id);
+  const k = appData.kegiatan.find((x) => x.id === id);
   if (!k) return;
   document.getElementById("f-edit-keg-id").value = k.id;
   document.getElementById("f-edit-keg-date").value = k.date;
@@ -907,12 +1111,20 @@ async function saveEditKegiatan() {
   const title = document.getElementById("f-edit-keg-title").value.trim();
   const desc = document.getElementById("f-edit-keg-desc").value.trim();
   const place = document.getElementById("f-edit-keg-place").value.trim();
-  if (!date || !title) return showToast("Tanggal dan judul wajib diisi", "error");
+  if (!date || !title)
+    return showToast("Tanggal dan judul wajib diisi", "error");
 
   try {
-    await FB.updateDoc(FB.doc(db, "kegiatan", String(id)), { date, type, title, desc, place });
-    const idx = appData.kegiatan.findIndex(x => x.id === id);
-    if (idx !== -1) appData.kegiatan[idx] = { id, date, type, title, desc, place };
+    await FB.updateDoc(FB.doc(db, "kegiatan", String(id)), {
+      date,
+      type,
+      title,
+      desc,
+      place,
+    });
+    const idx = appData.kegiatan.findIndex((x) => x.id === id);
+    if (idx !== -1)
+      appData.kegiatan[idx] = { id, date, type, title, desc, place };
     if (attendanceData[id]) {
       attendanceData[id].date = date;
       attendanceData[id].title = title;
@@ -923,7 +1135,7 @@ async function saveEditKegiatan() {
     currentKegYear = getYear(date);
     renderKegiatan();
     showToast("✅ Kegiatan berhasil diperbarui");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal update: " + e.message, "error");
   }
 }
@@ -936,10 +1148,10 @@ async function deleteKegiatan(id) {
       await FB.deleteDoc(FB.doc(db, "attendance", String(id)));
       delete attendanceData[id];
     }
-    appData.kegiatan = appData.kegiatan.filter(k => k.id !== id);
+    appData.kegiatan = appData.kegiatan.filter((k) => k.id !== id);
     renderKegiatan();
     showToast("Kegiatan dihapus");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal hapus: " + e.message, "error");
   }
 }
@@ -953,34 +1165,43 @@ function getEventAttendance(eventId) {
 }
 
 function getMemberAttendanceStats(memberId, year) {
-  let totalEvents = 0, attended = 0;
-  Object.values(attendanceData).forEach(ev => {
+  let totalEvents = 0,
+    attended = 0;
+  Object.values(attendanceData).forEach((ev) => {
     if (year && getYear(ev.date) !== year) return;
     if (!ev.present) return;
     totalEvents++;
     if (ev.present.includes(memberId)) attended++;
   });
-  return { attended, totalEvents, pct: totalEvents > 0 ? Math.round((attended / totalEvents) * 100) : null };
+  return {
+    attended,
+    totalEvents,
+    pct: totalEvents > 0 ? Math.round((attended / totalEvents) * 100) : null,
+  };
 }
 
 function openAttendanceModal(eventId) {
   currentAttendanceEventId = eventId;
-  const event = appData.kegiatan.find(k => k.id === eventId);
+  const event = appData.kegiatan.find((k) => k.id === eventId);
   if (!event) return;
 
   document.getElementById("attendance-event-info").innerHTML =
-    `<strong>${event.title}</strong> · ${fmtDate(event.date)} · <span class="type-badge type-${event.type.toLowerCase().replace(/[^a-z]/g,"")}">${event.type}</span>${event.place ? ` · 📍 ${event.place}` : ""}`;
+    `<strong>${event.title}</strong> · ${fmtDate(event.date)} · <span class="type-badge type-${event.type.toLowerCase().replace(/[^a-z]/g, "")}">${event.type}</span>${event.place ? ` · 📍 ${event.place}` : ""}`;
 
   const existing = getEventAttendance(eventId) || [];
-  const sorted = [...appData.members].sort((a, b) => memberDisplayName(a).localeCompare(memberDisplayName(b)));
+  const sorted = [...appData.members].sort((a, b) =>
+    memberDisplayName(a).localeCompare(memberDisplayName(b)),
+  );
 
-  document.getElementById("attendance-member-list").innerHTML = sorted.map(m => {
-    const checked = existing.includes(m.id);
-    return `<div class="attendance-member-item ${checked ? "checked" : ""}" onclick="toggleAttMember(this,${m.id})">
+  document.getElementById("attendance-member-list").innerHTML = sorted
+    .map((m) => {
+      const checked = existing.includes(m.id);
+      return `<div class="attendance-member-item ${checked ? "checked" : ""}" onclick="toggleAttMember(this,${m.id})">
       <input type="checkbox" id="att-m-${m.id}" ${checked ? "checked" : ""} onchange="updateAttCount()" onclick="event.stopPropagation()"/>
       <label for="att-m-${m.id}" onclick="event.stopPropagation()">${memberDisplayName(m)}</label>
     </div>`;
-  }).join("");
+    })
+    .join("");
 
   updateAttCount();
   openModal("modal-attendance");
@@ -994,39 +1215,59 @@ function toggleAttMember(el, memberId) {
 }
 
 function updateAttCount() {
-  const checked = document.querySelectorAll("#attendance-member-list input[type=checkbox]:checked").length;
+  const checked = document.querySelectorAll(
+    "#attendance-member-list input[type=checkbox]:checked",
+  ).length;
   const el = document.getElementById("att-count-display");
   if (el) el.textContent = `${checked} / ${appData.members.length} hadir`;
 }
 
 function toggleAllAttendance(selectAll) {
-  document.querySelectorAll("#attendance-member-list input[type=checkbox]").forEach(cb => {
-    cb.checked = selectAll;
-    cb.closest(".attendance-member-item").classList.toggle("checked", selectAll);
-  });
+  document
+    .querySelectorAll("#attendance-member-list input[type=checkbox]")
+    .forEach((cb) => {
+      cb.checked = selectAll;
+      cb.closest(".attendance-member-item").classList.toggle(
+        "checked",
+        selectAll,
+      );
+    });
   updateAttCount();
 }
 
 async function saveAttendanceData() {
   if (!currentAttendanceEventId) return;
-  const event = appData.kegiatan.find(k => k.id === currentAttendanceEventId);
+  const event = appData.kegiatan.find((k) => k.id === currentAttendanceEventId);
   if (!event) return;
 
   const presentIds = [];
-  document.querySelectorAll("#attendance-member-list input[type=checkbox]:checked").forEach(cb => {
-    presentIds.push(parseInt(cb.id.replace("att-m-", "")));
-  });
+  document
+    .querySelectorAll("#attendance-member-list input[type=checkbox]:checked")
+    .forEach((cb) => {
+      presentIds.push(parseInt(cb.id.replace("att-m-", "")));
+    });
 
-  const attData = { eventId: currentAttendanceEventId, date: event.date, title: event.title, type: event.type, present: presentIds };
+  const attData = {
+    eventId: currentAttendanceEventId,
+    date: event.date,
+    title: event.title,
+    type: event.type,
+    present: presentIds,
+  };
 
   try {
-    await FB.setDoc(FB.doc(db, "attendance", String(currentAttendanceEventId)), attData);
+    await FB.setDoc(
+      FB.doc(db, "attendance", String(currentAttendanceEventId)),
+      attData,
+    );
     attendanceData[currentAttendanceEventId] = attData;
     closeModal("modal-attendance");
     renderKegiatan();
     if (currentAnggotaTab === "keaktifan") renderKeaktifan();
-    showToast(`✅ Kehadiran disimpan: ${presentIds.length} dari ${appData.members.length} hadir`);
-  } catch(e) {
+    showToast(
+      `✅ Kehadiran disimpan: ${presentIds.length} dari ${appData.members.length} hadir`,
+    );
+  } catch (e) {
     showToast("❌ Gagal simpan kehadiran: " + e.message, "error");
   }
 }
@@ -1036,16 +1277,21 @@ async function saveAttendanceData() {
 // ============================================================
 
 function getBonYears() {
-  return [...new Set(Object.keys(appData.bonataon).map(Number))].sort((a, b) => b - a);
+  return [...new Set(Object.keys(appData.bonataon).map(Number))].sort(
+    (a, b) => b - a,
+  );
 }
 
 function renderBonataon() {
   const years = getBonYears();
   const tabsEl = document.getElementById("bonataon-year-tabs");
   if (tabsEl) {
-    tabsEl.innerHTML = years.map(y =>
-      `<div class="year-tab ${y === currentBonYear ? "active" : ""}" onclick="currentBonYear=${y};renderBonataon()">${y}</div>`
-    ).join("");
+    tabsEl.innerHTML = years
+      .map(
+        (y) =>
+          `<div class="year-tab ${y === currentBonYear ? "active" : ""}" onclick="currentBonYear=${y};renderBonataon()">${y}</div>`,
+      )
+      .join("");
   }
 
   const data = appData.bonataon[currentBonYear] || [];
@@ -1057,13 +1303,24 @@ function renderBonataon() {
     return;
   }
 
-  const rows = data.map((r, idx) => {
-    const total = (r.gr||0) + (r.arsik||0) + (r.ayam||0) + (r.buah||0) + (r.bir||0) + (r.mina||0) + (r.mini||0);
-    const sisa = total - (r.paid||0);
-    const lunas = sisa <= 0;
-    const adminBtn = isAdmin ? `<button class="delete-btn" onclick="deleteBonataon(${idx})">🗑</button>` : "";
-    return `<tr><td>${idx+1}</td><td>${r.family}</td><td class="rp">${r.gr ? fmtRp(r.gr) : "-"}</td><td class="rp">${r.arsik ? fmtRp(r.arsik) : "-"}</td><td class="rp">${r.ayam ? fmtRp(r.ayam) : "-"}</td><td class="rp">${r.buah ? fmtRp(r.buah) : "-"}</td><td class="rp">${r.bir ? fmtRp(r.bir) : "-"}</td><td class="rp">${r.mina ? fmtRp(r.mina) : "-"}</td><td class="rp">${r.mini ? fmtRp(r.mini) : "-"}</td><td class="rp"><strong>${fmtRp(total)}</strong></td><td class="rp">${fmtRp(r.paid)}</td><td class="rp">${fmtRp(sisa)}</td><td><span class="${lunas ? "lunas-badge" : "belum-badge"}">${lunas ? "LUNAS" : "BELUM"}</span></td><td>${adminBtn}</td></tr>`;
-  }).join("");
+  const rows = data
+    .map((r, idx) => {
+      const total =
+        (r.gr || 0) +
+        (r.arsik || 0) +
+        (r.ayam || 0) +
+        (r.buah || 0) +
+        (r.bir || 0) +
+        (r.mina || 0) +
+        (r.mini || 0);
+      const sisa = total - (r.paid || 0);
+      const lunas = sisa <= 0;
+      const adminBtn = isAdmin
+        ? `<button class="delete-btn" onclick="deleteBonataon(${idx})">🗑</button>`
+        : "";
+      return `<tr><td>${idx + 1}</td><td>${r.family}</td><td class="rp">${r.gr ? fmtRp(r.gr) : "-"}</td><td class="rp">${r.arsik ? fmtRp(r.arsik) : "-"}</td><td class="rp">${r.ayam ? fmtRp(r.ayam) : "-"}</td><td class="rp">${r.buah ? fmtRp(r.buah) : "-"}</td><td class="rp">${r.bir ? fmtRp(r.bir) : "-"}</td><td class="rp">${r.mina ? fmtRp(r.mina) : "-"}</td><td class="rp">${r.mini ? fmtRp(r.mini) : "-"}</td><td class="rp"><strong>${fmtRp(total)}</strong></td><td class="rp">${fmtRp(r.paid)}</td><td class="rp">${fmtRp(sisa)}</td><td><span class="${lunas ? "lunas-badge" : "belum-badge"}">${lunas ? "LUNAS" : "BELUM"}</span></td><td>${adminBtn}</td></tr>`;
+    })
+    .join("");
 
   cont.innerHTML = `<div class="card"><div class="card-title">🎉 Rekap Lelang Bonataon ${currentBonYear}</div><div class="tbl-wrap"><table><thead><tr><th>No</th><th>Nama Keluarga</th><th>GR</th><th>Arsik</th><th>Ayam</th><th>Buah</th><th>Bir</th><th>Min.Ama</th><th>Min.Ina</th><th>Total</th><th>Dibayar</th><th>Sisa</th><th>Status</th><th class="admin-only">Aksi</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
   updateAdminUI();
@@ -1085,16 +1342,21 @@ async function addBonataonEntry() {
     paid: parseInt(document.getElementById("f-bon-paid").value) || 0,
   };
   if (!appData.bonataon[year]) appData.bonataon[year] = [];
-  if (appData.bonataon[year].find(e => e.family === family))
-    return showToast("Data keluarga ini sudah ada untuk tahun " + year, "error");
+  if (appData.bonataon[year].find((e) => e.family === family))
+    return showToast(
+      "Data keluarga ini sudah ada untuk tahun " + year,
+      "error",
+    );
   appData.bonataon[year].push(entry);
   try {
-    await FB.setDoc(FB.doc(db, "bonataon", String(year)), { entries: appData.bonataon[year] });
+    await FB.setDoc(FB.doc(db, "bonataon", String(year)), {
+      entries: appData.bonataon[year],
+    });
     currentBonYear = year;
     closeModal("modal-add-bonataon-entry");
     renderBonataon();
     showToast("✅ Data lelang ditambahkan");
-  } catch(e) {
+  } catch (e) {
     appData.bonataon[year].pop();
     showToast("❌ Gagal simpan: " + e.message, "error");
   }
@@ -1104,10 +1366,12 @@ async function deleteBonataon(idx) {
   if (!isAdmin || !confirm("Hapus data ini?")) return;
   const removed = appData.bonataon[currentBonYear].splice(idx, 1);
   try {
-    await FB.setDoc(FB.doc(db, "bonataon", String(currentBonYear)), { entries: appData.bonataon[currentBonYear] });
+    await FB.setDoc(FB.doc(db, "bonataon", String(currentBonYear)), {
+      entries: appData.bonataon[currentBonYear],
+    });
     renderBonataon();
     showToast("Data dihapus");
-  } catch(e) {
+  } catch (e) {
     appData.bonataon[currentBonYear].splice(idx, 0, removed[0]);
     showToast("❌ Gagal hapus: " + e.message, "error");
   }
@@ -1120,25 +1384,38 @@ async function deleteBonataon(idx) {
 function computeCashflow(year) {
   // TODO Step 3: saldo awal dari Firestore
   let running = 10364300;
-  appData.cashflow.filter(r => getYear(r.date) < year).forEach(r => { running += (r.in||0) - (r.out||0); });
-  let totalIn = 0, totalOut = 0;
+  appData.cashflow
+    .filter((r) => getYear(r.date) < year)
+    .forEach((r) => {
+      running += (r.in || 0) - (r.out || 0);
+    });
+  let totalIn = 0,
+    totalOut = 0;
   const rows = [];
-  appData.cashflow.filter(r => getYear(r.date) === year).sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(r => {
-    running += (r.in||0) - (r.out||0);
-    totalIn += (r.in||0);
-    totalOut += (r.out||0);
-    rows.push({ ...r, balance: running });
-  });
+  appData.cashflow
+    .filter((r) => getYear(r.date) === year)
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .forEach((r) => {
+      running += (r.in || 0) - (r.out || 0);
+      totalIn += r.in || 0;
+      totalOut += r.out || 0;
+      rows.push({ ...r, balance: running });
+    });
   return { rows, totalIn, totalOut, closing: running };
 }
 
 function renderKeuangan() {
-  const years = [...new Set(appData.cashflow.map(r => getYear(r.date)))].sort((a, b) => b - a);
+  const years = [...new Set(appData.cashflow.map((r) => getYear(r.date)))].sort(
+    (a, b) => b - a,
+  );
   const tabsEl = document.getElementById("keuangan-year-tabs");
   if (tabsEl) {
-    tabsEl.innerHTML = years.map(y =>
-      `<div class="year-tab ${y === currentKeuYear ? "active" : ""}" onclick="currentKeuYear=${y};renderKeuangan()">${y}</div>`
-    ).join("");
+    tabsEl.innerHTML = years
+      .map(
+        (y) =>
+          `<div class="year-tab ${y === currentKeuYear ? "active" : ""}" onclick="currentKeuYear=${y};renderKeuangan()">${y}</div>`,
+      )
+      .join("");
   }
 
   const { rows, totalIn, totalOut, closing } = computeCashflow(currentKeuYear);
@@ -1154,17 +1431,19 @@ function renderKeuangan() {
 
   const tbody = document.getElementById("cashflow-tbody");
   if (tbody) {
-    tbody.innerHTML = rows.map((r, i) => {
-      const adminActs = isAdmin
-        ? `<td><button class="edit-btn" onclick="openCfEdit(${i})">✏</button><button class="delete-btn" onclick="deleteCf('${r.id}')">🗑</button></td>`
-        : "<td></td>";
-      return `<tr><td>${fmtDate(r.date)}</td><td style="max-width:300px;font-size:13px">${r.desc}</td><td class="rp" style="color:var(--teal)">${r.in ? fmtRp(r.in) : ""}</td><td class="rp" style="color:var(--coral)">${r.out ? fmtRp(r.out) : ""}</td><td class="rp"><strong>${fmtRp(r.balance)}</strong></td>${adminActs}</tr>`;
-    }).join("");
+    tbody.innerHTML = rows
+      .map((r, i) => {
+        const adminActs = isAdmin
+          ? `<td><button class="edit-btn" onclick="openCfEdit(${i})">✏</button><button class="delete-btn" onclick="deleteCf('${r.id}')">🗑</button></td>`
+          : "<td></td>";
+        return `<tr><td>${fmtDate(r.date)}</td><td style="max-width:300px;font-size:13px">${r.desc}</td><td class="rp" style="color:var(--teal)">${r.in ? fmtRp(r.in) : ""}</td><td class="rp" style="color:var(--coral)">${r.out ? fmtRp(r.out) : ""}</td><td class="rp"><strong>${fmtRp(r.balance)}</strong></td>${adminActs}</tr>`;
+      })
+      .join("");
   }
 
   // Iuran year tabs — termasuk tahun dari Firebase
-  const allIuranYears = new Set([2022,2023,2024,2025,2026]);
-  Object.keys(iuranFirebase).forEach(y => allIuranYears.add(parseInt(y)));
+  const allIuranYears = new Set([2022, 2023, 2024, 2025, 2026]);
+  Object.keys(iuranFirebase).forEach((y) => allIuranYears.add(parseInt(y)));
   const thisYear = new Date().getFullYear();
   allIuranYears.add(thisYear);
   allIuranYears.add(thisYear + 1);
@@ -1172,9 +1451,12 @@ function renderKeuangan() {
 
   const iuranTabs = document.getElementById("iuran-year-tabs");
   if (iuranTabs) {
-    iuranTabs.innerHTML = sortedIuranYears.map(y =>
-      `<div class="year-tab ${y === currentIuranYear ? "active" : ""}" onclick="currentIuranYear=${y};renderIuranTable()">${y}</div>`
-    ).join("");
+    iuranTabs.innerHTML = sortedIuranYears
+      .map(
+        (y) =>
+          `<div class="year-tab ${y === currentIuranYear ? "active" : ""}" onclick="currentIuranYear=${y};renderIuranTable()">${y}</div>`,
+      )
+      .join("");
   }
   renderIuranTable();
   updateAdminUI();
@@ -1184,27 +1466,34 @@ function renderBarChart(years) {
   const chartEl = document.getElementById("bar-chart");
   if (!chartEl) return;
   const chartYears = years.slice(0, 5);
-  const maxVal = Math.max(...chartYears.map(y => {
-    const { totalIn, totalOut } = computeCashflow(y);
-    return Math.max(totalIn, totalOut);
-  }));
-  chartEl.innerHTML = chartYears.map(y => {
-    const { totalIn, totalOut } = computeCashflow(y);
-    const inH = maxVal ? (totalIn / maxVal) * 120 : 4;
-    const outH = maxVal ? (totalOut / maxVal) * 120 : 4;
-    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+  const maxVal = Math.max(
+    ...chartYears.map((y) => {
+      const { totalIn, totalOut } = computeCashflow(y);
+      return Math.max(totalIn, totalOut);
+    }),
+  );
+  chartEl.innerHTML = chartYears
+    .map((y) => {
+      const { totalIn, totalOut } = computeCashflow(y);
+      const inH = maxVal ? (totalIn / maxVal) * 120 : 4;
+      const outH = maxVal ? (totalOut / maxVal) * 120 : 4;
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
       <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:130px">
         <div class="bar bar-in" style="flex:1;height:${inH}px" title="Pemasukan ${fmtRp(totalIn)}"></div>
         <div class="bar bar-out" style="flex:1;height:${outH}px" title="Pengeluaran ${fmtRp(totalOut)}"></div>
       </div>
       <div style="font-size:10px;color:var(--text-light);font-family:monospace">${y}</div>
     </div>`;
-  }).join("");
+    })
+    .join("");
 }
 
 function getMergedIuranStatus(year) {
   // Data Firebase selalu menimpa hardcode (Firebase = sudah diupdate admin)
-  if (iuranFirebase[String(year)] && Object.keys(iuranFirebase[String(year)]).length > 0) {
+  if (
+    iuranFirebase[String(year)] &&
+    Object.keys(iuranFirebase[String(year)]).length > 0
+  ) {
     return { ...iuranFirebase[String(year)] };
   }
   // Fallback ke hardcode
@@ -1219,11 +1508,15 @@ function renderIuranTable() {
   const entries = Object.entries(statusMap);
 
   // Hapus summary block lama
-  document.querySelectorAll(".iuran-summary-block").forEach(el => el.remove());
+  document
+    .querySelectorAll(".iuran-summary-block")
+    .forEach((el) => el.remove());
 
-  const lunas = entries.filter(([,s]) => s === "LUNAS").length;
-  const belum = entries.filter(([,s]) => s === "BELUM").length;
-  const partial = entries.filter(([,s]) => s !== "LUNAS" && s !== "BELUM").length;
+  const lunas = entries.filter(([, s]) => s === "LUNAS").length;
+  const belum = entries.filter(([, s]) => s === "BELUM").length;
+  const partial = entries.filter(
+    ([, s]) => s !== "LUNAS" && s !== "BELUM",
+  ).length;
   const total = entries.length;
   const pct = total > 0 ? Math.round((lunas / total) * 100) : 0;
 
@@ -1261,7 +1554,7 @@ function renderIuranTable() {
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
         <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px">
           <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#16a34a;line-height:1">${lunas}</div>
-          <div><div style="font-weight:600;font-size:13px;color:#16a34a">LUNAS</div><div style="font-size:11px;color:var(--text-light)">Rp ${(lunas*120000).toLocaleString("id-ID")}</div></div>
+          <div><div style="font-weight:600;font-size:13px;color:#16a34a">LUNAS</div><div style="font-size:11px;color:var(--text-light)">Rp ${(lunas * 120000).toLocaleString("id-ID")}</div></div>
         </div>
         <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px">
           <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#dc2626;line-height:1">${belum}</div>
@@ -1280,7 +1573,8 @@ function renderIuranTable() {
       if (oldBtn) oldBtn.remove();
       const btnWrap = document.createElement("div");
       btnWrap.id = "btn-tambah-iuran-wrap";
-      btnWrap.style.cssText = "margin-top:12px;display:flex;gap:8px;flex-wrap:wrap";
+      btnWrap.style.cssText =
+        "margin-top:12px;display:flex;gap:8px;flex-wrap:wrap";
       btnWrap.innerHTML = `
         <button onclick="openTambahSatuIuran(${year})" style="background:rgba(13,148,136,0.08);color:var(--teal);border:1px solid rgba(13,148,136,0.3);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">+ Tambah Anggota ke Iuran ${year}</button>
         <button onclick="inisialisasiIuranTahunBaru(${year}, true)" style="background:rgba(13,27,42,0.06);color:var(--navy);border:1px solid var(--border);padding:7px 16px;border-radius:8px;font-size:13px;cursor:pointer">🔄 Tambah Anggota Baru ke Daftar ${year}</button>`;
@@ -1291,16 +1585,26 @@ function renderIuranTable() {
   // Render baris tabel
   const tbody = document.getElementById("iuran-tbody");
   if (tbody) {
-    tbody.innerHTML = entries.map(([name, status], i) => {
-      let badgeClass = "lunas-badge", nominal = "120,000";
-      if (status === "BELUM") { badgeClass = "belum-badge"; nominal = "-"; }
-      else if (status !== "LUNAS") { badgeClass = "partial-badge"; nominal = status; }
-      const fbTag = iuranFirebase[String(year)]?.[name]
-        ? `<span style="font-size:9px;color:var(--teal);margin-left:4px;font-family:'JetBrains Mono',monospace;opacity:0.7">✓</span>` : "";
-      const editBtn = isAdmin
-        ? `<span onclick="openEditIuran('${year}','${name.replace(/'/g,"\\'")}','${status}')" style="cursor:pointer;color:var(--teal);font-size:12px;margin-left:6px;opacity:0.6;" title="Edit status">✏</span>` : "";
-      return `<tr><td>${i+1}</td><td>${name}</td><td><span class="${badgeClass}">${status}</span>${fbTag}${editBtn}</td><td class="rp">${nominal}</td>${isAdmin ? `<td><button class="delete-btn" onclick="hapusBarisIuran('${year}','${name.replace(/'/g,"\\'")}')">🗑</button></td>` : ""}</tr>`;
-    }).join("");
+    tbody.innerHTML = entries
+      .map(([name, status], i) => {
+        let badgeClass = "lunas-badge",
+          nominal = "120,000";
+        if (status === "BELUM") {
+          badgeClass = "belum-badge";
+          nominal = "-";
+        } else if (status !== "LUNAS") {
+          badgeClass = "partial-badge";
+          nominal = status;
+        }
+        const fbTag = iuranFirebase[String(year)]?.[name]
+          ? `<span style="font-size:9px;color:var(--teal);margin-left:4px;font-family:'JetBrains Mono',monospace;opacity:0.7">✓</span>`
+          : "";
+        const editBtn = isAdmin
+          ? `<span onclick="openEditIuran('${year}','${name.replace(/'/g, "\\'")}','${status}')" style="cursor:pointer;color:var(--teal);font-size:12px;margin-left:6px;opacity:0.6;" title="Edit status">✏</span>`
+          : "";
+        return `<tr><td>${i + 1}</td><td>${name}</td><td><span class="${badgeClass}">${status}</span>${fbTag}${editBtn}</td><td class="rp">${nominal}</td>${isAdmin ? `<td><button class="delete-btn" onclick="hapusBarisIuran('${year}','${name.replace(/'/g, "\\'")}')">🗑</button></td>` : ""}</tr>`;
+      })
+      .join("");
   }
 }
 
@@ -1308,21 +1612,30 @@ async function hapusBarisIuran(year, name) {
   if (!isAdmin) return;
   if (!confirm(`Hapus "${name}" dari daftar iuran tahun ${year}?`)) return;
   try {
-    const existing = iuranFirebase[String(year)] ? { ...iuranFirebase[String(year)] } : {};
+    const existing = iuranFirebase[String(year)]
+      ? { ...iuranFirebase[String(year)] }
+      : {};
     let mergedData = { ...existing };
     if (Object.keys(mergedData).length === 0) {
-      mergedData = year == 2025 ? { ...iuranStatus2025 } : { ...(iuranStatus[String(year)] || {}) };
+      mergedData =
+        year == 2025
+          ? { ...iuranStatus2025 }
+          : { ...(iuranStatus[String(year)] || {}) };
     } else {
-      const hardcodeBase = year == 2025 ? { ...iuranStatus2025 } : { ...(iuranStatus[String(year)] || {}) };
+      const hardcodeBase =
+        year == 2025
+          ? { ...iuranStatus2025 }
+          : { ...(iuranStatus[String(year)] || {}) };
       mergedData = { ...hardcodeBase, ...existing };
     }
-    if (!(name in mergedData)) return showToast(`"${name}" tidak ditemukan`, "error");
+    if (!(name in mergedData))
+      return showToast(`"${name}" tidak ditemukan`, "error");
     delete mergedData[name];
     await FB.setDoc(FB.doc(db, "iuran", String(year)), mergedData);
     iuranFirebase[String(year)] = mergedData;
     renderIuranTable();
     showToast(`✅ "${name}" berhasil dihapus dari iuran ${year}`);
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal hapus: " + e.message, "error");
   }
 }
@@ -1330,18 +1643,27 @@ async function hapusBarisIuran(year, name) {
 async function inisialisasiIuranTahunBaru(year, onlyMissing = false) {
   if (!isAdmin) return showToast("❌ Harus login admin", "error");
   const existing = iuranFirebase[String(year)] || {};
-  const toAdd = onlyMissing ? appData.members.filter(m => !existing[memberDisplayName(m)]) : appData.members;
-  if (toAdd.length === 0) return showToast("Semua anggota sudah ada di daftar iuran " + year);
-  const msg = onlyMissing ? `Tambahkan ${toAdd.length} anggota baru ke iuran ${year}? Status awal: BELUM` : `Buat daftar iuran ${year} untuk ${toAdd.length} anggota? Status: BELUM`;
+  const toAdd = onlyMissing
+    ? appData.members.filter((m) => !existing[memberDisplayName(m)])
+    : appData.members;
+  if (toAdd.length === 0)
+    return showToast("Semua anggota sudah ada di daftar iuran " + year);
+  const msg = onlyMissing
+    ? `Tambahkan ${toAdd.length} anggota baru ke iuran ${year}? Status awal: BELUM`
+    : `Buat daftar iuran ${year} untuk ${toAdd.length} anggota? Status: BELUM`;
   if (!confirm(msg)) return;
   const newData = { ...existing };
-  toAdd.forEach(m => { newData[memberDisplayName(m)] = "BELUM"; });
+  toAdd.forEach((m) => {
+    newData[memberDisplayName(m)] = "BELUM";
+  });
   try {
-    await FB.setDoc(FB.doc(db, "iuran", String(year)), newData, { merge: true });
+    await FB.setDoc(FB.doc(db, "iuran", String(year)), newData, {
+      merge: true,
+    });
     iuranFirebase[String(year)] = newData;
     renderIuranTable();
     showToast(`✅ Daftar iuran ${year} dibuat untuk ${toAdd.length} anggota!`);
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal: " + e.message, "error");
   }
 }
@@ -1377,11 +1699,14 @@ function openEditIuran(year, name, currentStatus) {
         <button class="btn btn-primary" onclick="saveIuranEdit()">💾 Simpan</button>
       </div>
     </div>`;
-    overlay.addEventListener("click", e => { if (e.target === overlay) overlay.classList.remove("show"); });
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) overlay.classList.remove("show");
+    });
     document.body.appendChild(overlay);
   }
   document.getElementById("iuran-edit-name").textContent = name;
-  document.getElementById("iuran-edit-year-display").textContent = `Tahun ${year}`;
+  document.getElementById("iuran-edit-year-display").textContent =
+    `Tahun ${year}`;
   document.getElementById("iuran-edit-year").value = year;
   document.getElementById("iuran-edit-key").value = name;
   const sel = document.getElementById("iuran-edit-status");
@@ -1398,23 +1723,30 @@ function openEditIuran(year, name, currentStatus) {
 
 function toggleNominalField() {
   const sel = document.getElementById("iuran-edit-status");
-  document.getElementById("iuran-nominal-group").style.display = sel.value === "custom" ? "block" : "none";
+  document.getElementById("iuran-nominal-group").style.display =
+    sel.value === "custom" ? "block" : "none";
 }
 
 async function saveIuranEdit() {
   const year = document.getElementById("iuran-edit-year").value;
   const name = document.getElementById("iuran-edit-key").value;
   const selVal = document.getElementById("iuran-edit-status").value;
-  let newStatus = selVal === "LUNAS" || selVal === "BELUM" ? selVal : document.getElementById("iuran-edit-nominal").value.trim();
-  if (!newStatus) return showToast("Masukkan nominal yang sudah dibayar", "error");
+  let newStatus =
+    selVal === "LUNAS" || selVal === "BELUM"
+      ? selVal
+      : document.getElementById("iuran-edit-nominal").value.trim();
+  if (!newStatus)
+    return showToast("Masukkan nominal yang sudah dibayar", "error");
   try {
     if (!iuranFirebase[year]) iuranFirebase[year] = {};
     iuranFirebase[year][name] = newStatus;
-    await FB.setDoc(FB.doc(db, "iuran", String(year)), iuranFirebase[year], { merge: true });
+    await FB.setDoc(FB.doc(db, "iuran", String(year)), iuranFirebase[year], {
+      merge: true,
+    });
     document.getElementById("modal-edit-iuran").classList.remove("show");
     renderIuranTable();
     showToast(`✅ Status iuran diperbarui → ${newStatus}`);
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal simpan: " + e.message, "error");
   }
 }
@@ -1436,26 +1768,33 @@ function openTambahSatuIuran(year) {
         <button class="btn btn-primary" onclick="saveTambahSatuIuran()">💾 Simpan</button>
       </div>
     </div>`;
-    overlay.addEventListener("click", e => { if (e.target === overlay) overlay.classList.remove("show"); });
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) overlay.classList.remove("show");
+    });
     document.body.appendChild(overlay);
   }
   document.getElementById("f-iuran-baru-year").value = year;
   const sel = document.getElementById("f-iuran-baru-family");
   const existing = iuranFirebase[String(year)] || {};
   sel.innerHTML = `<option value="">-- Pilih Keluarga --</option>`;
-  appData.members.slice().sort((a,b) => memberDisplayName(a).localeCompare(memberDisplayName(b))).forEach(m => {
-    const dn = memberDisplayName(m);
-    const opt = document.createElement("option");
-    opt.value = dn;
-    opt.textContent = dn + (existing[dn] ? ` (${existing[dn]})` : " — belum ada");
-    sel.appendChild(opt);
-  });
+  appData.members
+    .slice()
+    .sort((a, b) => memberDisplayName(a).localeCompare(memberDisplayName(b)))
+    .forEach((m) => {
+      const dn = memberDisplayName(m);
+      const opt = document.createElement("option");
+      opt.value = dn;
+      opt.textContent =
+        dn + (existing[dn] ? ` (${existing[dn]})` : " — belum ada");
+      sel.appendChild(opt);
+    });
   overlay.classList.add("show");
 }
 
 function toggleIuranBaruNominal() {
   const sel = document.getElementById("f-iuran-baru-status");
-  document.getElementById("iuran-baru-nominal-group").style.display = sel.value === "custom" ? "block" : "none";
+  document.getElementById("iuran-baru-nominal-group").style.display =
+    sel.value === "custom" ? "block" : "none";
 }
 
 async function saveTambahSatuIuran() {
@@ -1463,17 +1802,22 @@ async function saveTambahSatuIuran() {
   const family = document.getElementById("f-iuran-baru-family").value;
   const selVal = document.getElementById("f-iuran-baru-status").value;
   if (!family) return showToast("Pilih keluarga terlebih dahulu", "error");
-  let status = selVal === "LUNAS" || selVal === "BELUM" ? selVal : document.getElementById("f-iuran-baru-nominal").value.trim();
+  let status =
+    selVal === "LUNAS" || selVal === "BELUM"
+      ? selVal
+      : document.getElementById("f-iuran-baru-nominal").value.trim();
   if (!status) return showToast("Masukkan nominal", "error");
   try {
     if (!iuranFirebase[year]) iuranFirebase[year] = {};
     iuranFirebase[year][family] = status;
-    await FB.setDoc(FB.doc(db, "iuran", String(year)), iuranFirebase[year], { merge: true });
+    await FB.setDoc(FB.doc(db, "iuran", String(year)), iuranFirebase[year], {
+      merge: true,
+    });
     currentIuranYear = parseInt(year);
     document.getElementById("modal-tambah-iuran").classList.remove("show");
     renderIuranTable();
     showToast(`✅ Data iuran ${family} tahun ${year} → ${status}`);
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal simpan: " + e.message, "error");
   }
 }
@@ -1481,7 +1825,7 @@ async function saveTambahSatuIuran() {
 function openCfEdit(rowIdx) {
   const { rows } = computeCashflow(currentKeuYear);
   const r = rows[rowIdx];
-  const origIdx = appData.cashflow.findIndex(x => x.id === r.id);
+  const origIdx = appData.cashflow.findIndex((x) => x.id === r.id);
   document.getElementById("f-cf-edit-idx").value = origIdx;
   document.getElementById("f-cf-edit-date").value = r.date;
   document.getElementById("f-cf-edit-desc").value = r.desc;
@@ -1498,12 +1842,17 @@ async function saveCfEdit() {
   const inVal = parseInt(document.getElementById("f-cf-edit-in").value) || 0;
   const outVal = parseInt(document.getElementById("f-cf-edit-out").value) || 0;
   try {
-    await FB.updateDoc(FB.doc(db, "cashflow", String(r.id)), { date, desc, in: inVal, out: outVal });
+    await FB.updateDoc(FB.doc(db, "cashflow", String(r.id)), {
+      date,
+      desc,
+      in: inVal,
+      out: outVal,
+    });
     appData.cashflow[idx] = { ...r, date, desc, in: inVal, out: outVal };
     closeModal("modal-edit-cf");
     renderKeuangan();
     showToast("✅ Transaksi diperbarui");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal update: " + e.message, "error");
   }
 }
@@ -1512,10 +1861,10 @@ async function deleteCf(id) {
   if (!isAdmin || !confirm("Hapus transaksi ini?")) return;
   try {
     await FB.deleteDoc(FB.doc(db, "cashflow", String(id)));
-    appData.cashflow = appData.cashflow.filter(r => r.id != id);
+    appData.cashflow = appData.cashflow.filter((r) => r.id != id);
     renderKeuangan();
     showToast("Transaksi dihapus");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal hapus: " + e.message, "error");
   }
 }
@@ -1527,9 +1876,12 @@ async function addIncome() {
   const year = document.getElementById("f-inc-year").value;
   const amount = parseInt(document.getElementById("f-inc-amount").value) || 0;
   const note = document.getElementById("f-inc-note").value;
-  if (!date || !amount) return showToast("Tanggal dan nominal wajib diisi", "error");
+  if (!date || !amount)
+    return showToast("Tanggal dan nominal wajib diisi", "error");
   const desc = `${type} ${year}${family ? " - " + family : ""}${note ? " (" + note + ")" : ""}`;
-  const dup = appData.cashflow.find(r => r.date === date && r.desc === desc && r.in === amount);
+  const dup = appData.cashflow.find(
+    (r) => r.date === date && r.desc === desc && r.in === amount,
+  );
   if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
   const dropArea = document.getElementById("bukti-drop-area");
   const cfData = { date, desc, in: amount, out: 0 };
@@ -1546,7 +1898,7 @@ async function addIncome() {
     closeModal("modal-add-income");
     renderKeuangan();
     showToast("✅ Pemasukan ditambahkan");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal simpan: " + e.message, "error");
   }
 }
@@ -1556,18 +1908,26 @@ async function addExpense() {
   const date = document.getElementById("f-exp-date").value;
   const desc = document.getElementById("f-exp-desc").value.trim();
   const amount = parseInt(document.getElementById("f-exp-amount").value) || 0;
-  if (!date || !desc || !amount) return showToast("Semua field wajib diisi", "error");
-  const dup = appData.cashflow.find(r => r.date === date && r.desc === desc && r.out === amount);
+  if (!date || !desc || !amount)
+    return showToast("Semua field wajib diisi", "error");
+  const dup = appData.cashflow.find(
+    (r) => r.date === date && r.desc === desc && r.out === amount,
+  );
   if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
   const id = genId();
   try {
-    await FB.setDoc(FB.doc(db, "cashflow", String(id)), { date, desc, in: 0, out: amount });
+    await FB.setDoc(FB.doc(db, "cashflow", String(id)), {
+      date,
+      desc,
+      in: 0,
+      out: amount,
+    });
     appData.cashflow.push({ id, date, desc, in: 0, out: amount });
     currentKeuYear = getYear(date);
     closeModal("modal-add-expense");
     renderKeuangan();
     showToast("✅ Pengeluaran ditambahkan");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal simpan: " + e.message, "error");
   }
 }
@@ -1578,48 +1938,64 @@ async function addExpense() {
 
 function switchAnggotaTab(tab) {
   currentAnggotaTab = tab;
-  document.getElementById("tab-daftar").style.display = tab === "daftar" ? "" : "none";
-  document.getElementById("tab-keaktifan").style.display = tab === "keaktifan" ? "" : "none";
-  document.getElementById("tab-daftar-btn").classList.toggle("active", tab === "daftar");
-  document.getElementById("tab-keaktifan-btn").classList.toggle("active", tab === "keaktifan");
+  document.getElementById("tab-daftar").style.display =
+    tab === "daftar" ? "" : "none";
+  document.getElementById("tab-keaktifan").style.display =
+    tab === "keaktifan" ? "" : "none";
+  document
+    .getElementById("tab-daftar-btn")
+    .classList.toggle("active", tab === "daftar");
+  document
+    .getElementById("tab-keaktifan-btn")
+    .classList.toggle("active", tab === "keaktifan");
   if (tab === "keaktifan") renderKeaktifan();
 }
 
 function renderMembers() {
-  const q = (document.getElementById("member-search")?.value || "").toLowerCase();
-  const filtered = appData.members.filter(m => memberDisplayName(m).toLowerCase().includes(q));
+  const q = (
+    document.getElementById("member-search")?.value || ""
+  ).toLowerCase();
+  const filtered = appData.members.filter((m) =>
+    memberDisplayName(m).toLowerCase().includes(q),
+  );
   const countEl = document.getElementById("member-count");
   if (countEl) countEl.textContent = appData.members.length;
 
   const grid = document.getElementById("member-grid");
   if (!grid) return;
 
-  grid.innerHTML = filtered.map(m => {
-    const dn = memberDisplayName(m);
-    const initials = (m.name[0] || "") + (m.br[0] || "");
-    const stats = getMemberAttendanceStats(m.id, null);
-    const attInfo = stats.totalEvents > 0
-      ? `<div class="member-attendance-info" style="color:${stats.pct>=75?"#16a34a":stats.pct>=50?"#d97706":"#dc2626"}">📊 ${stats.pct}% hadir (${stats.attended}/${stats.totalEvents} kegiatan)</div>`
-      : `<div class="member-attendance-info" style="color:var(--text-light)">— Belum ada data kehadiran</div>`;
-    const tahunBergabung = m.joined ? new Date(m.joined).getFullYear() : null;
-    const publicInfo = tahunBergabung
-      ? `<div class="member-info">Anggota sejak ${tahunBergabung}</div>`
-      : `<div class="member-info">Anggota Parsahutaon</div>`;
-    const adminInfo = isAdmin ? `
+  grid.innerHTML = filtered
+    .map((m) => {
+      const dn = memberDisplayName(m);
+      const initials = (m.name[0] || "") + (m.br[0] || "");
+      const stats = getMemberAttendanceStats(m.id, null);
+      const attInfo =
+        stats.totalEvents > 0
+          ? `<div class="member-attendance-info" style="color:${stats.pct >= 75 ? "#16a34a" : stats.pct >= 50 ? "#d97706" : "#dc2626"}">📊 ${stats.pct}% hadir (${stats.attended}/${stats.totalEvents} kegiatan)</div>`
+          : `<div class="member-attendance-info" style="color:var(--text-light)">— Belum ada data kehadiran</div>`;
+      const tahunBergabung = m.joined ? new Date(m.joined).getFullYear() : null;
+      const publicInfo = tahunBergabung
+        ? `<div class="member-info">Anggota sejak ${tahunBergabung}</div>`
+        : `<div class="member-info">Anggota Parsahutaon</div>`;
+      const adminInfo = isAdmin
+        ? `
       ${m.addr ? `<div class="member-info" style="color:var(--teal)">📍 ${m.addr}</div>` : ""}
       ${m.phone ? `<div class="member-info" style="color:var(--teal)">📞 ${m.phone}</div>` : ""}
-      ${m.joined ? `<div class="member-info" style="color:var(--text-light)">📅 ${fmtDate(m.joined)}</div>` : ""}` : "";
-    const adminActs = isAdmin
-      ? `<div style="margin-left:auto;display:flex;gap:4px;flex-shrink:0"><button class="edit-btn" onclick="openEditMember(${appData.members.indexOf(m)})">✏</button><button class="delete-btn" onclick="deleteMember(${appData.members.indexOf(m)})">🗑</button></div>` : "";
+      ${m.joined ? `<div class="member-info" style="color:var(--text-light)">📅 ${fmtDate(m.joined)}</div>` : ""}`
+        : "";
+      const adminActs = isAdmin
+        ? `<div style="margin-left:auto;display:flex;gap:4px;flex-shrink:0"><button class="edit-btn" onclick="openEditMember(${appData.members.indexOf(m)})">✏</button><button class="delete-btn" onclick="deleteMember(${appData.members.indexOf(m)})">🗑</button></div>`
+        : "";
 
-    return `<div class="member-card">
+      return `<div class="member-card">
       <div class="member-avatar" style="background:${memberColor(m.id)}">${initials}</div>
       <div style="flex:1;min-width:0">
         <div class="member-name">${dn}</div>
         ${publicInfo}${adminInfo}${attInfo}
       </div>${adminActs}
     </div>`;
-  }).join("");
+    })
+    .join("");
 }
 
 async function addMember() {
@@ -1630,16 +2006,30 @@ async function addMember() {
   const phone = document.getElementById("f-mem-phone").value.trim();
   const joined = document.getElementById("f-mem-joined").value;
   if (!name) return showToast("Nama keluarga wajib diisi", "error");
-  const parts = name.split("/").map(s => s.trim().replace(/^br\./i, "").trim());
-  const n = parts[0], br = parts[1] || "";
-  const dup = appData.members.find(m => m.name.toLowerCase() === n.toLowerCase() && m.br.toLowerCase() === br.toLowerCase());
+  const parts = name
+    .split("/")
+    .map((s) => s.trim().replace(/^br\./i, "").trim());
+  const n = parts[0],
+    br = parts[1] || "";
+  const dup = appData.members.find(
+    (m) =>
+      m.name.toLowerCase() === n.toLowerCase() &&
+      m.br.toLowerCase() === br.toLowerCase(),
+  );
   if (dup) return showToast("Data ini sudah ada sebelumnya", "error");
-  const newId = Math.max(...appData.members.map(m => m.id), 0) + 1;
+  const newId = Math.max(...appData.members.map((m) => m.id), 0) + 1;
   try {
-    await FB.setDoc(FB.doc(db, "members", String(newId)), { name: n, br, nick, addr, phone, joined });
+    await FB.setDoc(FB.doc(db, "members", String(newId)), {
+      name: n,
+      br,
+      nick,
+      addr,
+      phone,
+      joined,
+    });
     closeModal("modal-add-member");
     showToast("✅ Anggota baru berhasil didaftarkan");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal simpan: " + e.message, "error");
   }
 }
@@ -1662,12 +2052,17 @@ async function saveEditMember() {
   const addr = document.getElementById("f-edit-mem-addr").value.trim();
   const phone = document.getElementById("f-edit-mem-phone").value.trim();
   try {
-    await FB.updateDoc(FB.doc(db, "members", String(m.id)), { name, nick, addr, phone });
+    await FB.updateDoc(FB.doc(db, "members", String(m.id)), {
+      name,
+      nick,
+      addr,
+      phone,
+    });
     appData.members[idx] = { ...m, name, nick, addr, phone };
     closeModal("modal-edit-member");
     renderMembers();
     showToast("✅ Data anggota diperbarui");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal update: " + e.message, "error");
   }
 }
@@ -1681,7 +2076,7 @@ async function deleteMember(idx) {
     renderMembers();
     populateDropdowns();
     showToast("Anggota dihapus");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal hapus: " + e.message, "error");
   }
 }
@@ -1691,40 +2086,57 @@ async function deleteMember(idx) {
 // ============================================================
 
 function getAttendanceYears() {
-  return [...new Set(Object.values(attendanceData).map(ev => getYear(ev.date)))].sort((a, b) => b - a);
+  return [
+    ...new Set(Object.values(attendanceData).map((ev) => getYear(ev.date))),
+  ].sort((a, b) => b - a);
 }
 
 function renderKeaktifan() {
   const years = getAttendanceYears();
   const tabsHtml = [
     `<div class="year-tab ${currentKeaktifanYear === null ? "active" : ""}" onclick="currentKeaktifanYear=null;renderKeaktifan()">Semua</div>`,
-    ...years.map(y => `<div class="year-tab ${currentKeaktifanYear === y ? "active" : ""}" onclick="currentKeaktifanYear=${y};renderKeaktifan()">${y}</div>`)
+    ...years.map(
+      (y) =>
+        `<div class="year-tab ${currentKeaktifanYear === y ? "active" : ""}" onclick="currentKeaktifanYear=${y};renderKeaktifan()">${y}</div>`,
+    ),
   ].join("");
   const tabsEl = document.getElementById("keaktifan-year-tabs");
   if (tabsEl) tabsEl.innerHTML = tabsHtml;
 
-  const eventsInScope = Object.values(attendanceData).filter(ev => currentKeaktifanYear === null || getYear(ev.date) === currentKeaktifanYear);
+  const eventsInScope = Object.values(attendanceData).filter(
+    (ev) =>
+      currentKeaktifanYear === null ||
+      getYear(ev.date) === currentKeaktifanYear,
+  );
   const totalEvents = eventsInScope.length;
 
-  const stats = appData.members.map(m => {
-    const attended = eventsInScope.filter(ev => ev.present?.includes(m.id)).length;
-    const pct = totalEvents > 0 ? Math.round((attended / totalEvents) * 100) : null;
-    return { m, attended, totalEvents, pct };
-  }).sort((a, b) => {
-    if (a.pct === null && b.pct === null) return memberDisplayName(a.m).localeCompare(memberDisplayName(b.m));
-    if (a.pct === null) return 1;
-    if (b.pct === null) return -1;
-    return b.pct - a.pct;
-  });
+  const stats = appData.members
+    .map((m) => {
+      const attended = eventsInScope.filter((ev) =>
+        ev.present?.includes(m.id),
+      ).length;
+      const pct =
+        totalEvents > 0 ? Math.round((attended / totalEvents) * 100) : null;
+      return { m, attended, totalEvents, pct };
+    })
+    .sort((a, b) => {
+      if (a.pct === null && b.pct === null)
+        return memberDisplayName(a.m).localeCompare(memberDisplayName(b.m));
+      if (a.pct === null) return 1;
+      if (b.pct === null) return -1;
+      return b.pct - a.pct;
+    });
 
   const summaryEl = document.getElementById("keaktifan-summary");
   if (summaryEl) {
     if (totalEvents === 0) {
       summaryEl.innerHTML = `<div class="keaktifan-box total" style="grid-column:1/-1"><div class="kb-num" style="color:var(--gold)">${totalEvents}</div><div class="kb-lbl" style="color:white">Total Kegiatan Tercatat</div></div>`;
     } else {
-      const aktif = stats.filter(s => s.pct !== null && s.pct >= 75).length;
-      const cukup = stats.filter(s => s.pct !== null && s.pct >= 50 && s.pct < 75).length;
-      const perlu = stats.filter(s => s.pct !== null && s.pct < 50).length;
+      const aktif = stats.filter((s) => s.pct !== null && s.pct >= 75).length;
+      const cukup = stats.filter(
+        (s) => s.pct !== null && s.pct >= 50 && s.pct < 75,
+      ).length;
+      const perlu = stats.filter((s) => s.pct !== null && s.pct < 50).length;
       summaryEl.innerHTML = `
         <div class="keaktifan-box total"><div class="kb-num" style="color:var(--gold)">${totalEvents}</div><div class="kb-lbl" style="color:white">Total Kegiatan</div></div>
         <div class="keaktifan-box aktif"><div class="kb-num">${aktif}</div><div class="kb-lbl">Aktif (≥75%)</div></div>
@@ -1744,24 +2156,42 @@ function renderKeaktifanChart(stats, totalEvents) {
     chartEl.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-light)">Belum ada data kehadiran. Isi daftar hadir di menu Kegiatan.</div>`;
     return;
   }
-  chartEl.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px">` + stats.map((s, idx) => {
-    const pct = s.pct !== null ? s.pct : 0;
-    const barColor = pct >= 75 ? "#16a34a" : pct >= 50 ? "#d97706" : "#dc2626";
-    const shortName = s.m.name + (s.m.nick ? ` (${s.m.nick})` : "");
-    return `<div style="display:flex;align-items:center;gap:10px">
-      <div style="width:22px;text-align:right;font-size:11px;color:var(--text-light);font-family:monospace;flex-shrink:0">${idx+1}</div>
+  chartEl.innerHTML =
+    `<div style="display:flex;flex-direction:column;gap:6px">` +
+    stats
+      .map((s, idx) => {
+        const pct = s.pct !== null ? s.pct : 0;
+        const barColor =
+          pct >= 75 ? "#16a34a" : pct >= 50 ? "#d97706" : "#dc2626";
+        const shortName = s.m.name + (s.m.nick ? ` (${s.m.nick})` : "");
+        return `<div style="display:flex;align-items:center;gap:10px">
+      <div style="width:22px;text-align:right;font-size:11px;color:var(--text-light);font-family:monospace;flex-shrink:0">${idx + 1}</div>
       <div style="width:160px;font-size:12px;color:var(--text-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0">${shortName}</div>
       <div style="flex:1;background:#eee;border-radius:999px;height:10px;overflow:hidden"><div style="height:100%;border-radius:999px;background:${barColor};width:${pct}%"></div></div>
-      <div style="width:50px;text-align:right;font-family:monospace;font-size:12px;font-weight:600;color:${barColor};flex-shrink:0">${s.pct !== null ? s.pct+"%" : "-"}</div>
+      <div style="width:50px;text-align:right;font-family:monospace;font-size:12px;font-weight:600;color:${barColor};flex-shrink:0">${s.pct !== null ? s.pct + "%" : "-"}</div>
     </div>`;
-  }).join("") + `</div>`;
+      })
+      .join("") +
+    `</div>`;
 }
 
 function renderKeaktifanTable(statsInput) {
-  const q = (document.getElementById("keaktifan-search")?.value || "").toLowerCase();
-  const eventsInScope = Object.values(attendanceData).filter(ev => currentKeaktifanYear === null || getYear(ev.date) === currentKeaktifanYear);
+  const q = (
+    document.getElementById("keaktifan-search")?.value || ""
+  ).toLowerCase();
+  const eventsInScope = Object.values(attendanceData).filter(
+    (ev) =>
+      currentKeaktifanYear === null ||
+      getYear(ev.date) === currentKeaktifanYear,
+  );
   const totalEvents = eventsInScope.length;
-  const filtered = statsInput ? (q ? statsInput.filter(s => memberDisplayName(s.m).toLowerCase().includes(q)) : statsInput) : [];
+  const filtered = statsInput
+    ? q
+      ? statsInput.filter((s) =>
+          memberDisplayName(s.m).toLowerCase().includes(q),
+        )
+      : statsInput
+    : [];
 
   const tbody = document.getElementById("keaktifan-tbody");
   if (!tbody) return;
@@ -1769,39 +2199,61 @@ function renderKeaktifanTable(statsInput) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-light)">Belum ada data kehadiran. Admin perlu mengisi daftar hadir di menu Kegiatan.</td></tr>`;
     return;
   }
-  tbody.innerHTML = filtered.map((s, idx) => {
-    const pct = s.pct;
-    let badge, barColor;
-    if (pct === null) { badge = `<span class="nodata-badge">—</span>`; barColor = "#ccc"; }
-    else if (pct >= 75) { badge = `<span class="aktif-badge">Aktif</span>`; barColor = "#16a34a"; }
-    else if (pct >= 50) { badge = `<span class="cukup-badge">Cukup</span>`; barColor = "#d97706"; }
-    else { badge = `<span class="perlu-badge">Perlu Perhatian</span>`; barColor = "#dc2626"; }
-    return `<tr style="cursor:pointer" onclick="showMemberAttDetail(${s.m.id})">
-      <td style="font-weight:600;color:var(--text-light)">${idx+1}</td>
+  tbody.innerHTML = filtered
+    .map((s, idx) => {
+      const pct = s.pct;
+      let badge, barColor;
+      if (pct === null) {
+        badge = `<span class="nodata-badge">—</span>`;
+        barColor = "#ccc";
+      } else if (pct >= 75) {
+        badge = `<span class="aktif-badge">Aktif</span>`;
+        barColor = "#16a34a";
+      } else if (pct >= 50) {
+        badge = `<span class="cukup-badge">Cukup</span>`;
+        barColor = "#d97706";
+      } else {
+        badge = `<span class="perlu-badge">Perlu Perhatian</span>`;
+        barColor = "#dc2626";
+      }
+      return `<tr style="cursor:pointer" onclick="showMemberAttDetail(${s.m.id})">
+      <td style="font-weight:600;color:var(--text-light)">${idx + 1}</td>
       <td style="font-weight:600">${memberDisplayName(s.m)}</td>
       <td style="font-family:monospace;font-weight:700;color:${barColor}">${s.attended}</td>
       <td style="font-family:monospace;color:var(--text-mid)">${s.totalEvents}</td>
-      <td style="font-family:monospace;font-weight:700;color:${barColor}">${pct !== null ? pct+"%" : "—"}</td>
-      <td><div class="progress-wrap"><div class="progress-bar" style="width:${pct||0}%;background:${barColor}"></div></div></td>
+      <td style="font-family:monospace;font-weight:700;color:${barColor}">${pct !== null ? pct + "%" : "—"}</td>
+      <td><div class="progress-wrap"><div class="progress-bar" style="width:${pct || 0}%;background:${barColor}"></div></div></td>
       <td>${badge}</td>
     </tr>`;
-  }).join("");
+    })
+    .join("");
 }
 
 function showMemberAttDetail(memberId) {
-  const m = appData.members.find(x => x.id === memberId);
+  const m = appData.members.find((x) => x.id === memberId);
   if (!m) return;
   const eventsInScope = Object.values(attendanceData)
-    .filter(ev => currentKeaktifanYear === null || getYear(ev.date) === currentKeaktifanYear)
+    .filter(
+      (ev) =>
+        currentKeaktifanYear === null ||
+        getYear(ev.date) === currentKeaktifanYear,
+    )
     .sort((a, b) => new Date(b.date) - new Date(a.date));
   const el = document.getElementById("keaktifan-detail");
   if (!el) return;
-  if (eventsInScope.length === 0) { el.innerHTML = `<div style="color:var(--text-light);text-align:center;padding:20px">Belum ada data kehadiran.</div>`; return; }
-  const attended = eventsInScope.filter(ev => ev.present?.includes(memberId)).length;
-  const rows = eventsInScope.map(ev => {
-    const hadir = ev.present?.includes(memberId);
-    return `<tr><td>${fmtDate(ev.date)}</td><td>${ev.title}</td><td><span class="type-badge type-${(ev.type||"").toLowerCase().replace(/[^a-z]/g,"")}">${ev.type||""}</span></td><td><span class="${hadir ? "lunas-badge" : "belum-badge"}">${hadir ? "✅ Hadir" : "❌ Tidak Hadir"}</span></td></tr>`;
-  }).join("");
+  if (eventsInScope.length === 0) {
+    el.innerHTML = `<div style="color:var(--text-light);text-align:center;padding:20px">Belum ada data kehadiran.</div>`;
+    return;
+  }
+  const attended = eventsInScope.filter((ev) =>
+    ev.present?.includes(memberId),
+  ).length;
+  const rows = eventsInScope
+    .map((ev) => {
+      const hadir = ev.present?.includes(memberId);
+      return `<tr><td>${fmtDate(ev.date)}</td><td>${ev.title}</td><td><span class="type-badge type-${(ev.type || "").toLowerCase().replace(/[^a-z]/g, "")}">${ev.type || ""}</span></td><td><span class="${hadir ? "lunas-badge" : "belum-badge"}">${hadir ? "✅ Hadir" : "❌ Tidak Hadir"}</span></td></tr>`;
+    })
+    .join("");
   el.innerHTML = `
     <div style="margin-bottom:12px;padding:12px 16px;background:rgba(13,148,136,0.07);border-radius:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
       <div class="member-avatar" style="background:${memberColor(m.id)};width:36px;height:36px;font-size:14px">${m.name[0]}${m.br[0]}</div>
@@ -1815,20 +2267,29 @@ function showMemberAttDetail(memberId) {
 // ============================================================
 
 function renderPengumuman() {
-  const years = [...new Set(appData.kegiatan.map(k => getYear(k.date)))].sort((a, b) => b - a);
+  const years = [...new Set(appData.kegiatan.map((k) => getYear(k.date)))].sort(
+    (a, b) => b - a,
+  );
   const tabsEl = document.getElementById("pengumuman-year-tabs");
   if (tabsEl) {
-    tabsEl.innerHTML = years.map(y =>
-      `<div class="year-tab ${y === currentPengYear ? "active" : ""}" onclick="currentPengYear=${y};renderPengumuman()">${y}</div>`
-    ).join("");
+    tabsEl.innerHTML = years
+      .map(
+        (y) =>
+          `<div class="year-tab ${y === currentPengYear ? "active" : ""}" onclick="currentPengYear=${y};renderPengumuman()">${y}</div>`,
+      )
+      .join("");
   }
-  const filtered = appData.kegiatan.filter(k => getYear(k.date) === currentPengYear).sort((a, b) => new Date(b.date) - new Date(a.date));
+  const filtered = appData.kegiatan
+    .filter((k) => getYear(k.date) === currentPengYear)
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
   const tbody = document.getElementById("pengumuman-tbody");
   if (tbody) {
-    tbody.innerHTML = filtered.map(k => {
-      const tc = "type-" + k.type.toLowerCase().replace(/[^a-z]/g, "");
-      return `<tr><td>${fmtDate(k.date)}</td><td><span class="type-badge ${tc}">${k.type}</span></td><td><strong>${k.title}</strong></td><td style="color:var(--text-mid);font-size:13px">${k.desc||""}${k.place?" — "+k.place:""}</td></tr>`;
-    }).join("");
+    tbody.innerHTML = filtered
+      .map((k) => {
+        const tc = "type-" + k.type.toLowerCase().replace(/[^a-z]/g, "");
+        return `<tr><td>${fmtDate(k.date)}</td><td><span class="type-badge ${tc}">${k.type}</span></td><td><strong>${k.title}</strong></td><td style="color:var(--text-mid);font-size:13px">${k.desc || ""}${k.place ? " — " + k.place : ""}</td></tr>`;
+      })
+      .join("");
   }
 }
 
@@ -1844,11 +2305,15 @@ function renderADRT() {
 async function saveADRT() {
   appData.adrt = document.getElementById("f-adrt-content").value;
   try {
-    await FB.setDoc(FB.doc(db, "settings", "config"), { adrt: appData.adrt }, { merge: true });
+    await FB.setDoc(
+      FB.doc(db, "settings", "config"),
+      { adrt: appData.adrt },
+      { merge: true },
+    );
     closeModal("modal-adrt-edit");
     renderADRT();
     showToast("✅ ADRT berhasil diperbarui");
-  } catch(e) {
+  } catch (e) {
     showToast("❌ Gagal simpan: " + e.message, "error");
   }
 }
@@ -1861,14 +2326,14 @@ function populateDropdowns() {
   const families = appData.members
     .slice()
     .sort((a, b) => memberDisplayName(a).localeCompare(memberDisplayName(b)))
-    .map(m => ({ value: memberDisplayName(m), label: memberDisplayName(m) }));
+    .map((m) => ({ value: memberDisplayName(m), label: memberDisplayName(m) }));
 
-  ["f-inc-family", "f-bon-family"].forEach(id => {
+  ["f-inc-family", "f-bon-family"].forEach((id) => {
     const sel = document.getElementById(id);
     if (!sel) return;
     const currentVal = sel.value;
     sel.innerHTML = `<option value="">-- Pilih Keluarga --</option>`;
-    families.forEach(f => {
+    families.forEach((f) => {
       const opt = document.createElement("option");
       opt.value = f.value;
       opt.textContent = f.label;
@@ -1898,13 +2363,20 @@ function injectUploadBukti() {
       <div id="bukti-preview" style="display:none"></div>
     </div>`;
   btnRow.parentNode.insertBefore(wrap, btnRow);
-  document.getElementById("f-inc-bukti").addEventListener("change", function() { handleBuktiFile(this.files[0]); });
+  document
+    .getElementById("f-inc-bukti")
+    .addEventListener("change", function () {
+      handleBuktiFile(this.files[0]);
+    });
 }
 
 function handleBuktiFile(file) {
-  if (!file || file.size > 2*1024*1024) { showToast("File terlalu besar, maks 2MB", "error"); return; }
+  if (!file || file.size > 2 * 1024 * 1024) {
+    showToast("File terlalu besar, maks 2MB", "error");
+    return;
+  }
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     document.getElementById("bukti-placeholder").style.display = "none";
     const preview = document.getElementById("bukti-preview");
     preview.style.display = "block";
@@ -1943,8 +2415,10 @@ function showBuktiModal(base64, name, type) {
   const overlay = document.createElement("div");
   overlay.id = "modal-lihat-bukti";
   overlay.className = "modal-overlay show";
-  overlay.innerHTML = `<div class="modal" style="max-width:500px"><div class="modal-title">🧾 Bukti Pembayaran <button class="modal-close" onclick="document.getElementById('modal-lihat-bukti').remove()">✕</button></div><p style="font-size:12px;color:var(--text-light);margin-bottom:12px;font-family:monospace">${name||"bukti"}</p>${content}</div>`;
-  overlay.addEventListener("click", e => { if (e.target === overlay) overlay.remove(); });
+  overlay.innerHTML = `<div class="modal" style="max-width:500px"><div class="modal-title">🧾 Bukti Pembayaran <button class="modal-close" onclick="document.getElementById('modal-lihat-bukti').remove()">✕</button></div><p style="font-size:12px;color:var(--text-light);margin-bottom:12px;font-family:monospace">${name || "bukti"}</p>${content}</div>`;
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
   document.body.appendChild(overlay);
 }
 
@@ -1955,7 +2429,10 @@ function showBuktiModal(base64, name, type) {
 function loadScript(src) {
   return new Promise((resolve, reject) => {
     const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) { resolve(); return; }
+    if (existing) {
+      resolve();
+      return;
+    }
     const s = document.createElement("script");
     s.src = src;
     s.onload = resolve;
@@ -1967,64 +2444,129 @@ function loadScript(src) {
 async function downloadLaporanExcel() {
   const status = document.getElementById("downloadStatus");
   if (status) status.textContent = "⏳ Sedang membuat laporan...";
-  await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");
+  await loadScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
+  );
   try {
     const wb = XLSX.utils.book_new();
     const tahun = new Date().getFullYear();
-    const tgl = new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
+    const tgl = new Date().toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
     const org = "Parsahutaon Dos Roha Regency & Sekitarnya";
 
     // Sheet 1: Iuran
-    const s1 = [[org], ["LAPORAN IURAN ANGGOTA " + tahun], ["Dicetak: " + tgl], []];
-    const years = [2022,2023,2024,2025,2026];
-    const h1 = ["No","Nama Keluarga","Nama Panggilan","Bergabung"];
-    years.forEach(y => h1.push(y + " Status"));
+    const s1 = [
+      [org],
+      ["LAPORAN IURAN ANGGOTA " + tahun],
+      ["Dicetak: " + tgl],
+      [],
+    ];
+    const years = [2022, 2023, 2024, 2025, 2026];
+    const h1 = ["No", "Nama Keluarga", "Nama Panggilan", "Bergabung"];
+    years.forEach((y) => h1.push(y + " Status"));
     s1.push(h1);
     appData.members.forEach((m, i) => {
-      const row = [i+1, m.name + " / br." + m.br, m.nick||"-", m.joined||"-"];
-      years.forEach(y => {
+      const row = [
+        i + 1,
+        m.name + " / br." + m.br,
+        m.nick || "-",
+        m.joined || "-",
+      ];
+      years.forEach((y) => {
         const sm = getMergedIuranStatus(y);
         row.push(sm[memberDisplayName(m)] || "-");
       });
       s1.push(row);
     });
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(s1), "Laporan Iuran");
+    XLSX.utils.book_append_sheet(
+      wb,
+      XLSX.utils.aoa_to_sheet(s1),
+      "Laporan Iuran",
+    );
 
     // Sheet 2: Cashflow
-    const s2 = [[org], ["LAPORAN KEUANGAN & CASHFLOW"], ["Dicetak: " + tgl], []];
-    const tMasuk = appData.cashflow.reduce((s,c) => s + (c.in||0), 0);
-    const tKeluar = appData.cashflow.reduce((s,c) => s + (c.out||0), 0);
-    s2.push(["=== RINGKASAN ==="], ["Total Pemasukan", tMasuk], ["Total Pengeluaran", tKeluar], ["Saldo", tMasuk-tKeluar], []);
-    s2.push(["Tanggal","Keterangan","Masuk (Rp)","Keluar (Rp)","Saldo (Rp)"]);
+    const s2 = [
+      [org],
+      ["LAPORAN KEUANGAN & CASHFLOW"],
+      ["Dicetak: " + tgl],
+      [],
+    ];
+    const tMasuk = appData.cashflow.reduce((s, c) => s + (c.in || 0), 0);
+    const tKeluar = appData.cashflow.reduce((s, c) => s + (c.out || 0), 0);
+    s2.push(
+      ["=== RINGKASAN ==="],
+      ["Total Pemasukan", tMasuk],
+      ["Total Pengeluaran", tKeluar],
+      ["Saldo", tMasuk - tKeluar],
+      [],
+    );
+    s2.push([
+      "Tanggal",
+      "Keterangan",
+      "Masuk (Rp)",
+      "Keluar (Rp)",
+      "Saldo (Rp)",
+    ]);
     let saldo = 10364300;
-    appData.cashflow.slice().sort((a,b) => new Date(a.date)-new Date(b.date)).forEach(c => {
-      saldo += (c.in||0)-(c.out||0);
-      s2.push([c.date||"-", c.desc||"-", c.in||"", c.out||"", saldo]);
-    });
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(s2), "Keuangan & Cashflow");
+    appData.cashflow
+      .slice()
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .forEach((c) => {
+        saldo += (c.in || 0) - (c.out || 0);
+        s2.push([c.date || "-", c.desc || "-", c.in || "", c.out || "", saldo]);
+      });
+    XLSX.utils.book_append_sheet(
+      wb,
+      XLSX.utils.aoa_to_sheet(s2),
+      "Keuangan & Cashflow",
+    );
 
     // Sheet 3: Kehadiran
     const s3 = [[org], ["LAPORAN KEHADIRAN ANGGOTA"], ["Dicetak: " + tgl], []];
-    const allEvents = Object.values(attendanceData).sort((a,b) => new Date(a.date)-new Date(b.date));
+    const allEvents = Object.values(attendanceData).sort(
+      (a, b) => new Date(a.date) - new Date(b.date),
+    );
     if (allEvents.length > 0) {
-      const hdr3 = ["No","Nama Keluarga"];
-      allEvents.forEach(ev => hdr3.push(ev.date?.slice(0,10) + " - " + ev.title?.slice(0,20)));
-      hdr3.push("Jumlah Hadir","Total Event","Persentase (%)");
+      const hdr3 = ["No", "Nama Keluarga"];
+      allEvents.forEach((ev) =>
+        hdr3.push(ev.date?.slice(0, 10) + " - " + ev.title?.slice(0, 20)),
+      );
+      hdr3.push("Jumlah Hadir", "Total Event", "Persentase (%)");
       s3.push(hdr3);
       appData.members.forEach((m, i) => {
-        const row = [i+1, memberDisplayName(m)];
+        const row = [i + 1, memberDisplayName(m)];
         let hadir = 0;
-        allEvents.forEach(ev => { const h = ev.present?.includes(m.id); row.push(h ? "Hadir" : "Tidak Hadir"); if(h) hadir++; });
-        row.push(hadir, allEvents.length, allEvents.length > 0 ? Math.round((hadir/allEvents.length)*100)+"%" : "0%");
+        allEvents.forEach((ev) => {
+          const h = ev.present?.includes(m.id);
+          row.push(h ? "Hadir" : "Tidak Hadir");
+          if (h) hadir++;
+        });
+        row.push(
+          hadir,
+          allEvents.length,
+          allEvents.length > 0
+            ? Math.round((hadir / allEvents.length) * 100) + "%"
+            : "0%",
+        );
         s3.push(row);
       });
-    } else { s3.push(["Belum ada data kehadiran."]); }
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(s3), "Kehadiran Anggota");
+    } else {
+      s3.push(["Belum ada data kehadiran."]);
+    }
+    XLSX.utils.book_append_sheet(
+      wb,
+      XLSX.utils.aoa_to_sheet(s3),
+      "Kehadiran Anggota",
+    );
 
-    const fname = `Laporan_DosRoha_${tahun}_${new Date().toISOString().slice(0,10)}.xlsx`;
+    const fname = `Laporan_DosRoha_${tahun}_${new Date().toISOString().slice(0, 10)}.xlsx`;
     XLSX.writeFile(wb, fname);
-    if (status) status.textContent = "✅ Berhasil! File " + fname + " sudah terdownload.";
-  } catch(err) {
+    if (status)
+      status.textContent = "✅ Berhasil! File " + fname + " sudah terdownload.";
+  } catch (err) {
     console.error(err);
     if (status) status.textContent = "❌ Gagal. Cek konsol browser.";
   }
@@ -2061,7 +2603,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Set tanggal hari ini di semua form date
   const today = new Date().toISOString().split("T")[0];
-  ["f-keg-date","f-inc-date","f-exp-date","f-mem-joined"].forEach(id => {
+  ["f-keg-date", "f-inc-date", "f-exp-date", "f-mem-joined"].forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.value = today;
   });
@@ -2086,7 +2628,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Fallback jika DOMContentLoaded sudah lewat
-if (document.readyState === "complete" || document.readyState === "interactive") {
+if (
+  document.readyState === "complete" ||
+  document.readyState === "interactive"
+) {
   setTimeout(() => {
     if (!window._firebaseInitDone) {
       window._firebaseInitDone = true;
@@ -2101,4 +2646,6 @@ if (document.readyState === "complete" || document.readyState === "interactive")
   }, 300);
 }
 
-console.log("✅ app-core.js loaded — semua patch tergabung, bug kritis terperbaiki!");
+console.log(
+  "✅ app-core.js loaded — semua patch tergabung, bug kritis terperbaiki!",
+);
