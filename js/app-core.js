@@ -1348,6 +1348,21 @@ function getMergedIuranStatus(year) {
 
 function renderIuranTable() {
   const year = currentIuranYear;
+  // Re-render tab aktif
+  const iuranTabsEl = document.getElementById("iuran-year-tabs");
+  if (iuranTabsEl) {
+    const allIuranYears = new Set([2022, 2023, 2024, 2025, 2026]);
+    Object.keys(iuranFirebase).forEach((y) => allIuranYears.add(parseInt(y)));
+    allIuranYears.add(new Date().getFullYear());
+    allIuranYears.add(new Date().getFullYear() + 1);
+    const sortedYears = [...allIuranYears].sort((a, b) => a - b);
+    iuranTabsEl.innerHTML = sortedYears
+      .map(
+        (y) =>
+          `<div class="year-tab ${y === year ? "active" : ""}" onclick="currentIuranYear=${y};renderIuranTable()">${y}</div>`,
+      )
+      .join("");
+  }
   const statusMap = getMergedIuranStatus(year);
   const entries = Object.entries(statusMap);
 
