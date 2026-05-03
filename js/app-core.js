@@ -51,159 +51,6 @@ let currentAttendanceEventId = null;
 const activeListeners = {};
 
 // ============================================================
-// SECTION 2: HARDCODED IURAN DATA (SEMENTARA)
-// Konsep: Ini akan dipindah ke Firestore di Step 3
-// Untuk sekarang kita pertahankan agar tidak break
-// ============================================================
-
-const iuranStatus = {
-  2022: {
-    "A. Pangaribuan / br.Simanjuntak (Anabel)": "LUNAS",
-    "Aritonang / br.Nainggolan": "LUNAS",
-    "Batubara/br.Tobing": "LUNAS",
-    "C.Nainggolan /br.Hutabarat (Josua)": "LUNAS",
-    "D. Siregar /br.Manullang (Daniel)": "LUNAS",
-    "M.Hasugian /Br.Purba": "LUNAS",
-    "Malau /Br.Sembiring (Regina)": "LUNAS",
-    "Manullang/Br Pardosi": "LUNAS",
-    "Manurung/ br.Hutasoit": "LUNAS",
-    "Pangaribuan /br.Siahaan (Zio)": "LUNAS",
-    "R.Sihombing /br.Pangaribuan (Audrey)": "LUNAS",
-    "Sihombing / br.Malau (Moza)": "LUNAS",
-    "Sihombing /br.Sihotang (Phebe)": "LUNAS",
-    "Sihombing/Purba (Ray)": "LUNAS",
-    "Simanjuntak/br.Simangungsong (S.Pratama)": "LUNAS",
-    "Simangunsong/Nainggolan (Gideon)": "LUNAS",
-    "Simatupang /br.Panjaitan (OP.Mira)": "LUNAS",
-    "Simbolon /br.Sirait (mama El)": "LUNAS",
-    "Simorangkir /br.Tampubolon": "LUNAS",
-    "Sirait/ br.Sinulingga (Jessica)": "LUNAS",
-    "Siregar /br.Sianturi": "80,000",
-    "Sitohang/br.Situmeang (op.Elora)": "LUNAS",
-    "Tamba /br.Nainggolan (Sepinggan Pratama)": "LUNAS",
-    "Tambunan/br.Siregar (Intan)": "LUNAS",
-  },
-  2023: {
-    "A. Pangaribuan / br.Simanjuntak (Anabel)": "LUNAS",
-    "Aritonang / br.Nainggolan": "LUNAS",
-    "Banurea/ br.Nababam": "LUNAS",
-    "Batubara/br.Tobing": "LUNAS",
-    "C.Nainggolan /br.Hutabarat (Josua)": "LUNAS",
-    "D. Siregar /br.Manullang (Daniel)": "LUNAS",
-    "Gultom /br.Sitorus (Stephen)": "LUNAS",
-    "M.Hasugian /Br.Purba": "LUNAS",
-    "Malau /Br.Sembiring (Regina)": "LUNAS",
-    "Manullang/Br Pardosi": "LUNAS",
-    "Manurung/ br.Hutasoit": "LUNAS",
-    "Nababan /br.Gultom (Gerald)": "LUNAS",
-    "Pangaribuan /br.Siahaan (Zio)": "LUNAS",
-    "R.Sihombing /br.Pangaribuan (Audrey)": "LUNAS",
-    "Sianipar F/br.Sidabutar (Bpk.Elvira)": "LUNAS",
-    "Sihombing / br.Malau (Moza)": "LUNAS",
-    "Sihombing /br.Sihotang (Phebe)": "LUNAS",
-    "Sihombing/Purba (Ray)": "LUNAS",
-    "Simanjuntak/br.Simangungsong (S.Pratama)": "LUNAS",
-    "Simanjuntak /br.Gultom (Samuel)": "LUNAS",
-    "Simangunsong/Nainggolan (Gideon)": "LUNAS",
-    "Simatupang /br.Panjaitan (OP.Mira)": "LUNAS",
-    "Simbolon /br.Sirait (mama El)": "LUNAS",
-    "Simorangkir /br.Tampubolon": "LUNAS",
-    "Sirait/ br.Sinulingga (Jessica)": "LUNAS",
-    "Siregar /br.Sianturi": "BELUM",
-    "Sitohang/br.Situmeang (op.Elora)": "LUNAS",
-    "Sitorus /br.Saragih (B.Poin)": "LUNAS",
-    "Tamba /br.Nainggolan (Sepinggan Pratama)": "LUNAS",
-    "Tambunan/br.Siregar (Intan)": "LUNAS",
-  },
-  2024: {
-    "A. Pangaribuan / br.Simanjuntak (Anabel)": "LUNAS",
-    "Aritonang / br.Nainggolan": "LUNAS",
-    "Banurea/ br.Nababam": "LUNAS",
-    "Batubara/br.Tobing": "LUNAS",
-    "C.Nainggolan /br.Hutabarat (Josua)": "LUNAS",
-    "D. Siregar /br.Manullang (Daniel)": "LUNAS",
-    "Gultom /br.Sitorus (Stephen)": "LUNAS",
-    "Harianja /br. Sianipar (Feoddora)": "BELUM",
-    "M.Hasugian /Br.Purba": "LUNAS",
-    "Malau /Br.Sembiring (Regina)": "LUNAS",
-    "Manullang/Br Pardosi": "LUNAS",
-    "Manurung/ br.Hutasoit": "LUNAS",
-    "Nababan /br.Gultom (Gerald)": "LUNAS",
-    "Pangaribuan /br.Siahaan (Zio)": "LUNAS",
-    "R.Sihombing /br.Pangaribuan (Audrey)": "LUNAS",
-    "Sianipar F/br.Sidabutar (Bpk.Elvira)": "LUNAS",
-    "Sihombing / br.Malau (Moza)": "LUNAS",
-    "Sihombing /br.Sihotang (Phebe)": "LUNAS",
-    "Sihombing/Purba (Ray)": "LUNAS",
-    "Simanjuntak/br.Simangungsong (S.Pratama)": "LUNAS",
-    "Simanjuntak /br.Gultom (Samuel)": "LUNAS",
-    "Simangunsong/Nainggolan (Gideon)": "LUNAS",
-    "Simatupang /br.Panjaitan (OP.Mira)": "LUNAS",
-    "Simbolon /br.Sirait (mama El)": "LUNAS",
-    "Simorangkir /br.Tampubolon": "LUNAS",
-    "Sirait/ br.Sinulingga (Jessica)": "LUNAS",
-    "Siregar /br.Sianturi": "BELUM",
-    "Sitohang/br.Situmeang (op.Elora)": "LUNAS",
-    "Sitorus /br.Saragih (B.Poin)": "LUNAS",
-    "Tamba /br.Nainggolan (Sepinggan Pratama)": "LUNAS",
-    "Tambunan/br.Siregar (Intan)": "LUNAS",
-    "Ny.Sinulingga / br.Simatupang": "LUNAS",
-    "PDT. J.W Sinaga/br.Silalahi (Tama)": "LUNAS",
-    "Munte /br.Parhusip (Iren)": "LUNAS",
-    "R.Panggabean Simorangkir/ br.Damanik (Meidy)": "LUNAS",
-    "Haloho /br. Sinaga (Jayden)": "LUNAS",
-    "Siagian /br.Sianturi (Gilbert)": "LUNAS",
-  },
-};
-
-const iuranStatus2025 = {
-  "A. Pangaribuan / br.Simanjuntak (Anabel)": "BELUM",
-  "Aritonang / br.Nainggolan": "LUNAS",
-  "Banurea/ br.Nababam": "LUNAS",
-  "Batubara/br.Tobing": "LUNAS",
-  "C.Nainggolan /br.Hutabarat (Josua)": "BELUM",
-  "D. Siregar /br.Manullang (Daniel)": "LUNAS",
-  "Gultom /br.Sitorus (Stephen)": "LUNAS",
-  "Harianja /br. Sianipar (Feoddora)": "BELUM",
-  "M.Hasugian /Br.Purba": "LUNAS",
-  "Malau /Br.Sembiring (Regina)": "LUNAS",
-  "Manullang/Br Pardosi": "LUNAS",
-  "Manurung/ br.Hutasoit": "LUNAS",
-  "Nababan /br.Gultom (Gerald)": "BELUM",
-  "Pangaribuan /br.Siahaan (Zio)": "BELUM",
-  "R.Sihombing /br.Pangaribuan (Audrey)": "LUNAS",
-  "Sianipar F/br.Sidabutar (Bpk.Elvira)": "LUNAS",
-  "Sihombing / br.Malau (Moza)": "LUNAS",
-  "Sihombing /br.Sihotang (Phebe)": "LUNAS",
-  "Sihombing/Purba (Ray)": "LUNAS",
-  "Simanjuntak/br.Simangungsong (S.Pratama)": "LUNAS",
-  "Simanjuntak /br.Gultom (Samuel)": "LUNAS",
-  "Simangunsong/Nainggolan (Gideon)": "LUNAS",
-  "Simatupang /br.Panjaitan (OP.Mira)": "LUNAS",
-  "Simbolon /br.Sirait (mama El)": "LUNAS",
-  "Simorangkir /br.Tampubolon": "LUNAS",
-  "Sirait/ br.Sinulingga (Jessica)": "LUNAS",
-  "Siregar /br.Sianturi": "BELUM",
-  "Sitohang/br.Situmeang (op.Elora)": "LUNAS",
-  "Sitorus /br.Saragih (B.Poin)": "LUNAS",
-  "Tamba /br.Nainggolan (Sepinggan Pratama)": "LUNAS",
-  "Tambunan/br.Siregar (Intan)": "LUNAS",
-  "Ny.Sinulingga / br.Simatupang": "LUNAS",
-  "PDT. J.W Sinaga/br.Silalahi (Tama)": "LUNAS",
-  "Munte /br.Parhusip (Iren)": "30,000",
-  "R.Panggabean Simorangkir/ br.Damanik (Meidy)": "LUNAS",
-  "Haloho /br. Sinaga (Jayden)": "50,000",
-  "Siagian /br.Sianturi (Gilbert)": "50,000",
-  "F.Tampubolon/ br.sidabutar (Vania)": "BELUM",
-  "Turnip /br.Banjarnahor (Gema)": "BELUM",
-  "Siregar /br.Manalu (Arga)": "LUNAS",
-  "Turnip /br.Sirait": "BELUM",
-  "Siregar/ br.Tobing (Ezra)": "BELUM",
-  "Pasaribu/br.Lumbantoruan": "LUNAS",
-  "Manalu/ br.Silaban (Oliv)": "LUNAS",
-};
-
-// ============================================================
 // SECTION 3: UTILITY FUNCTIONS
 // Konsep: Pure functions — tidak ada side effect, mudah di-test
 // ============================================================
@@ -1489,16 +1336,13 @@ function renderBarChart(years) {
 }
 
 function getMergedIuranStatus(year) {
-  // Data Firebase selalu menimpa hardcode (Firebase = sudah diupdate admin)
+  // Semua data iuran sudah di Firebase (Step 3 selesai)
   if (
     iuranFirebase[String(year)] &&
     Object.keys(iuranFirebase[String(year)]).length > 0
   ) {
     return { ...iuranFirebase[String(year)] };
   }
-  // Fallback ke hardcode
-  if (year === 2025 || year === "2025") return { ...iuranStatus2025 };
-  if (iuranStatus[String(year)]) return { ...iuranStatus[String(year)] };
   return {};
 }
 
